@@ -4,14 +4,14 @@ CREATE DATABASE project_manager;
 
 \c project_manager
 CREATE TABLE "task_relation"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "task_id" BIGINT NOT NULL,
     "pre_req_task_id" BIGINT NOT NULL
 );
 ALTER TABLE
     "task_relation" ADD PRIMARY KEY("id");
 CREATE TABLE "tasks"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "project_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,
@@ -24,14 +24,14 @@ CREATE TABLE "tasks"(
 ALTER TABLE
     "tasks" ADD PRIMARY KEY("id");
 CREATE TABLE "user_task_relation"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "user_project_relation_id" BIGINT NOT NULL,
     "task_id" BIGINT NOT NULL
 );
 ALTER TABLE
     "user_task_relation" ADD PRIMARY KEY("id");
 CREATE TABLE "messages"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "project_id" BIGINT NOT NULL,
     "content" VARCHAR(255) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE "messages"(
 ALTER TABLE
     "messages" ADD PRIMARY KEY("id");
 CREATE TABLE "projects"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "image" VARCHAR(255) NULL,
     "min_duration" BIGINT NULL
@@ -49,7 +49,7 @@ CREATE TABLE "projects"(
 ALTER TABLE
     "projects" ADD PRIMARY KEY("id");
 CREATE TABLE "users"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "username" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
@@ -64,7 +64,7 @@ ALTER TABLE
 ALTER TABLE
     "users" ADD CONSTRAINT "users_email_unique" UNIQUE("email");
 CREATE TABLE "user_project_relation"(
-    "id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "project_id" BIGINT NOT NULL,
     "permission_level" BIGINT NOT NULL

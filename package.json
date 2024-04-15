@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node main.ts",
     "dev": "ts-node-dev main.ts",
-    "database": "psql -f ./psql/setup.sql"
+    "database": "psql -f ./psql/testingsetup.sql"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/shumkwanho/Group-Project-Project-Management-#readme",
   "dependencies": {
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20.12.7",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -33,7 +34,6 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.0",
-    "@types/formidable": "^2.0.6",
     "@types/pg": "^8.11.5"
   }
 }
