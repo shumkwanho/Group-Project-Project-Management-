@@ -1,0 +1,142 @@
+import { Request, Response, Router } from "express";
+import { pgClient } from './pgClient';
+
+export const chatRoomRouter = Router();
+
+chatRoomRouter.get('/chatroom', showAllMessages);
+chatRoomRouter.post('/chatroom', sendMyMessage);
+chatRoomRouter.put('/chatroom', editMyMessage);
+
+
+
+
+
+// ==================== Show Server Error ====================
+function serverError(err: any, res: Response) {
+    console.log(err)
+    res.status(500).json({ message: 'Server internal error.' })
+}
+
+
+
+
+
+// ==================== Show All Messages ====================
+
+async function getGroupMembers(projectId: any) {
+    return (await pgClient.query(`
+    SELECT project_id, 
+    user_id, 
+    username,
+    email,
+    profile_image
+    FROM users INNER JOIN user_project_relation
+    ON users.id = user_id
+    WHERE project_id = $1`,[projectId])).rows
+}
+
+async function getAllMessagesFrompgClient(projectId: any) {
+    return (await pgClient.query(`SELECT project_id, 
+    messages.id as messages_id, 
+    users.id as users_id, 
+    profile_image, 
+    username, 
+    messages.content, 
+    created_at,
+    edited_at
+    FROM users INNER JOIN messages
+    ON users.id = user_id
+    WHERE project_id = $1
+    ORDER BY created_at ASC`, [projectId])).rows
+}
+
+async function showAllMessages(req: Request, res: Response) {
+    let { userId, projectId } = req.query;
+
+    try {
+        let groupMembers = await getGroupMembers(projectId);
+        let allMessages = await getAllMessagesFrompgClient(projectId);
+
+        console.log(groupMembers);
+        console.log(allMessages);
+
+        res.status(200).json({
+            userId: userId,
+            groupMembers : groupMembers,
+            allMessage: allMessages
+        })
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+
+
+
+
+// ==================== Send My Message ====================
+
+async function saveMessageTopgClient(userId: number, projectId: number, content: string) {
+    return (await pgClient.query(`INSERT INTO messages (
+        user_id, project_id, content, created_at )
+        VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
+        RETURNING id;`, [userId, projectId, content])).rows[0].id
+}
+
+async function pickJustSentMessage(messageId: number) {
+    return (await pgClient.query(
+        `SELECT profile_image, 
+        users.id as users_id,
+        username, 
+        messages.content, 
+        created_at
+        FROM users INNER JOIN messages
+        ON users.id = user_id
+        WHERE messages.id = $1`, [messageId])).rows[0]
+}
+
+async function sendMyMessage(req: Request, res: Response) {
+    let { userId, projectId, content } = req.body;
+
+    try {
+        let messageId = await saveMessageTopgClient(userId, projectId, content);
+        let justSentMessage = await pickJustSentMessage(messageId);
+
+        res.status(200).json({
+            message: "Your message has been sent.",
+            date: justSentMessage
+        })
+
+    } catch (err) {
+        serverError(err, res);
+    }
+}
+
+
+
+
+
+// ==================== Edit My Message ====================
+
+async function changeMessageTopgClient(messageId: number, content: string) {
+    return (await pgClient.query(`
+        UPDATE messages 
+        SET content = $1, 
+        edited_at = CURRENT_TIMESTAMP
+        WHERE Id = $2
+        RETURNING content, edited_at`, [content, messageId])).rows[0]
+}
+
+async function editMyMessage(req: Request, res: Response) {
+    let { userId, messageId, content } = req.body;
+    console.log(userId);
+
+    let justEditedMessage = await changeMessageTopgClient(messageId, content);
+
+    console.log(justEditedMessage);
+
+    res.status(200).json({
+        message: "Your message has been edited.",
+        date: justEditedMessage
+    })
+}
