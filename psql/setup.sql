@@ -15,7 +15,7 @@ CREATE TABLE "tasks"(
     "project_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,
-    "pre-req_fulfilled" BOOLEAN NOT NULL,
+    "pre_req_fulfilled" BOOLEAN NOT NULL,
     "deadline" DATE NOT NULL,
     "start_date" DATE NOT NULL,
     "duration" BIGINT NOT NULL,
@@ -89,3 +89,5 @@ ALTER TABLE
     "tasks" ADD CONSTRAINT "tasks_project_id_foreign" FOREIGN KEY("project_id") REFERENCES "projects"("id");
 ALTER TABLE
     "user_task_relation" ADD CONSTRAINT "user_task_relation_task_id_foreign" FOREIGN KEY("task_id") REFERENCES "tasks"("id");
+
+\c project_manager;

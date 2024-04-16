@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
-import { checkPassword, hashPassword } from "../hash";
+import { checkPassword, hashPassword } from "../utils/hash";
 import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
-import { isLoggedIn } from "../guard";
+import { isLoggedIn } from "../utils/guard";
 
 export const authRouter = Router();
 
