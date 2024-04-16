@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { pgClient } from './pgClient';
+import { pgClient } from "../utils/pgClient";
 
 export const chatRoomRouter = Router();
 
