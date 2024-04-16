@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { pgClient } from "../pgClient";
+import { pgClient } from "../utils/pgClient";
 
 export const taskRouter = Router()
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { projectType } from "../types"
-import { pgClient } from "../pgClient";
+import { projectType } from "../utils/types"
+import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
 
 export const projectRouter = Router()
@@ -116,6 +116,7 @@ async function deleteProject(req: Request, res: Response) {
         await pgClient.query(`DELETE FROM tasks where project_id = $1`, [id])
         await pgClient.query(`DELETE FROM messages where project_id = $1`, [id])
         await pgClient.query(`DELETE FROM projects where id = $1`, [id])
+        await pgClient.query(`DELETE FROM user_project_relation where id = $1`, [id])
 
         res.json({ message: "Delete Successully" })
 
@@ -124,3 +125,8 @@ async function deleteProject(req: Request, res: Response) {
         res.status(500).json({ message: error })
     }
 }
+
+
+async function getPermissionLevel (projectId) {
+    const result = await pgClient.query(`Select * from users left outer join user_project_relation where project_id = ${projectId}`)
+} 
