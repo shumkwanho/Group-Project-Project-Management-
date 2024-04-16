@@ -1,3 +1,5 @@
+\c project_manager;
+
 INSERT INTO users (
     username,
     email,
@@ -11,7 +13,7 @@ VALUES (
     'user@gmail.com',
     '$2a$10$r8xSUf9C4lG0ubOpWbMJH.LjoNVv6KgLxyqFWK8UxTmUmA6fD5hNa',
     --hashed password for '1234'
-    'example.jpg',
+    'mydog.jpg',
     CURRENT_TIMESTAMP,
     CURRENT_DATE
 );

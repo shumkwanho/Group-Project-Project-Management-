@@ -20,7 +20,8 @@ app.use(
 
 declare module "express-session" {
   interface SessionData {
-    userId?: string;
+    userId?: number;
+    username?: string;
   }
 }
 
