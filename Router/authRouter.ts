@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { checkPassword, hashPassword } from "../hash";
-import { pgClient } from "../pgClient";
+import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
 import { isLoggedIn } from "../guard";
 
