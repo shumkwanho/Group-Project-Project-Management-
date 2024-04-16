@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { hashPassword } from "../hash";
-import { pgClient } from "../pgClient";
+import { hashPassword } from "../utils/hash";
+import { pgClient } from "../utils/pgClient";
 
 export const authRouter = Router();
 
