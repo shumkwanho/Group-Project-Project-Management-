@@ -16,7 +16,6 @@ CREATE TABLE "tasks"(
     "name" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,
     "pre_req_fulfilled" BOOLEAN NOT NULL,
-    "deadline" DATE NOT NULL,
     "start_date" DATE NOT NULL,
     "duration" BIGINT NOT NULL,
     "actual_finish_date" DATE NOT NULL

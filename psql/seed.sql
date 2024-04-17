@@ -235,3 +235,19 @@ insert into user_task_relation (task_id, user_project_relation_id) values (40, 2
 insert into user_task_relation (task_id, user_project_relation_id) values (27, 28);
 insert into user_task_relation (task_id, user_project_relation_id) values (45, 28);
 insert into user_task_relation (task_id, user_project_relation_id) values (12, 8);
+
+-- project 10 task relation
+insert into task_relation (task_id, pre_req_task_id) values (13, 16);
+insert into task_relation (task_id, pre_req_task_id) values (10, 16);
+insert into task_relation (task_id, pre_req_task_id) values (32, 16);
+insert into task_relation (task_id, pre_req_task_id) values (35, 10);
+insert into task_relation (task_id, pre_req_task_id) values (7, 35);
+insert into task_relation (task_id, pre_req_task_id) values (7, 32);
+
+-- project 10 task duration (min_duration = 12)
+UPDATE tasks SET duration = 2 where id = 16;
+UPDATE tasks SET duration = 8 where id = 13;
+UPDATE tasks SET duration = 2 where id = 10;
+UPDATE tasks SET duration = 7 where id = 32;
+UPDATE tasks SET duration = 3 where id = 35;
+UPDATE tasks SET duration = 3 where id = 7;

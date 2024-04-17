@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import { projectType } from "../utils/types"
 import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
+import { getTaskRelation } from "../utils/getTaskRelation";
 
 export const projectRouter = Router()
 
@@ -13,7 +13,7 @@ projectRouter.delete("/", deleteProject)
 // request: project id
 async function inspectProject(req: Request, res: Response) {
     try {
-        const id = req.body.id
+        const id = req.query.id
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
         if (targetProject == undefined) {
             res.status(400).json({ message: "Cannot find target project" })
@@ -21,15 +21,16 @@ async function inspectProject(req: Request, res: Response) {
         }
         const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description, pre_req_fulfilled,deadline,start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1`, [id])).rows
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
-        for (let task of tasksOfTargetProject) {
-            const preReqTasks = (await pgClient.query(`select * from tasks join task_relation on tasks.id = task_id where tasks.id = $1`, [task.id])).rows
-            task.preTask = preReqTasks
+
+        
+        for (let task of tasksOfTargetProject) { 
+            let taskRelation = await getTaskRelation(id!.toString())
+            task.relation = taskRelation
         }
 
         targetProject.tasks = tasksOfTargetProject
         targetProject.users = usersOfTargetProject
 
-        // targetProject.users = usersOfTargetProject
         res.json({ data: targetProject })
         return
     } catch (error) {
@@ -72,7 +73,7 @@ async function createProject(req: Request, res: Response) {
             }
 
             let newProjectId = (await pgClient.query(`insert into projects (name,image) values ($1,$2) RETURNING id;`, [projectName, image])).rows[0].id
-            let permissionQuery = await pgClient.query(`insert into user_project_relation (user_id,project_id,permission_level) values ($1,$2,1);`, [id, newProjectId])
+            await pgClient.query(`insert into user_project_relation (user_id,project_id,permission_level) values ($1,$2,1);`, [id, newProjectId])
 
             res.json({
                 message: "created new project",
@@ -115,7 +116,6 @@ async function updateProject(req: Request, res: Response) {
 
             if (files.image) {
                 const image = files.image[0].newFilename
-                console.log(image);
                 
                 await pgClient.query(
                     `UPDATE projects SET name = $1, image = $2 WHERE id = $3;`, [projectName, image, id])
@@ -182,7 +182,11 @@ async function deleteProject(req: Request, res: Response) {
 //         try {
 //             if (err) {
 //                 console.log(err);
+<<<<<<< HEAD
 //                 res.status(400).json({ message: "You need to fill the content" }) 
+=======
+//                 res.status(400).json({ message: "You need to fill the content" })
+>>>>>>> e53eb2a594679dca24149668197c5b59aed0b6f0
 //             }
 
 //             if (fields.content) {
