@@ -1,0 +1,67 @@
+nav{
+    display: flex;
+    justify-content: end;
+    max-width: 90vw;
+    border: 1px solid black;
+    height: 50px;
+    align-items: center;
+    border-radius: 5px;
+}
+
+nav div{
+    margin-right: 10px;
+}
+
+.container{
+    display: flex;
+    margin-top: 20px;
+}
+
+.personal-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30vw;
+    height: 500px;
+    margin-right: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+#user-profile{
+    overflow: hidden;
+    max-width: 100%;
+    object-fit: cover;
+    max-width: 100%;
+    object-position: center;
+}
+
+.project-area{
+    width: 60vw;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 500px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.project{
+    margin-right: 10px;
+}
+
+#new-project{
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.completed-project-area{
+    margin-top: 20px;
+    display: flex;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.completed-project{
+    padding: 10px;
+    height: 500px;
+}
