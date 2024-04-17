@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express";
-import { projectType } from "../utils/types"
 import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
 
@@ -29,7 +28,6 @@ async function inspectProject(req: Request, res: Response) {
         targetProject.tasks = tasksOfTargetProject
         targetProject.users = usersOfTargetProject
 
-        // targetProject.users = usersOfTargetProject
         res.json({ data: targetProject })
         return
     } catch (error) {
@@ -72,7 +70,7 @@ async function createProject(req: Request, res: Response) {
             }
 
             let newProjectId = (await pgClient.query(`insert into projects (name,image) values ($1,$2) RETURNING id;`, [projectName, image])).rows[0].id
-            let permissionQuery = await pgClient.query(`insert into user_project_relation (user_id,project_id,permission_level) values ($1,$2,1);`, [id, newProjectId])
+            await pgClient.query(`insert into user_project_relation (user_id,project_id,permission_level) values ($1,$2,1);`, [id, newProjectId])
 
             res.json({
                 message: "created new project",
