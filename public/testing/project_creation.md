@@ -11,16 +11,22 @@ Step 2: Task Planning
 
 Great, let's define the tasks for your project.
 
-4. What is the title of Task 1?
-5. What is the title of Task 2?
-6. What is the title of Task 3? (Optional, only if you selected 3 or more tasks)
-7. What is the title of Task 4? (Optional, only if you selected 4 or more tasks)
-8. What is the title of Task 5? (Optional, only if you selected 5 tasks)
+Q4
+What is the title of Task 1?
+What is the title of Task 2?
+What is the title of Task 3? (Optional, only if you selected 3 or more tasks)
+What is the title of Task 4? (Optional, only if you selected 4 or more tasks)
+What is the title of Task 5? (Optional, only if you selected 5 tasks)
 
+Q5
 Step 3: Task Details
-9. When will Task 1 start? (This will be the same as the project start date)
-10. How many working days will it take to complete Task 1?
-11. Does Task 1 need to be completed before any other tasks can start? (Yes/No)
+When will Task 1 start? (This will be the same as the project start date)
+
+Q6
+How many working days will it take to complete Task 1?
+
+Q7
+Does Task 1 need to be completed before any other tasks can start? (Yes/No)
 
 If you answered "No" to the previous question:
 12. When will Task 2 start? (Enter the start date in the format YYYY-MM-DD)

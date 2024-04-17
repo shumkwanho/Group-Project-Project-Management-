@@ -6,3 +6,8 @@ body {
 .modal {
     color: black;
 }
+
+.names {
+    color: red;
+    font-weight: bold;
+}
