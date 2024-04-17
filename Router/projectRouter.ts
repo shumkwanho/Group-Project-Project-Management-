@@ -182,11 +182,9 @@ async function deleteProject(req: Request, res: Response) {
 //         try {
 //             if (err) {
 //                 console.log(err);
-<<<<<<< HEAD
+
 //                 res.status(400).json({ message: "You need to fill the content" }) 
-=======
-//                 res.status(400).json({ message: "You need to fill the content" })
->>>>>>> e53eb2a594679dca24149668197c5b59aed0b6f0
+
 //             }
 
 //             if (fields.content) {
