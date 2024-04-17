@@ -6,7 +6,7 @@
       "esModuleInterop": true,
       "moduleResolution": "node",
       "noImplicitReturns": true,
-      "noUnusedLocals": true,
+      "noUnusedLocals": false,
       "outDir": "dist"
     },
     "exclude": ["dist"]

@@ -5,10 +5,9 @@ export async function getMinDuration(taskId: string) {
     let treeResult = await getChildTree(taskId)
     let routeResult = getRoutes(treeResult, taskId)
     let result = await shortestRoute(routeResult)
-    return routeResult
+    return result
 }
 
-getMinDuration("16").then(console.log)
 
 
 let childTree: any = {}
@@ -57,9 +56,11 @@ async function shortestRoute(routes: string[][]) {
     let routeDuration:any = await switchTaskIntoDuration(routes)
     routeDuration = toNumberArray(routeDuration)
     routeDuration = sumArrays(routeDuration)
-
-    return Math.max(routeDuration)
+    let result = Math.max(...routeDuration)
+    return result
+    
 }
+
 
 async function switchTaskIntoDuration(routes: string[][]) {
     let duration: string[][] = []
