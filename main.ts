@@ -1,10 +1,13 @@
-import express from "express"
-import expressSession from "express-session"
-import dotenv from "dotenv"
-import { projectRouter } from "./Router/projectRouter"
-import { taskRouter } from "./Router/taskRouter"
-import { authRouter } from "./Router/authRouter"
-import { chatRoomRouter } from "./Router/chatRoomRouter"
+import express from "express";
+import expressSession from "express-session";
+import dotenv from "dotenv";
+import { projectRouter } from "./Router/projectRouter";
+import { taskRouter } from "./Router/taskRouter";
+import { authRouter } from "./Router/authRouter";
+import { chatRoomRouter } from "./Router/chatRoomRouter";
+import { testLoginRouter } from "./Router/testLoginRouter";
+import path from "path";
+import fs from "fs";
 
 
 const app = express()
@@ -27,11 +30,14 @@ declare module "express-session" {
 }
 
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 app.use("/project", projectRouter)
 app.use("/task", taskRouter)
 app.use("/auth", authRouter)
-app.use("/", chatRoomRouter)
+app.use("/chatroom", chatRoomRouter)
+
+app.use("/testLogin", testLoginRouter)
+app.use("/chat",express.static("chat"))
 
 app.use(express.static("public"))
 

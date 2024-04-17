@@ -3,16 +3,16 @@ import { pgClient } from '../utils/pgClient';
 
 export const chatRoomRouter = Router();
 
-chatRoomRouter.get('/chatroom', showAllMessages);
-chatRoomRouter.post('/chatroom', sendMyMessage);
-chatRoomRouter.put('/chatroom', editMyMessage);
+chatRoomRouter.get('/', showChatroom);
+chatRoomRouter.post('/', sendMyMessage);
+chatRoomRouter.put('/', editMyMessage);
 
 
 
 
 
 // ==================== Show Server Error ====================
-function serverError(err: any, res: Response) {
+export function serverError(err: any, res: Response) {
     console.log(err)
     res.status(500).json({ message: 'Server internal error.' })
 }
@@ -47,23 +47,24 @@ async function getAllMessagesFrompgClient(projectId: any) {
     FROM users INNER JOIN messages
     ON users.id = user_id
     WHERE project_id = $1
-    ORDER BY created_at ASC`, [projectId])).rows
+    ORDER BY created_at DESC`, [projectId])).rows
 }
 
-async function showAllMessages(req: Request, res: Response) {
-    let { userId, projectId } = req.query;
+async function showChatroom(req: Request, res: Response) {
+    let { projectId } = req.query;
+    console.log(projectId);
+    
+    let userId = req.session.userId;
 
     try {
         let groupMembers = await getGroupMembers(projectId);
         let allMessages = await getAllMessagesFrompgClient(projectId);
 
-        console.log(groupMembers);
-        console.log(allMessages);
-
         res.status(200).json({
             userId: userId,
-            groupMembers : groupMembers,
-            allMessage: allMessages
+            projectId: projectId,
+            groupMembers: groupMembers,
+            allMessages: allMessages
         })
     } catch (err) {
         serverError(err, res);
@@ -96,7 +97,8 @@ async function pickJustSentMessage(messageId: number) {
 }
 
 async function sendMyMessage(req: Request, res: Response) {
-    let { userId, projectId, content } = req.body;
+    let { projectId, content } = req.body;
+    let userId: any = req.session.userId;
 
     try {
         let messageId = await saveMessageTopgClient(userId, projectId, content);
@@ -128,8 +130,8 @@ async function changeMessageTopgClient(messageId: number, content: string) {
 }
 
 async function editMyMessage(req: Request, res: Response) {
-    let { userId, messageId, content } = req.body;
-    console.log(userId);
+    let { messageId, content } = req.body;
+    let userId: any = req.session.userId;
 
     let justEditedMessage = await changeMessageTopgClient(messageId, content);
 

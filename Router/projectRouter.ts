@@ -174,44 +174,44 @@ async function deleteProject(req: Request, res: Response) {
 
 
 //  =================================================================================================
-async function postMemo(req: Request, res: Response) {
-    let memoContent: string | string[];
-    let memoImage: string | undefined;
+// async function postMemo(req: Request, res: Response) {
+//     let memoContent: string | string[];
+//     let memoImage: string | undefined;
 
-    form.parse(req, async (err, fields, files) => {
-        try {
-            if (err) {
-                console.log(err);
-                res.status(400).json({ message: "You need to fill the content" })
-            }
+//     form.parse(req, async (err, fields, files) => {
+//         try {
+//             if (err) {
+//                 console.log(err);
+//                 res.status(400).json({ message: "You need to fill the content" }) 
+//             }
 
-            if (fields.content) {
-                memoContent = fields.content;
-            }
+//             if (fields.content) {
+//                 memoContent = fields.content;
+//             }
 
 
-            if ((files.image as formidable.File).size != 0) {
-                memoImage = ((files.image as formidable.File).newFilename)
-            } else {
-                await unlink(`${__dirname}/../uploads/${((files.image as formidable.File).newFilename)}`)
-                memoImage = undefined
-            }
+//             if ((files.image as formidable.File).size != 0) {
+//                 memoImage = ((files.image as formidable.File).newFilename)
+//             } else {
+//                 await unlink(`${__dirname}/../uploads/${((files.image as formidable.File).newFilename)}`)
+//                 memoImage = undefined
+//             }
 
-            let memoQueryInsert = await pgClient.query("INSERT INTO memos (content,image,created_at,updated_at) VALUES ($1,$2,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)RETURNING id,content,image", [memoContent, memoImage]);
-            let memoQueryResult = memoQueryInsert.rows[0]
-            res.status(200).json({
-                message: "upload success",
-                userId: req.session.userId,
-                data: {
-                    id: memoQueryResult.id,
-                    content: memoQueryResult.content,
-                    image: memoQueryResult.image
-                }
-            })
+//             let memoQueryInsert = await pgClient.query("INSERT INTO memos (content,image,created_at,updated_at) VALUES ($1,$2,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)RETURNING id,content,image", [memoContent, memoImage]);
+//             let memoQueryResult = memoQueryInsert.rows[0]
+//             res.status(200).json({
+//                 message: "upload success",
+//                 userId: req.session.userId,
+//                 data: {
+//                     id: memoQueryResult.id,
+//                     content: memoQueryResult.content,
+//                     image: memoQueryResult.image
+//                 }
+//             })
 
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ message: "Internal serer error" })
-        }
-    });
-}
+//         } catch (error) {
+//             console.log(error);
+//             res.status(500).json({ message: "Internal serer error" })
+//         }
+//     });
+// }
