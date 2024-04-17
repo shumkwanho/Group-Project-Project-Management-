@@ -7,7 +7,7 @@
     "start": "ts-node main.ts",
     "dev": "ts-node-dev main.ts",
     "database": "psql -f ./psql/testingsetup.sql",
-    "bill_data": "psql -f ./psql/setup.sql && psql -f ./psql/bill_seed.sql"
+    "bill_data": "psql -f ./psql/setup.sql && psql -f ./testing_bill/bill_seed.sql"
   },
   "repository": {
     "type": "git",
