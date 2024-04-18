@@ -19,7 +19,7 @@ nav div{
     margin-top: 30px;
     display: flex;
     padding: 20px;
-    height: 700px;
+    height: 80vh;
 }
 .task-list-container{
     border: 1px solid black;

@@ -42,6 +42,7 @@ async function createNewTask(req: Request, res: Response) {
 
         
         if (preReqTask) {
+            //potential bug (type of req.body.preReqTask)
             preReqTask = JSON.parse(preReqTask).map((number: any) => Number(number))
             for (let relation of preReqTask){
                 await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[newTask.id,relation])

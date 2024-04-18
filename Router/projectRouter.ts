@@ -19,12 +19,13 @@ async function inspectProject(req: Request, res: Response) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description, pre_req_fulfilled,deadline,start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1`, [id])).rows
+        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY start_date`, [id])).rows
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
+
 
         
         for (let task of tasksOfTargetProject) { 
-            let taskRelation = await getTaskRelation(id!.toString())
+            let taskRelation = await getTaskRelation(task.id!.toString())
             task.relation = taskRelation
         }
 
@@ -66,6 +67,8 @@ async function createProject(req: Request, res: Response) {
             let image: string
             const id = fields.id![0]
             let projectName = fields.projectName![0]
+
+            //potential bug (wrong conditionn)
             if (!files.image) {
                 image = ""
             } else {
