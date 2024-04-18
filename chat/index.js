@@ -1,6 +1,18 @@
+const socket = io.connect();
+
+// socket.on('newConnection', function(data){
+//     console.log(data);
+// })
+
 var searchParams = new URLSearchParams(window.location.search);
-const projectId = searchParams.get("projectId");
-console.log(projectId);
+const projectId = searchParams.get("project");
+console.log("current project id: ", projectId);
+
+
+
+// Socket.on('newMessage', function (data) {
+//     console.log(data)
+// })
 
 
 document.querySelector("#login").addEventListener("submit", async (event) => {
@@ -32,7 +44,7 @@ document.querySelector("#login").addEventListener("submit", async (event) => {
         <div>
         ${response.username}
         </div>`
-        // window.location.reload()
+        window.location.reload()
     }
 })
 
@@ -65,32 +77,67 @@ async function getAllMessages(projectId) {
 
 
     let response = await res.json();
-    console.log(response);
-    let allMessages = response.allMessages
+
+    // console.log("userId: ", response.userId);
+    // console.log("allResponse: ", response);
+
+
+    let allMessagesDate = response.allMessagesDate;
+    let allMessages = response.allMessages;
+
+    // console.log(allMessagesDate);
 
 
     if (res.ok) {
 
-        let messagesBox = document.querySelector("#message_box")
+        
+        
 
-        console.log(allMessages);
+        let messagesBox = document.querySelector("#message-box")
 
-        for (let eachMessage of allMessages) {
+        // console.log(allMessages);
 
-            messagesBox.innerHTML += `
-        <div class="message">
-        <span class="username">${eachMessage.username}</span>
-        <span class="content">${eachMessage.content}</span>
-        <span class="content">${eachMessage.created_at}</span>
-        </div>
-        `
+
+        for (let eachMessageDate of allMessagesDate) {
+            console.log("hi", eachMessageDate)
+
+            messagesBox.innerHTML +=
+                `<div class="displayCreatedDate"><div>${eachMessageDate.created_date}</div></div>`
+
+            for (let eachMessage of allMessages) {
+                console.log("check bye", eachMessage.created_date)
+                if (eachMessage.created_date == eachMessageDate.created_date) {
+
+                    messagesBox.innerHTML +=
+                        `
+                ${response.userId == eachMessage.users_id ?
+                            `
+                <div class="myMessage">
+                <span class="content">${eachMessage.content}</span>
+                <span class="create-time">${eachMessage.created_time}</span>
+                </div>
+                `
+                            :
+                            `
+                <div class="message">
+                <span class="username">${eachMessage.username}</span>
+                <span class="content">${eachMessage.content}</span>
+                <span class="create-time">${eachMessage.created_time}</span>
+                </div>
+                `
+                        }`
+                }
+            }
         }
-
-
-        // window.location.href = `http://localhost:8080/chat/?pId=${pId}`;
+        socket.emit('join', projectId);
     }
-
 }
+
+// window.location.href = `http://localhost:8080/chat/?pId=${pId}`;
+
+
+
+
 
 
 
@@ -102,7 +149,8 @@ document.querySelector("#sendMessage").addEventListener("submit", async (event) 
 })
 
 async function sendMessage(projectId) {
-    const content = await document.querySelector("#text_content").value;
+    const content = await document.querySelector("#text-content").value;
+
     let res = await fetch('/chatroom', {
         method: "POST",
         headers: {
@@ -112,12 +160,31 @@ async function sendMessage(projectId) {
             projectId: projectId,
             content: content
         })
-
     })
-    console.log(res)
+    if (res.ok) {
+        let response = await res.json();
+        let userId = response.userId;
+        socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
+        console.log("send message success");
+        content.value = "";
+        // window.location.reload();
+    }
+
 }
 
 
+socket.on('receive-newMessage', async lastMessageInfo => {
+    console.log(lastMessageInfo);
+    let msg = await lastMessageInfo.justSentMessage;
+    let messagesBox = document.querySelector("#message-box")
+    messagesBox.innerHTML +=
+        `
+        <div class="myMessage">
+        <span class="content">${msg.content}</span>
+        <span class="create-time">${msg.created_time}</span>
+        </div>
+        `
+})
 
 async function editMessage(userId, projectId) { }
 

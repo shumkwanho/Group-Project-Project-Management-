@@ -1,26 +1,160 @@
-#message_box {
-    margin: 10px 0;
-    display: flex;
-    flex-direction: column;
+body {
+    background-color: rgb(34, 91, 138);
 }
 
 #memberAndMessages {
+    background-color: white;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    height: 600px;
-    width: 700px;
-    flex-direction: column;
-    border: 1px solid rgb(255, 155, 0);
+    height: 60%;
+    width: 55%;
+    min-width: 600px;
+    border: .5px solid rgb(215, 215, 215);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    border-radius: 30px;
+    padding: 10px;
 }
 
-.memberList {
-    display: block;
+#member-list {
+    background-color: rgb(56, 141, 211);
+    padding: 10px;
+    display: flex;
     flex-direction: column;
-    width: 30%;
-    height: max-content;
+    width: 25%;
+    min-width: 150px;
+    height: auto;
+    border-radius: 20px;
+}
+
+#member-list>.list-title {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    margin: 10px 0;
+}
+
+#member-list>.member {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.member>.username {
+    font-size: 18px;
+}
+
+.member>.image-cropper {
+    margin-left: 10px;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.image-cropper>img {
+    min-height: 40px;
+    min-width: 40px;
+    object-fit: cover;
+    display: inline;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    /* height: 100%;
+    width: auto; */
+}
+
+#messageList {
+    /* background-color: rgb(127, 197, 255); */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    height: auto;
+    overflow-y: auto;
+}
+
+#message-box {
+    /* background-color: rgb(255, 255, 255); */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 95%;
+    padding: 5px 5px 0 5px;
+    margin-bottom: 10px;
+}
+
+#message-box>.displayCreatedDate {
+    display: flex;
+    justify-content: center;
+    margin: 3px 0;
+}
+
+#message-box>.displayCreatedDate>div {
+    background-color: rgb(190, 190, 190);
+    font-size: 10px;
+    padding: 3px;
+}
+
+#message-box>.message {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    margin-bottom: 3px;
+    font-size: 15px;
+}
+
+#message-box>.myMessage {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: baseline;
+    margin-bottom: 3px;
+    font-size: 15px;
+}
+
+.message>.username,
+.myMessage>.username {
+    color: blueviolet;
+    margin-right: 5px;
+}
+
+.message>.content,
+.myMessage>.content {
+    color: brown;
+    margin-right: 5px;
+}
+
+.message>.create-time,
+.myMessage>.create-time {
+    font-size: 10px;
+}
+
+/* .myMessage > .create-time {
+    font-size: 10px;
+} */
+
+#texting-box {
+    display: flex;
+    flex-direction: row;
+    padding: 0 5px;
+}
+
+#sendMessage {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#text-content {
+    width: calc(100% - 70px);
 }

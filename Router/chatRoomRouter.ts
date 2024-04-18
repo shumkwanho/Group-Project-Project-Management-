@@ -1,5 +1,7 @@
 import { Request, Response, Router } from "express";
 import { pgClient } from '../utils/pgClient';
+import { io } from "../main";
+// import { Socket } from "socket.io";
 
 export const chatRoomRouter = Router();
 
@@ -32,22 +34,32 @@ async function getGroupMembers(projectId: any) {
     profile_image
     FROM users INNER JOIN user_project_relation
     ON users.id = user_id
-    WHERE project_id = $1`,[projectId])).rows
+    WHERE project_id = $1;`,[projectId])).rows
+}
+
+async function getMessagesDate(projectId: any) {
+    return (await pgClient.query(`
+    SELECT to_char(created_at, 'YYYY-MM-DD') AS created_date  
+    FROM messages 
+    WHERE project_id = $1 
+    GROUP BY created_date;`, [projectId])).rows
 }
 
 async function getAllMessagesFrompgClient(projectId: any) {
-    return (await pgClient.query(`SELECT project_id, 
+    return (await pgClient.query(`
+    SELECT project_id, 
     messages.id as messages_id, 
     users.id as users_id, 
     profile_image, 
     username, 
     messages.content, 
-    created_at,
+    to_char(created_at, 'YYYY-MM-DD') AS created_date,
+    to_char(created_at, 'HH24:MI') AS created_time,
     edited_at
     FROM users INNER JOIN messages
     ON users.id = user_id
     WHERE project_id = $1
-    ORDER BY created_at DESC`, [projectId])).rows
+    ORDER BY created_at ASC  ;`, [projectId])).rows
 }
 
 async function showChatroom(req: Request, res: Response) {
@@ -57,15 +69,20 @@ async function showChatroom(req: Request, res: Response) {
     let userId = req.session.userId;
 
     try {
+        let allMessagesDate = await getMessagesDate(projectId);
         let groupMembers = await getGroupMembers(projectId);
         let allMessages = await getAllMessagesFrompgClient(projectId);
+    
 
         res.status(200).json({
             userId: userId,
             projectId: projectId,
             groupMembers: groupMembers,
+            allMessagesDate: allMessagesDate,
             allMessages: allMessages
         })
+
+        // console.log(allMessages)
     } catch (err) {
         serverError(err, res);
     }
@@ -86,7 +103,8 @@ async function saveMessageTopgClient(userId: number, projectId: number, content:
 
 async function pickJustSentMessage(messageId: number) {
     return (await pgClient.query(
-        `SELECT profile_image, 
+        `SELECT project_id, 
+        profile_image, 
         users.id as users_id,
         username, 
         messages.content, 
@@ -105,9 +123,11 @@ async function sendMyMessage(req: Request, res: Response) {
         let justSentMessage = await pickJustSentMessage(messageId);
 
         res.status(200).json({
+            userId: userId,
             message: "Your message has been sent.",
             date: justSentMessage
         })
+
 
     } catch (err) {
         serverError(err, res);
@@ -142,3 +162,12 @@ async function editMyMessage(req: Request, res: Response) {
         date: justEditedMessage
     })
 }
+
+
+
+
+
+
+
+
+
