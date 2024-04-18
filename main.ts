@@ -8,9 +8,6 @@ import { chatRoomRouter } from "./Router/chatRoomRouter";
 import { testLoginRouter } from "./Router/testLoginRouter";
 import path from "path";
 import fs from "fs";
-import http from "http";
-import { Server as SOCKETIO } from "socket.io";
-import { pgClient } from "./utils/pgClient";
 
 
 const app = express()
@@ -131,6 +128,7 @@ app.use("/testLogin", testLoginRouter)
 app.use("/chat", express.static("chat"))
 
 app.use(express.static("public"))
+app.use(isLoggedIn, express.static("private"))
 
 
 server.listen(PORT, () => {

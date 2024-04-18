@@ -89,16 +89,12 @@ insert into tasks (project_id, name, description) values (13, 'Temp', 'massa qui
 insert into tasks (project_id, name, description) values (15, 'Domainer', 'mus vivamus vestibulum sagittis sapien');
 insert into tasks (project_id, name, description) values (4, 'Zaam-Dox', 'magna vestibulum aliquet ultrices');
 insert into tasks (project_id, name, description) values (9, 'Alpha', 'duis aliquam');
-insert into tasks (project_id, name, description) values (10, 'Sonair', 'eu');
 insert into tasks (project_id, name, description) values (3, 'Bamity', 'nam tristique');
 insert into tasks (project_id, name, description) values (13, 'Redhold', 'congue elementum in hac habitasse');
-insert into tasks (project_id, name, description) values (10, 'Tres-Zap', 'pellentesque');
 insert into tasks (project_id, name, description) values (8, 'Greenlam', 'ac diam');
 insert into tasks (project_id, name, description) values (6, 'Kanlam', 'vestibulum velit id pretium');
-insert into tasks (project_id, name, description) values (10, 'Tin', 'non');
 insert into tasks (project_id, name, description) values (11, 'Fixflex', 'orci eget orci vehicula');
 insert into tasks (project_id, name, description) values (4, 'Fintone', 'varius');
-insert into tasks (project_id, name, description) values (10, 'Alpha', 'ut massa quis');
 insert into tasks (project_id, name, description) values (9, 'Zontrax', 'vel enim sit');
 insert into tasks (project_id, name, description) values (1, 'Stronghold', 'pharetra magna ac');
 insert into tasks (project_id, name, description) values (12, 'Biodex', 'etiam vel augue vestibulum rutrum');
@@ -114,10 +110,8 @@ insert into tasks (project_id, name, description) values (12, 'Stim', 'lacinia a
 insert into tasks (project_id, name, description) values (11, 'Tampflex', 'nibh in hac habitasse');
 insert into tasks (project_id, name, description) values (1, 'Gembucket', 'primis in faucibus orci luctus');
 insert into tasks (project_id, name, description) values (15, 'Voltsillam', 'odio donec');
-insert into tasks (project_id, name, description) values (10, 'Bytecard', 'erat');
 insert into tasks (project_id, name, description) values (6, 'Lotstring', 'quam sollicitudin vitae consectetuer eget');
 insert into tasks (project_id, name, description) values (5, 'Home Ing', 'sit amet sapien dignissim');
-insert into tasks (project_id, name, description) values (10, 'Regrant', 'non ligula pellentesque ultrices phasellus');
 insert into tasks (project_id, name, description) values (12, 'Pannier', 'enim blandit mi');
 insert into tasks (project_id, name, description) values (3, 'Aerified', 'eget orci vehicula');
 insert into tasks (project_id, name, description) values (2, 'Konklab', 'aliquam non mauris');
@@ -186,72 +180,38 @@ insert into user_task_relation (task_id, user_project_relation_id) values (27, 2
 insert into user_task_relation (task_id, user_project_relation_id) values (45, 28);
 insert into user_task_relation (task_id, user_project_relation_id) values (12, 8);
 
+
+
+--test project
+insert into users (username, password, email) values ('Frasco', 'tG4"g$~8uq~&E1d', 'fhammerson0@bbb.org');
+insert into projects (name, start_date,min_duration) values ('Alpha', '2024-04-01',25);
+insert into user_project_relation (user_id, project_id) values (1, 1);
+
+
+--project 10 taskname ,startdate , duration, dependencies
+insert into tasks (project_id, name, duration, start_date) values (1, 'root Project', 0,'2024-04-01');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Sonair', 4,'2024-04-01');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tres-Zap', 3,'2024-04-05');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tin', 6,'2024-04-05');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Alpha', 4,'2024-04-11');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Bytecard', 1,'2024-04-08');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Regrant', 8,'2024-04-08');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Hatity', 3,'2024-04-08');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Mat Lam Tam', 6,'2024-04-11');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Transcof', 9,'2024-04-09');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Stringtough', 2,'2024-04-15');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tampflex', 8,'2024-04-16');
+
 -- project 10 task relation
-insert into task_relation (task_id, pre_req_task_id) values (13, 16);
-insert into task_relation (task_id, pre_req_task_id) values (10, 16);
-insert into task_relation (task_id, pre_req_task_id) values (32, 16);
-insert into task_relation (task_id, pre_req_task_id) values (35, 10);
-insert into task_relation (task_id, pre_req_task_id) values (7, 35);
-insert into task_relation (task_id, pre_req_task_id) values (7, 32);
-
--- project 10 task duration (min_duration = 12)
-UPDATE tasks SET duration = 2 where id = 16;
-UPDATE tasks SET duration = 8 where id = 13;
-UPDATE tasks SET duration = 2 where id = 10;
-UPDATE tasks SET duration = 7 where id = 32;
-UPDATE tasks SET duration = 3 where id = 35;
-UPDATE tasks SET duration = 3 where id = 7;
-
-
-
--- insert into messages (user_id, project_id, content) values (19, 10, 'in felis donec semper sapien a');
--- insert into messages (user_id, project_id, content) values (27, 4, 'arcu sed augue aliquam erat volutpat in congue etiam justo');
--- insert into messages (user_id, project_id, content) values (12, 10, 'leo pellentesque ultrices mattis odio donec vitae nisi nam ultrices libero non mattis pulvinar nulla');
--- insert into messages (user_id, project_id, content) values (9, 6, 'consequat in consequat ut nulla sed accumsan felis ut at dolor quis');
--- insert into messages (user_id, project_id, content) values (21, 11, 'turpis integer aliquet massa id lobortis convallis tortor risus');
--- insert into messages (user_id, project_id, content) values (30, 9, 'nec condimentum neque sapien placerat');
--- insert into messages (user_id, project_id, content) values (17, 6, 'imperdiet nullam orci pede venenatis non sodales sed tincidunt eu');
--- insert into messages (user_id, project_id, content) values (27, 7, 'sed tincidunt eu felis fusce posuere felis sed lacus morbi sem mauris laoreet');
--- insert into messages (user_id, project_id, content) values (20, 12, 'aliquet ultrices erat tortor sollicitudin mi sit amet lobortis sapien sapien non');
--- insert into messages (user_id, project_id, content) values (6, 11, 'vulputate vitae nisl aenean lectus pellentesque eget nunc donec quis orci eget orci vehicula');
--- insert into messages (user_id, project_id, content) values (25, 1, 'mattis nibh ligula nec sem duis aliquam convallis');
--- insert into messages (user_id, project_id, content) values (6, 11, 'at nulla suspendisse potenti cras in purus eu magna vulputate luctus cum sociis');
--- insert into messages (user_id, project_id, content) values (3, 8, 'nisi vulputate nonummy maecenas tincidunt lacus');
--- insert into messages (user_id, project_id, content) values (10, 3, 'in tempus sit amet sem fusce consequat nulla nisl nunc nisl');
--- insert into messages (user_id, project_id, content) values (7, 12, 'primis in faucibus orci luctus et ultrices posuere cubilia curae nulla dapibus dolor');
--- insert into messages (user_id, project_id, content) values (14, 2, 'nec sem duis aliquam convallis nunc proin at turpis a');
--- insert into messages (user_id, project_id, content) values (19, 2, 'proin at turpis a pede posuere nonummy integer non velit');
--- insert into messages (user_id, project_id, content) values (15, 14, 'sollicitudin vitae consectetuer eget rutrum at lorem integer tincidunt ante vel');
--- insert into messages (user_id, project_id, content) values (20, 13, 'justo in blandit ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing');
--- insert into messages (user_id, project_id, content) values (29, 10, 'mauris lacinia sapien quis libero nullam sit amet turpis elementum ligula');
--- insert into messages (user_id, project_id, content) values (15, 14, 'cubilia curae donec pharetra magna vestibulum aliquet ultrices erat tortor sollicitudin');
--- insert into messages (user_id, project_id, content) values (16, 4, 'posuere nonummy integer non velit donec diam neque vestibulum');
--- insert into messages (user_id, project_id, content) values (30, 8, 'tortor id nulla ultrices aliquet maecenas leo odio');
--- insert into messages (user_id, project_id, content) values (25, 13, 'convallis duis consequat dui nec nisi');
--- insert into messages (user_id, project_id, content) values (29, 6, 'odio cras mi pede malesuada in imperdiet et');
--- insert into messages (user_id, project_id, content) values (24, 4, 'in ante vestibulum ante ipsum primis in faucibus orci luctus et ultrices');
--- insert into messages (user_id, project_id, content) values (21, 4, 'tortor risus dapibus augue vel accumsan tellus');
--- insert into messages (user_id, project_id, content) values (5, 12, 'purus sit amet nulla quisque arcu');
--- insert into messages (user_id, project_id, content) values (5, 11, 'ac nibh fusce lacus purus aliquet at feugiat non pretium quis lectus');
--- insert into messages (user_id, project_id, content) values (18, 14, 'in porttitor pede justo eu massa donec dapibus duis at velit eu est congue elementum');
--- insert into messages (user_id, project_id, content) values (9, 6, 'in lacus curabitur at ipsum ac');
--- insert into messages (user_id, project_id, content) values (3, 15, 'ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing elit proin interdum');
--- insert into messages (user_id, project_id, content) values (8, 9, 'fusce consequat nulla nisl nunc');
--- insert into messages (user_id, project_id, content) values (7, 11, 'phasellus sit amet erat nulla tempus vivamus in felis');
--- insert into messages (user_id, project_id, content) values (19, 14, 'a odio in hac habitasse platea dictumst maecenas ut massa quis augue');
--- insert into messages (user_id, project_id, content) values (12, 6, 'sit amet consectetuer adipiscing elit proin');
--- insert into messages (user_id, project_id, content) values (17, 8, 'vestibulum sit amet cursus id turpis integer aliquet massa id lobortis convallis tortor');
--- insert into messages (user_id, project_id, content) values (21, 6, 'sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae');
--- insert into messages (user_id, project_id, content) values (8, 15, 'porttitor lorem id ligula suspendisse ornare consequat lectus');
--- insert into messages (user_id, project_id, content) values (2, 6, 'interdum in ante vestibulum ante ipsum primis in faucibus orci luctus et');
--- insert into messages (user_id, project_id, content) values (10, 5, 'risus praesent lectus vestibulum quam sapien varius ut blandit non interdum in ante vestibulum');
--- insert into messages (user_id, project_id, content) values (23, 7, 'donec dapibus duis at velit eu est congue elementum in hac');
--- insert into messages (user_id, project_id, content) values (12, 11, 'ultrices posuere cubilia curae mauris viverra diam');
--- insert into messages (user_id, project_id, content) values (16, 6, 'aliquam quis turpis eget elit sodales scelerisque mauris sit amet eros');
--- insert into messages (user_id, project_id, content) values (16, 9, 'orci luctus et ultrices posuere cubilia curae mauris viverra diam vitae quam suspendisse potenti');
--- insert into messages (user_id, project_id, content) values (29, 8, 'vel augue vestibulum rutrum rutrum neque');
--- insert into messages (user_id, project_id, content) values (3, 1, 'sed lacus morbi sem mauris laoreet ut rhoncus aliquet pulvinar sed nisl nunc rhoncus');
--- insert into messages (user_id, project_id, content) values (19, 5, 'nisi at nibh in hac habitasse platea dictumst aliquam augue quam sollicitudin vitae');
--- insert into messages (user_id, project_id, content) values (9, 1, 'morbi ut odio cras mi pede malesuada in imperdiet et commodo vulputate justo in blandit');
--- insert into messages (user_id, project_id, content) values (23, 12, 'ligula suspendisse ornare consequat lectus in est risus auctor sed tristique in');
-
+insert into task_relation (task_id, pre_req_task_id) values (2, 1);
+insert into task_relation (task_id, pre_req_task_id) values (3, 2);
+insert into task_relation (task_id, pre_req_task_id) values (4, 2);
+insert into task_relation (task_id, pre_req_task_id) values (5, 4);
+insert into task_relation (task_id, pre_req_task_id) values (6, 3);
+insert into task_relation (task_id, pre_req_task_id) values (7, 3);
+insert into task_relation (task_id, pre_req_task_id) values (8, 3);
+insert into task_relation (task_id, pre_req_task_id) values (9, 8);
+insert into task_relation (task_id, pre_req_task_id) values (10, 6);
+insert into task_relation (task_id, pre_req_task_id) values (11, 5);
+insert into task_relation (task_id, pre_req_task_id) values (12, 10);
+insert into task_relation (task_id, pre_req_task_id) values (12, 7);

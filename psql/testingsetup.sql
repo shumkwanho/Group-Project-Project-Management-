@@ -51,7 +51,9 @@ CREATE TABLE "projects"(
     "id" SERIAL,
     "name" VARCHAR(255),
     "image" VARCHAR(255),
-    "min_duration" BIGINT
+    "start_date" DATE ,
+    "min_duration" BIGINT,
+    "actua;_finish_date" DATE
 );
 
 ALTER TABLE

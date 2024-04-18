@@ -10,6 +10,8 @@ projectRouter.post("/", createProject)
 projectRouter.put("/", updateProject)
 projectRouter.delete("/", deleteProject)
 
+projectRouter.post("/init", initProject)
+
 // request: project id
 async function inspectProject(req: Request, res: Response) {
     try {
@@ -19,12 +21,13 @@ async function inspectProject(req: Request, res: Response) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description, pre_req_fulfilled,deadline,start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1`, [id])).rows
+        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY start_date`, [id])).rows
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
+
 
         
         for (let task of tasksOfTargetProject) { 
-            let taskRelation = await getTaskRelation(id!.toString())
+            let taskRelation = await getTaskRelation(task.id!.toString())
             task.relation = taskRelation
         }
 
@@ -66,6 +69,8 @@ async function createProject(req: Request, res: Response) {
             let image: string
             const id = fields.id![0]
             let projectName = fields.projectName![0]
+
+            //potential bug (wrong conditionn)
             if (!files.image) {
                 image = ""
             } else {
@@ -155,65 +160,8 @@ async function deleteProject(req: Request, res: Response) {
     }
 }
 
+//******bill testing ******/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  =================================================================================================
-// async function postMemo(req: Request, res: Response) {
-//     let memoContent: string | string[];
-//     let memoImage: string | undefined;
-
-//     form.parse(req, async (err, fields, files) => {
-//         try {
-//             if (err) {
-//                 console.log(err);
-
-//                 res.status(400).json({ message: "You need to fill the content" }) 
-
-//             }
-
-//             if (fields.content) {
-//                 memoContent = fields.content;
-//             }
-
-
-//             if ((files.image as formidable.File).size != 0) {
-//                 memoImage = ((files.image as formidable.File).newFilename)
-//             } else {
-//                 await unlink(`${__dirname}/../uploads/${((files.image as formidable.File).newFilename)}`)
-//                 memoImage = undefined
-//             }
-
-//             let memoQueryInsert = await pgClient.query("INSERT INTO memos (content,image,created_at,updated_at) VALUES ($1,$2,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)RETURNING id,content,image", [memoContent, memoImage]);
-//             let memoQueryResult = memoQueryInsert.rows[0]
-//             res.status(200).json({
-//                 message: "upload success",
-//                 userId: req.session.userId,
-//                 data: {
-//                     id: memoQueryResult.id,
-//                     content: memoQueryResult.content,
-//                     image: memoQueryResult.image
-//                 }
-//             })
-
-//         } catch (error) {
-//             console.log(error);
-//             res.status(500).json({ message: "Internal serer error" })
-//         }
-//     });
-// }
+async function initProject(req: Request, res: Response) {
+    let { projectId, taskName, description, deadline, startDate, duration, preReqTask } = req.body
+}
