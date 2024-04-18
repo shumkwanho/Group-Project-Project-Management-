@@ -48,3 +48,38 @@ Repeat steps 15-17 for each remaining task that has a dependency on the previous
 
 Final
 18. Your project, "${project_name}", is scheduled to start on ${project_start_date} and is initially estimated to be completed on ${estimated_completion_date}.
+
+
+--------------
+
+output format sample
+
+{
+  "name": "New Project 1",
+  "start_date": "2024-01-01",
+  "tasks": {
+    "1": {
+      "name": "New Task 1",
+      "start_date": "2024-01-01",
+      "duration": 1,
+      "finish_date": "2024-01-02",
+      "pre_req": [
+        2
+      ]
+    },
+    "2": {
+      "name": "New Task 2",
+      "start_date": "2024-01-03",
+      "duration": 1,
+      "finish_date": "2024-01-04",
+      "pre_req": []
+    },
+    "3": {
+      "name": "New Task 3",
+      "start_date": "2024-01-01",
+      "duration": 1,
+      "finish_date": "2024-01-02",
+      "pre_req": []
+    }
+  }
+}

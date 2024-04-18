@@ -26,6 +26,7 @@ projectCreationForm.addEventListener("submit", (e) => {
 
     //ready to init
     if (promptCount == 99) {
+        console.log(newProjectData);
         projectInit(newProjectData);
 
     } else {
@@ -313,6 +314,16 @@ function getFinishDate (startDate, durationInDay) {
     return `${year}-${month}-${day}`;
 }
 
-function projectInit(projJSON) {
-    
+async function projectInit(projJSON) {
+
+    const res = await fetch("/project/init", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+          },
+        body: JSON.stringify(projJSON),
+    });
+
+    let result = await res.json()
+    console.log(result.data);
 }
