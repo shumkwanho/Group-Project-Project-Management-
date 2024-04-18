@@ -139,16 +139,12 @@ insert into tasks (project_id, name, description) values (13, 'Temp', 'massa qui
 insert into tasks (project_id, name, description) values (15, 'Domainer', 'mus vivamus vestibulum sagittis sapien');
 insert into tasks (project_id, name, description) values (4, 'Zaam-Dox', 'magna vestibulum aliquet ultrices');
 insert into tasks (project_id, name, description) values (9, 'Alpha', 'duis aliquam');
-insert into tasks (project_id, name, description) values (10, 'Sonair', 'eu');
 insert into tasks (project_id, name, description) values (3, 'Bamity', 'nam tristique');
 insert into tasks (project_id, name, description) values (13, 'Redhold', 'congue elementum in hac habitasse');
-insert into tasks (project_id, name, description) values (10, 'Tres-Zap', 'pellentesque');
 insert into tasks (project_id, name, description) values (8, 'Greenlam', 'ac diam');
 insert into tasks (project_id, name, description) values (6, 'Kanlam', 'vestibulum velit id pretium');
-insert into tasks (project_id, name, description) values (10, 'Tin', 'non');
 insert into tasks (project_id, name, description) values (11, 'Fixflex', 'orci eget orci vehicula');
 insert into tasks (project_id, name, description) values (4, 'Fintone', 'varius');
-insert into tasks (project_id, name, description) values (10, 'Alpha', 'ut massa quis');
 insert into tasks (project_id, name, description) values (9, 'Zontrax', 'vel enim sit');
 insert into tasks (project_id, name, description) values (1, 'Stronghold', 'pharetra magna ac');
 insert into tasks (project_id, name, description) values (12, 'Biodex', 'etiam vel augue vestibulum rutrum');
@@ -164,10 +160,8 @@ insert into tasks (project_id, name, description) values (12, 'Stim', 'lacinia a
 insert into tasks (project_id, name, description) values (11, 'Tampflex', 'nibh in hac habitasse');
 insert into tasks (project_id, name, description) values (1, 'Gembucket', 'primis in faucibus orci luctus');
 insert into tasks (project_id, name, description) values (15, 'Voltsillam', 'odio donec');
-insert into tasks (project_id, name, description) values (10, 'Bytecard', 'erat');
 insert into tasks (project_id, name, description) values (6, 'Lotstring', 'quam sollicitudin vitae consectetuer eget');
 insert into tasks (project_id, name, description) values (5, 'Home Ing', 'sit amet sapien dignissim');
-insert into tasks (project_id, name, description) values (10, 'Regrant', 'non ligula pellentesque ultrices phasellus');
 insert into tasks (project_id, name, description) values (12, 'Pannier', 'enim blandit mi');
 insert into tasks (project_id, name, description) values (3, 'Aerified', 'eget orci vehicula');
 insert into tasks (project_id, name, description) values (2, 'Konklab', 'aliquam non mauris');
@@ -236,18 +230,38 @@ insert into user_task_relation (task_id, user_project_relation_id) values (27, 2
 insert into user_task_relation (task_id, user_project_relation_id) values (45, 28);
 insert into user_task_relation (task_id, user_project_relation_id) values (12, 8);
 
--- project 10 task relation
-insert into task_relation (task_id, pre_req_task_id) values (13, 16);
-insert into task_relation (task_id, pre_req_task_id) values (10, 16);
-insert into task_relation (task_id, pre_req_task_id) values (32, 16);
-insert into task_relation (task_id, pre_req_task_id) values (35, 10);
-insert into task_relation (task_id, pre_req_task_id) values (7, 35);
-insert into task_relation (task_id, pre_req_task_id) values (7, 32);
 
--- project 10 task duration (min_duration = 12)
-UPDATE tasks SET duration = 2 where id = 16;
-UPDATE tasks SET duration = 8 where id = 13;
-UPDATE tasks SET duration = 2 where id = 10;
-UPDATE tasks SET duration = 7 where id = 32;
-UPDATE tasks SET duration = 3 where id = 35;
-UPDATE tasks SET duration = 3 where id = 7;
+
+--test project
+insert into users (username, password, email) values ('Frasco', 'tG4"g$~8uq~&E1d', 'fhammerson0@bbb.org');
+insert into projects (name, start_date,min_duration) values ('Alpha', '2024-04-01',25);
+insert into user_project_relation (user_id, project_id) values (1, 1);
+
+
+--project 10 taskname ,startdate , duration, dependencies
+insert into tasks (project_id, name, duration, start_date) values (1, 'root Project', 0,'2024-04-01');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Sonair', 4,'2024-04-01');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tres-Zap', 3,'2024-04-05');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tin', 6,'2024-04-05');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Alpha', 4,'2024-04-11');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Bytecard', 1,'2024-04-08');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Regrant', 8,'2024-04-08');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Hatity', 3,'2024-04-08');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Mat Lam Tam', 6,'2024-04-11');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Transcof', 9,'2024-04-09');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Stringtough', 2,'2024-04-15');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tampflex', 8,'2024-04-16');
+
+-- project 10 task relation
+insert into task_relation (task_id, pre_req_task_id) values (2, 1);
+insert into task_relation (task_id, pre_req_task_id) values (3, 2);
+insert into task_relation (task_id, pre_req_task_id) values (4, 2);
+insert into task_relation (task_id, pre_req_task_id) values (5, 4);
+insert into task_relation (task_id, pre_req_task_id) values (6, 3);
+insert into task_relation (task_id, pre_req_task_id) values (7, 3);
+insert into task_relation (task_id, pre_req_task_id) values (8, 3);
+insert into task_relation (task_id, pre_req_task_id) values (9, 8);
+insert into task_relation (task_id, pre_req_task_id) values (10, 6);
+insert into task_relation (task_id, pre_req_task_id) values (11, 5);
+insert into task_relation (task_id, pre_req_task_id) values (12, 10);
+insert into task_relation (task_id, pre_req_task_id) values (12, 7);

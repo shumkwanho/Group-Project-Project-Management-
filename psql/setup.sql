@@ -14,11 +14,11 @@ CREATE TABLE "tasks"(
     "id" SERIAL NOT NULL,
     "project_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "description" VARCHAR(255) NOT NULL,
+    "description" VARCHAR(255) NULL,
     "pre_req_fulfilled" BOOLEAN NOT NULL,
     "start_date" DATE NOT NULL,
     "duration" BIGINT NOT NULL,
-    "actual_finish_date" DATE NOT NULL
+    "actual_finish_date" DATE NULL
 );
 ALTER TABLE
     "tasks" ADD PRIMARY KEY("id");
@@ -43,7 +43,9 @@ CREATE TABLE "projects"(
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "image" VARCHAR(255) NULL,
-    "min_duration" BIGINT NULL
+    "start_date" DATE NOT NULL,
+    "min_duration" BIGINT NULL,
+    "actual_finish_date" DATE NOT NULL
 );
 ALTER TABLE
     "projects" ADD PRIMARY KEY("id");
