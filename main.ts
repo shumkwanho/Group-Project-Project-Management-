@@ -8,6 +8,7 @@ import { chatRoomRouter } from "./Router/chatRoomRouter";
 import { testLoginRouter } from "./Router/testLoginRouter";
 import path from "path";
 import fs from "fs";
+import { isLoggedIn } from "./utils/guard";
 
 
 const app = express()
@@ -40,6 +41,7 @@ app.use("/testLogin", testLoginRouter)
 app.use("/chat",express.static("chat"))
 
 app.use(express.static("public"))
+app.use(isLoggedIn, express.static("private"))
 
 app.listen(PORT, () => {
   console.log(`listening to http://localhost:${PORT}`)
