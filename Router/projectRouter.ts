@@ -15,7 +15,7 @@ projectRouter.post("/init", initProject)
 // request: project id
 async function inspectProject(req: Request, res: Response) {
     try {
-        const id = req.query.id
+        const {id} = req.query
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
         if (targetProject == undefined) {
             res.status(400).json({ message: "Cannot find target project" })
