@@ -176,10 +176,8 @@ async function initProject(req: Request, res: Response) {
             const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`,[newProject.id,task[i].name , task[i].start_date,task[i].duration])).rows[0].id
             
             if (task[i].pre_req.length > 0){
-
-                
                 for (let relation of task[i].pre_req){
-                    await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[rootId + relation, taskId])
+                    await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`,[taskId,rootId + relation])
                 }                
             }
         }

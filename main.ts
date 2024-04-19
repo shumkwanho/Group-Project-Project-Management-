@@ -99,7 +99,7 @@ app.use("/main", express.static("public/mainPage"))
 
 app.use(express.static("uploads"))
 app.use(express.static("public"))
-app.use(isLoggedIn, express.static("private"))
+app.use("/utils", express.static("utils"))
 app.use(isLoggedIn, express.static("private"))
 
 
