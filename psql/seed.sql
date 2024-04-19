@@ -183,7 +183,7 @@ insert into user_task_relation (task_id, user_project_relation_id) values (12, 8
 
 
 --test project
-insert into users (username, password, email) values ('Frasco', 'tG4"g$~8uq~&E1d', 'fhammerson0@bbb.org');
+insert into users (username, password, email) values ('user', '$2a$10$r8xSUf9C4lG0ubOpWbMJH.LjoNVv6KgLxyqFWK8UxTmUmA6fD5hNa', 'user@gmail.com');
 insert into projects (name, start_date,min_duration) values ('Alpha', '2024-04-01',25);
 insert into user_project_relation (user_id, project_id) values (1, 1);
 

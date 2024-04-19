@@ -17,4 +17,3 @@ export async function getTaskRelation(taskId: string) {
     return taskRelation
 }
 
-getTaskRelation("3").then(console.log)

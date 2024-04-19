@@ -98,6 +98,7 @@ app.use("/chat", express.static("chat"))
 
 app.use(express.static("public"))
 app.use(isLoggedIn, express.static("private"))
+app.use(isLoggedIn, express.static("private"))
 
 
 server.listen(PORT, () => {

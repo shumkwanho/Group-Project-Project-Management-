@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
 import { getTaskRelation } from "../utils/getTaskRelation";
-
+import { getMinDuration } from "../utils/MinDuration";
 export const projectRouter = Router()
 
 projectRouter.get("/", inspectProject)
@@ -21,12 +21,12 @@ async function inspectProject(req: Request, res: Response) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY start_date`, [id])).rows
+        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY tasks.id`, [id])).rows
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
 
 
-        
-        for (let task of tasksOfTargetProject) { 
+
+        for (let task of tasksOfTargetProject) {
             let taskRelation = await getTaskRelation(task.id!.toString())
             task.relation = taskRelation
         }
@@ -65,7 +65,7 @@ async function createProject(req: Request, res: Response) {
                 res.status(500).json({ message: "Internal Server Error" });
                 return
             }
-            
+
             let image: string
             const id = fields.id![0]
             let projectName = fields.projectName![0]
@@ -121,14 +121,14 @@ async function updateProject(req: Request, res: Response) {
 
             if (files.image) {
                 const image = files.image[0].newFilename
-                
+
                 await pgClient.query(
                     `UPDATE projects SET name = $1, image = $2 WHERE id = $3;`, [projectName, image, id])
             } else {
                 await pgClient.query(
                     `UPDATE projects SET name = $1 WHERE id = $2;`, [projectName, id])
             }
-            
+
             const updatedProjectInfo = (await pgClient.query(`SELECT * FROM projects where id = $1`, [id])).rows[0]
             res.json({ message: "project info updated", data: updatedProjectInfo });
         })
@@ -156,12 +156,57 @@ async function deleteProject(req: Request, res: Response) {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error })
+        res.status(500).json({ message: "Internal Server Error" })
     }
 }
 
 //******bill testing ******/
 
 async function initProject(req: Request, res: Response) {
-    let { projectId, taskName, description, deadline, startDate, duration, preReqTask } = req.body
+    try {
+        const newProject = (await pgClient.query(`insert into projects (name,start_date) values ($1,$2) returning *`,[req.body.name , req.body.start_date])).rows[0]
+        
+        let task = req.body.tasks
+        let rootId
+        for (let i = 0 ; i <= Object.keys(task).length ; i++ ){
+            if (i == 0) {
+                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration) values ($1,'root task',$2, 0) returning *`,[newProject.id, req.body.start_date])).rows[0].id
+                continue
+            }
+            const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`,[newProject.id,task[i].name , task[i].start_date,task[i].duration])).rows[0].id
+            
+            if (task[i].pre_req.length > 0){
+
+                
+                for (let relation of task[i].pre_req){
+                    await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[taskId, rootId + relation])
+                }                
+            }
+        }
+        await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[rootId+1,rootId])
+        const addDurationIntoProj = (await pgClient.query(`update projects set min_duration = $1 where id = $2 returning *`,[await getMinDuration(rootId),newProject.id])).rows[0]
+
+        res.json({messgae:"init project sucessfully", data:addDurationIntoProj})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+  
+    
 }
+
+
+
+
+
+
+// select tasks.id, name,description, pre_req_fulfilled,start_date,duration,pre_req_task_id 
+// from tasks left outer join task_relation on tasks.id = task_id 
+// where project_id = 68 group by tasks.id , pre_req_task_id
+// order by case when pre_req_task_id is null then 0 else 1 end, pre_req_task_id
+
+// select tasks.id, name,description, pre_req_fulfilled,start_date,duration,pre_req_task_id 
+// from tasks left outer join (select task_id,pre_req_task_id from task_relation) on tasks.id = task_id 
+// where project_id = 71
+// group by tasks.id
+// order by case when pre_req_task_id is null then 0 else 1 end, pre_req_task_id;

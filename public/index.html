@@ -4,25 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>User Login</title>
     <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
     <div class="login-container">
+        <form id="user-login">
+            <h4>Existing User</h4>
+            <label for="username_email">Username / Email</label>
+            <input type="text" id="username_email" name="username_email" value="user" required>
 
-        <form action="" id="user-login">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" value="user">
             <label for="password">Password</label>
-            <input type="text" id="password" name="password" value="1234">
+            <input type="text" id="password" name="password" value="1234" required>
 
             <button type="submit" id="login">Login</button>
-
-            <button id="register">Create new account</button>
         </form>
     </div>
-    <script src="index.js"></script>
+
+    <div class="register-container">
+        <form id="user-registration">
+            <h4>New User</h4>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="user@gmail.com" required>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="user" required>
+
+<!-- 
+            <label for="password1">Password</label>
+            <input type="text" id="password1" name="password" value="1234" required>
+
+            <label for="password2">Re-enter password</label>
+            <input type="text" id="password2" name="password2" value="1234" required>
+ -->
+
+            <button type="submit" id="register">Create New Account</button>
+        </form>
+    </div>
+
+    <script type="module" src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

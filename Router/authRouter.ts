@@ -7,6 +7,7 @@ import { isLoggedIn } from "../utils/guard";
 export const authRouter = Router();
 
 authRouter.post("/registration", userRegistration);
+authRouter.post("/check-user-exist", checkUserExist);
 authRouter.post("/username-login", usernameLogin);
 authRouter.post("/email-login", emailLogin);
 authRouter.post("/logout", isLoggedIn, logout);
@@ -27,7 +28,7 @@ async function userRegistration(req: Request, res: Response) {
         )).rows[0];
 
         if (checkUniqueQuery) {
-            res.json({
+            res.status(400).json({
                 message: "user registration failed",
                 error: "username and/or email already exist(s) in database"
             });
@@ -54,6 +55,32 @@ async function userRegistration(req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
 };
+
+async function checkUserExist(req: Request, res: Response) {
+    try {
+        const { username, email } = req.body;
+
+        let checkUniqueQuery = (await pgClient.query(
+            "SELECT id FROM users WHERE username = $1 OR email = $2",
+            [username, email]
+        )).rows[0];
+
+        let message = checkUniqueQuery ?
+            "username and/or email already exist(s)" :
+            "username and email does not exist";
+
+        let isExist = checkUniqueQuery ? true : false
+
+        res.json({
+            message: message,
+            isExist: isExist
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
+}
 
 async function usernameLogin(req: Request, res: Response) {
     try {
