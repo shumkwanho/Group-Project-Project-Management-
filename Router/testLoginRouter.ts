@@ -9,7 +9,6 @@ testLoginRouter.get('/', loginOk);
 async function usernameLogin(req: Request, res: Response) {
 
     const { username, password } = req.body;
-    console.log(req.body);
 
     try {
         let userQuery = (
@@ -17,9 +16,6 @@ async function usernameLogin(req: Request, res: Response) {
                 "SELECT id, username, email, password FROM users WHERE username = $1 AND password = $2",
                 [username, password]
             )).rows[0];
-
-        console.log(userQuery);
-
 
         if (userQuery) {
 

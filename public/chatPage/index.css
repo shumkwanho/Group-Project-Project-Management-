@@ -1,5 +1,18 @@
 body {
+    font-family: "DM Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+}
+
+
+
+body {
     background-color: rgb(34, 91, 138);
+}
+
+.white-word {
+    color: rgb(250, 250, 250);
 }
 
 #memberAndMessages {
@@ -19,7 +32,7 @@ body {
     padding: 10px;
 }
 
-#member-list {
+#member-area {
     background-color: rgb(56, 141, 211);
     padding: 10px;
     display: flex;
@@ -30,11 +43,17 @@ body {
     border-radius: 20px;
 }
 
-#member-list>.list-title {
+#member-area>.list-title {
     display: flex;
     justify-content: center;
-    font-size: 30px;
+    font-size: 28px;
     margin: 10px 0;
+    font-weight: 600;
+}
+
+#member-list {
+    display: flex;
+    flex-direction: column;
 }
 
 #member-list>.member {
@@ -48,6 +67,7 @@ body {
 
 .member>.username {
     font-size: 18px;
+    cursor: pointer;
 }
 
 .member>.image-cropper {
@@ -67,11 +87,12 @@ body {
     margin: auto;
     height: auto;
     width: 100%;
+    cursor: pointer;
     /* height: 100%;
     width: auto; */
 }
 
-#messageList {
+#message-list {
     /* background-color: rgb(127, 197, 255); */
     padding: 10px;
     display: flex;
@@ -93,7 +114,7 @@ body {
 
 #message-box::-webkit-scrollbar {
     display: none;
-  }
+}
 
 
 
@@ -129,24 +150,41 @@ body {
 
 .message>.username,
 .myMessage>.username {
-    color: blueviolet;
+    color: #8a2be2;
+    margin-right: 5px;
+    font-weight: 600;
+}
+
+.message>.content {
+    color: #232323;
     margin-right: 5px;
 }
 
-.message>.content,
 .myMessage>.content {
-    color: brown;
+    color: #0555c8;
     margin-right: 5px;
 }
 
 .message>.create-time,
 .myMessage>.create-time {
     font-size: 10px;
+    margin-right: 5px;
 }
 
-/* .myMessage > .create-time {
+.message>.edited,
+.myMessage>.edited {
     font-size: 10px;
-} */
+    margin-right: 5px;
+}
+
+.myMessage>.edit-content {
+    font-size: 9px;
+    background-color: rgb(70, 70, 70);
+    color: white;
+    border: none;
+    padding: 2px 5px;
+    cursor: pointer;
+}
 
 #texting-box {
     display: flex;
@@ -162,6 +200,10 @@ body {
     width: 100%;
 }
 
-#text-content {
+.text-content {
     width: calc(100% - 70px);
+}
+
+#text-send {
+    cursor: pointer;
 }

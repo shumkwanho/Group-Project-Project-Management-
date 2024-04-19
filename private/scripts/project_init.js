@@ -1,5 +1,7 @@
 console.log("hello project creation");
 
+import { getFinishDate } from "../../utils/getFinishDate.js";
+
 let promptCount = 1; //tracking the current prompt 
 let taskCount = []; //tracking how many task information to be filled
 let taskCountCurrent = 0; //tracking which task information is currently being filled
@@ -19,15 +21,17 @@ const projectCreationForm = document.querySelector("#projectCreationForm");
 const projectCreationPromptContent = document.querySelector("#projectCreationPromptContent");
 const projectCreationModalLabel = document.querySelector("#projectCreationModalLabel");
 
-projectCreationForm.addEventListener("submit", (e) => {
+projectCreationForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     let inputTarget = e.currentTarget
 
     //ready to init
     if (promptCount == 99) {
+
         console.log(newProjectData);
-        projectInit(newProjectData);
+        let projId = await projectInit(newProjectData);
+        window.location.href = `../../Project Page/projectPage.html/?project=${projId}`;
 
     } else {
         //save response and update prompt count
@@ -69,7 +73,7 @@ function saveResponseByPromptCount(count, inputTarget) {
                 start_date: "2024-01-01",
                 duration: 0,
                 finish_date: "2024-12-31",
-                pre_req: [],
+                pre_req_of: [],
             };
 
             taskCount.push(i);
@@ -111,10 +115,10 @@ function saveResponseByPromptCount(count, inputTarget) {
             taskCountCurrent = taskDependanceCount[0];
             return 5;
 
-        } else if (motherTaskCountCurrent == 0 || newProjectData.tasks[motherTaskCountCurrent].pre_req.length === 0) {
+        } else if (motherTaskCountCurrent == 0 || newProjectData.tasks[motherTaskCountCurrent].pre_req_of.length === 0) {
             return 7;
         } else {
-            taskDependanceCount = [...newProjectData.tasks[motherTaskCountCurrent].pre_req];
+            taskDependanceCount = [...newProjectData.tasks[motherTaskCountCurrent].pre_req_of];
             taskCountCurrent = taskDependanceCount[0];
             motherTaskCountCurrent = 0;
             return 7;
@@ -141,7 +145,7 @@ function saveResponseByPromptCount(count, inputTarget) {
         for (let checkbox of checkboxes) {
             if (checkbox.checked){
                 let taskNum = parseInt(checkbox.value);
-                newProjectData.tasks[taskCountCurrent].pre_req.push(taskNum);
+                newProjectData.tasks[taskCountCurrent].pre_req_of.push(taskNum);
                 taskDependanceCount.push(taskNum);
             }
         }
@@ -304,18 +308,8 @@ function printTaskNameCheckboxes() {
     return printResult;
 }
 
-function getFinishDate (startDate, durationInDay) {
-    let date = new Date(startDate);
-  
-    date.setDate(date.getDate() + durationInDay);
-  
-    let year = date.getFullYear();
-    let month = String(date.getMonth() + 1).padStart(2, '0');
-    let day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
 async function projectInit(projJSON) {
+    addPreReq(projJSON);
 
     const res = await fetch("/project/init", {
         method: "POST",
@@ -327,4 +321,23 @@ async function projectInit(projJSON) {
 
     let result = await res.json()
     console.log(result.data);
+
+    return result.id;
 }
+
+function addPreReq(projJSON) {
+
+    //add pre_req key to tasks.task
+    for (let taskId in projJSON.tasks) {
+        projJSON.tasks[taskId]["pre_req"] = [];
+    }
+
+    for (let taskId in projJSON.tasks) {
+        for (let subTaskId of projJSON.tasks[taskId].pre_req_of) {
+            if (subTaskId) {
+                projJSON.tasks[subTaskId].pre_req.push(parseInt(taskId));
+            }
+        }
+    }
+    console.log(projJSON);
+};

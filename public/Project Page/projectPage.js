@@ -1,6 +1,15 @@
 let taskCount = 1
+var searchParams = new URLSearchParams(window.location.search);
+const projectId = searchParams.get("project");
+
+async function getProjectData(projectId) {
+	const res = await fetch(`http://localhost:8080/project?project=${projectId}`)
+	const data = (await res.json()).data
+	return data
+}
+
 window.addEventListener("load", async (e) => {
-	const data = await getProjectData()
+	const data = await getProjectData(projectId)
 	let projectData = [{ id: 1, text: data.name, start_date: data.start_date, duration: data.min_duration, parent: 0, open: true }]
 	for (let i = taskCount; i < data.tasks.length; i++) {
 		let taskData = data.tasks
@@ -70,9 +79,5 @@ gantt.attachEvent("onTaskCreated", function(task){
     return true;
 });
 
-async function getProjectData() {
-	const res = await fetch("http://localhost:8080/project?id=1")
-	const data = (await res.json()).data
-	return data
-}
+
 
