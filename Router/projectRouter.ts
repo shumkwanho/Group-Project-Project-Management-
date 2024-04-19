@@ -179,7 +179,7 @@ async function initProject(req: Request, res: Response) {
 
                 
                 for (let relation of task[i].pre_req){
-                    await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[taskId, rootId + relation])
+                    await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[rootId + relation, taskId])
                 }                
             }
         }
