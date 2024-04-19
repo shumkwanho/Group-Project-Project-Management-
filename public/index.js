@@ -111,10 +111,14 @@ document.querySelector("#user-registration")
                         text: 'Enter another email / username',
                     });
                 } else {
-                    window.location.href = "./user-registration/new.html"
+                    runUserRegistration(email, username);
                 }
             } else {
-                console.log("error to be handled...")
+                console.log("unknown error to be handled...")
             }
         }
     })
+
+function runUserRegistration(email, username) {
+
+}
