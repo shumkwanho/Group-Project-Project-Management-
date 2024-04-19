@@ -8,6 +8,9 @@ import { chatRoomRouter } from "./Router/chatRoomRouter";
 import { testLoginRouter } from "./Router/testLoginRouter";
 import path from "path";
 import fs from "fs";
+import http from "http";
+import { Server as SOCKETIO } from "socket.io";
+import { pgClient } from "./utils/pgClient";
 
 
 const app = express()
@@ -39,8 +42,8 @@ io.on('connection', function (socket: any) {
     var userId = await data.userId;
     var projectId = await data.projectId;
 
-    io.to(`room-${projectId}`).emit('receive-newMessage', {userId: userId, justSentMessage: justSentMessage});
-    
+    io.to(`room-${projectId}`).emit('receive-newMessage', { userId: userId, justSentMessage: justSentMessage });
+
     console.log("user id: ", userId);
     console.log("last message: ", justSentMessage);
 
@@ -53,7 +56,7 @@ io.on('connection', function (socket: any) {
 
 })
 
-async function getJustSentMessages (projectId: number) {
+async function getJustSentMessages(projectId: number) {
   return (await pgClient.query(`
     SELECT project_id, 
     messages.id as messages_id, 
@@ -128,7 +131,7 @@ app.use("/testLogin", testLoginRouter)
 app.use("/chat", express.static("chat"))
 
 app.use(express.static("public"))
-app.use(isLoggedIn, express.static("private"))
+// app.use(isLoggedIn, express.static("private"))
 
 
 server.listen(PORT, () => {
