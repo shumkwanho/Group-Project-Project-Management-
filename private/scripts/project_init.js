@@ -207,6 +207,7 @@ function printPromptContent(promptCount) {
         
         //check if all task information have been input
         if (taskCount.length == 0) {
+            //never fire???
             return `
             <label for="projectCreationResponse" class="form-label">
             Done!!

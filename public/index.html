@@ -10,19 +10,34 @@
 
 <body>
     <div class="login-container">
+        <form id="user-login">
+            <h4>Existing User</h4>
+            <label for="username">Username / Email</label>
+            <input type="text" id="username_email" name="username_email" value="user">
 
-        <form action="" id="user-login">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" value="user">
             <label for="password">Password</label>
             <input type="text" id="password" name="password" value="1234">
 
             <button type="submit" id="login">Login</button>
-
-            <button id="register">Create new account</button>
         </form>
     </div>
-    <script src="index.js"></script>
+
+    <div class="register-container">
+        <form id="user-registration">
+            <h4>New User</h4>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="user@gmail.com">
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="user">
+
+            <button type="submit" id="register">Create New Account</button>
+        </form>
+    </div>
+    <script type="module" src="index.js"></script>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>
