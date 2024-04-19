@@ -21,7 +21,7 @@ async function inspectProject(req: Request, res: Response) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY tasks.id`, [id])).rows
+        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY task.id`, [id])).rows
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
 
 
@@ -176,10 +176,8 @@ async function initProject(req: Request, res: Response) {
             const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`,[newProject.id,task[i].name , task[i].start_date,task[i].duration])).rows[0].id
             
             if (task[i].pre_req.length > 0){
-
-                
                 for (let relation of task[i].pre_req){
-                    await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[taskId, rootId + relation])
+                    await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`,[taskId,rootId + relation])
                 }                
             }
         }

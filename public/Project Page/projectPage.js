@@ -1,11 +1,8 @@
-
+let taskCount = 1
 window.addEventListener("load", async (e) => {
-	const res = await fetch("http://localhost:8080/project?id=1")
-	const data = (await res.json()).data
-
-
+	const data = await getProjectData()
 	let projectData = [{ id: 1, text: data.name, start_date: data.start_date, duration: data.min_duration, parent: 0, open: true }]
-	for (let i = 1; i < data.tasks.length; i++) {
+	for (let i = taskCount; i < data.tasks.length; i++) {
 		let taskData = data.tasks
 		let temp = {}
 		temp.id = i + 1
@@ -13,6 +10,7 @@ window.addEventListener("load", async (e) => {
 		temp.start_date = taskData[i].start_date
 		temp.duration = parseInt(taskData[i].duration)
 		projectData.push(temp)
+		
 	}
 
 	console.log(projectData);
@@ -41,8 +39,40 @@ window.addEventListener("load", async (e) => {
 		data: projectData,
 		links: taskRelation
 	});
-
-	console.log(taskRelation);
 })
 
+
+gantt.attachEvent("onAfterTaskDelete", async (id,item)=> {
+	const data = await getProjectData()
+	let taskid
+	for (let task of data.tasks){
+		if (task.name == item.text)[
+			taskid = task.id
+		]
+	}
+	let res = await fetch('/task', {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            taskId: taskid
+        })
+    })
+	taskCount -= 1
+	console.log(taskCount);
+});
+
+gantt.attachEvent("onTaskCreated", function(task){
+    task.projectId = taskCount;
+
+	taskCount += 1
+    return true;
+});
+
+async function getProjectData() {
+	const res = await fetch("http://localhost:8080/project?id=1")
+	const data = (await res.json()).data
+	return data
+}
 
