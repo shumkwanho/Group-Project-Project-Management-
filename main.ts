@@ -11,7 +11,7 @@ import fs from "fs";
 import http from "http";
 import { Server as SOCKETIO } from "socket.io";
 import { pgClient } from "./utils/pgClient";
-
+import { isLoggedIn } from "./utils/guard";
 
 const app = express()
 
