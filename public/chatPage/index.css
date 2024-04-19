@@ -11,6 +11,10 @@ body {
     background-color: rgb(34, 91, 138);
 }
 
+.white-word {
+    color: rgb(250, 250, 250);
+}
+
 #memberAndMessages {
     background-color: white;
     display: flex;
@@ -42,8 +46,9 @@ body {
 #member-area>.list-title {
     display: flex;
     justify-content: center;
-    font-size: 30px;
+    font-size: 28px;
     margin: 10px 0;
+    font-weight: 600;
 }
 
 #member-list {
@@ -62,6 +67,7 @@ body {
 
 .member>.username {
     font-size: 18px;
+    cursor: pointer;
 }
 
 .member>.image-cropper {
@@ -81,6 +87,7 @@ body {
     margin: auto;
     height: auto;
     width: 100%;
+    cursor: pointer;
     /* height: 100%;
     width: auto; */
 }
@@ -143,13 +150,18 @@ body {
 
 .message>.username,
 .myMessage>.username {
-    color: blueviolet;
+    color: #8a2be2;
+    margin-right: 5px;
+    font-weight: 600;
+}
+
+.message>.content {
+    color: #232323;
     margin-right: 5px;
 }
 
-.message>.content,
 .myMessage>.content {
-    color: brown;
+    color: #0555c8;
     margin-right: 5px;
 }
 
@@ -188,8 +200,10 @@ body {
     width: 100%;
 }
 
-
-
 .text-content {
     width: calc(100% - 70px);
+}
+
+#text-send {
+    cursor: pointer;
 }

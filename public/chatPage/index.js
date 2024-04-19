@@ -94,6 +94,8 @@ async function testLoginOk() {
     }
 }
 
+testLoginOk()
+
 
 //===================== Useful Below ====================
 
@@ -129,7 +131,7 @@ async function getAllMessages(projectId) {
     if (res.ok) {
 
         let memberBox = document.querySelector("#member-list")
-        
+
 
         for (let eachMember of allMembers) {
             memberBox.innerHTML +=
@@ -137,13 +139,14 @@ async function getAllMessages(projectId) {
             <div class="member">
             <div class="username">${eachMember.username}</div>
             <div class="image-cropper">
-            ${eachMember.profile_image ? `<img src="${eachMember.profile_image}" class="profilePic" />` : ""}
+            ${eachMember.profile_image ? `<img src="/profile-image/${eachMember.profile_image}" class="profilePic" />` :
+                    `<img src="01.jpg" class="profilePic" />`}
             </div>
             </div>
             `
         }
 
-        
+
 
 
 
@@ -210,25 +213,25 @@ document.querySelector("#sendMessage").addEventListener("submit", async (event) 
 async function sendMessage(projectId) {
     const content = await document.querySelector("#text-content").value;
 
-    let res = await fetch('/chatroom', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            projectId: projectId,
-            content: content
+    if (content.trim() != "") {
+        let res = await fetch('/chatroom', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                projectId: projectId,
+                content: content
+            })
         })
-    })
-    if (res.ok) {
-        let response = await res.json();
-        let userId = response.userId;
-        socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
-        console.log("send message success");
-        document.querySelector("#text-content").value = "";
-        // window.location.reload();
+        if (res.ok) {
+            let response = await res.json();
+            let userId = response.userId;
+            socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
+            console.log("send message success");
+            document.querySelector("#text-content").value = "";
+        }
     }
-
 }
 
 socket.on('receive-newMessage', async lastMessageInfo => {
@@ -279,7 +282,6 @@ async function editMessage(messageId, content) {
             <button id="text-send" type="submit">Edit</button>
         </form>
     `
-
 }
 
 async function confirmEdit(event, messageId) {
@@ -338,11 +340,8 @@ socket.on('receive-editMessage', async info => {
             `
         }
         `
-
 })
 
-
-testLoginOk()
 
 // <script>
 // function getParams() {
