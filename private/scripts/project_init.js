@@ -29,9 +29,9 @@ projectCreationForm.addEventListener("submit", async (e) => {
     //ready to init
     if (promptCount == 99) {
 
-        console.log(newProjectData);
         let projId = await projectInit(newProjectData);
-        window.location.href = `../../Project Page/projectPage.html/?project=${projId}`;
+        console.log(projId);
+        window.location.href = `../../ProjectPage/projectPage.html/?id=${projId}`;
 
     } else {
         //save response and update prompt count

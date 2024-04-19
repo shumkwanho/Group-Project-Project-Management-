@@ -1,9 +1,9 @@
 let taskCount = 1
 var searchParams = new URLSearchParams(window.location.search);
-const projectId = searchParams.get("project");
+const projectId = searchParams.get("id");
 
 async function getProjectData(projectId) {
-	const res = await fetch(`http://localhost:8080/project?project=${projectId}`)
+	const res = await fetch(`http://localhost:8080/project?id=${projectId}`)
 	const data = (await res.json()).data
 	return data
 }
