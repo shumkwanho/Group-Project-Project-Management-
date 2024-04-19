@@ -83,3 +83,45 @@ output format sample
     }
   }
 }
+
+-------
+
+{
+    "name": "New Project 1",
+    "start_date": "2024-01-01",
+    "tasks": {
+        "1": {
+            "name": "New Task 1",
+            "start_date": "2024-01-01",
+            "duration": 3,
+            "finish_date": "2024-01-04",
+            "pre_req": [
+                2,
+                3
+            ]
+        },
+        "2": {
+            "name": "New Task 2",
+            "start_date": "2024-01-05",
+            "duration": 2,
+            "finish_date": "2024-01-07",
+            "pre_req": [
+                4
+            ]
+        },
+        "3": {
+            "name": "New Task 3",
+            "start_date": "2024-01-05",
+            "duration": 7,
+            "finish_date": "2024-01-12",
+            "pre_req": []
+        },
+        "4": {
+            "name": "New Task 4",
+            "start_date": "2024-01-08",
+            "duration": 3,
+            "finish_date": "2024-01-11",
+            "pre_req": []
+        }
+    }
+}
