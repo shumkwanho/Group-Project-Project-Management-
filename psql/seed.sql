@@ -49,11 +49,11 @@ insert into projects (name, min_duration) values ('Fix San', 45);
 insert into projects (name, min_duration) values ('Voltsillam', 46);
 
 --user_project_relation sample
-insert into user_project_relation (user_id, project_id) values (4, 9);
-insert into user_project_relation (user_id, project_id) values (30, 5);
-insert into user_project_relation (user_id, project_id) values (29, 14);
-insert into user_project_relation (user_id, project_id) values (23, 8);
-insert into user_project_relation (user_id, project_id) values (16, 10);
+insert into user_project_relation (user_id, project_id) values (1, 1);
+insert into user_project_relation (user_id, project_id) values (2, 1);
+insert into user_project_relation (user_id, project_id) values (3, 1);
+insert into user_project_relation (user_id, project_id) values (4, 1);
+insert into user_project_relation (user_id, project_id) values (5, 1);
 insert into user_project_relation (user_id, project_id) values (3, 10);
 insert into user_project_relation (user_id, project_id) values (30, 7);
 insert into user_project_relation (user_id, project_id) values (8, 6);
@@ -83,8 +83,8 @@ insert into user_project_relation (user_id, project_id) values (26, 13);
 
 
 -- tasks sample
-insert into tasks (project_id, name, description) values (3, 'Zamit', 'eu tincidunt in leo maecenas');
-insert into tasks (project_id, name, description) values (14, 'Keylex', 'lacinia eget tincidunt eget');
+insert into tasks (project_id, name, description) values (1, 'Zamit', 'eu tincidunt in leo maecenas');
+insert into tasks (project_id, name, description) values (1, 'Keylex', 'lacinia eget tincidunt eget');
 insert into tasks (project_id, name, description) values (13, 'Temp', 'massa quis');
 insert into tasks (project_id, name, description) values (15, 'Domainer', 'mus vivamus vestibulum sagittis sapien');
 insert into tasks (project_id, name, description) values (4, 'Zaam-Dox', 'magna vestibulum aliquet ultrices');
@@ -122,7 +122,7 @@ insert into tasks (project_id, name, description) values (3, 'Sonair', 'metus ae
 insert into tasks (project_id, name, description) values (15, 'Temp', 'duis mattis egestas metus aenean');
 insert into tasks (project_id, name, description) values (6, 'Cookley', 'ipsum dolor');
 insert into tasks (project_id, name, description) values (2, 'Temp', 'volutpat dui');
-insert into tasks (project_id, name, description) values (14, 'Aerified', 'id sapien in');
+insert into tasks (project_id, name, description) values (1, 'Aerified', 'id sapien in');
 insert into tasks (project_id, name, description) values (12, 'Otcom', 'ultrices');
 insert into tasks (project_id, name, description) values (7, 'Alpha', 'eu magna vulputate');
 insert into tasks (project_id, name, description) values (9, 'Cookley', 'proin eu mi nulla ac');

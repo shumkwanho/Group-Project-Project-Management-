@@ -11,7 +11,9 @@ import fs from "fs";
 import http from "http";
 import { Server as SOCKETIO } from "socket.io";
 import { pgClient } from "./utils/pgClient";
-
+import { isLoggedIn } from "./utils/guard";
+import { getJustSentMessage } from "./Router/chatRoomRouter";
+import { getLastEditMessage } from "./Router/chatRoomRouter";
 
 const app = express()
 
@@ -23,13 +25,6 @@ console.log("what server is: ", server);
 export const io = new SOCKETIO(server);
 console.log("what io is: ", io);
 
-
-
-
-
-
-
-
 io.on('connection', function (socket: any) {
 
   // const req = socket.request as express.Request;
@@ -38,7 +33,7 @@ io.on('connection', function (socket: any) {
   io.emit('newConnection', "There is a new connection");
 
   socket.on('newMessage', async (data: any) => {
-    var justSentMessage = await getJustSentMessages(data.projectId);
+    var justSentMessage = await getJustSentMessage(data.projectId);
     var userId = await data.userId;
     var projectId = await data.projectId;
 
@@ -49,38 +44,24 @@ io.on('connection', function (socket: any) {
 
   })
 
+  socket.on('editMessage', async (data: any) => {
+    var lastEditMessageInfo = await getLastEditMessage(data.messageId);
+    var userId = await data.userId;
+    var projectId = await lastEditMessageInfo.project_id;
+
+    io.to(`room-${projectId}`).emit('receive-editMessage', { userId: userId, lastEditMessageInfo: lastEditMessageInfo });
+
+    console.log("user id: ", userId);
+    console.log("project id: ", projectId);
+    console.log("last message info: ", lastEditMessageInfo);
+
+  })
+
   socket.on('join', (projectId: any) => {
     socket.join(`room-${projectId}`);
     socket.to(`room-${projectId}`).emit('joined');
   })
-
 })
-
-async function getJustSentMessages(projectId: number) {
-  return (await pgClient.query(`
-    SELECT project_id, 
-    messages.id as messages_id, 
-    users.id as users_id, 
-    profile_image, 
-    username, 
-    messages.content, 
-    to_char(created_at, 'YYYY-MM-DD') AS created_date,
-    to_char(created_at, 'HH24:MI') AS created_time,
-    edited_at
-    FROM users INNER JOIN messages
-    ON users.id = user_id
-    WHERE project_id = $1
-    ORDER BY created_at DESC 
-    LIMIT 1;`, [projectId])).rows[0]
-}
-
-
-
-
-
-
-
-
 
 
 
@@ -104,22 +85,6 @@ declare module "express-session" {
 
 
 
-// const sessionMiddleware = expressSession({
-//   secret: "project_manager",
-//   resave: true,
-//   saveUninitialized: true,
-//   cookie: { secure: false },
-// });
-
-// app.use(sessionMiddleware);
-
-// io.use((socket, next) => {
-//   let req = socket.request as express.Request;
-//   let res = req.res as express.Response;
-//   sessionMiddleware(req, res, next as express.NextFunction);
-// });
-
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use("/project", projectRouter)
@@ -129,9 +94,10 @@ app.use("/chatroom", chatRoomRouter)
 
 app.use("/testLogin", testLoginRouter)
 app.use("/chat", express.static("chat"))
+// app.use('/chat', express.static(path.join(__dirname, 'chat')))
 
 app.use(express.static("public"))
-// app.use(isLoggedIn, express.static("private"))
+app.use(isLoggedIn, express.static("private"))
 
 
 server.listen(PORT, () => {
@@ -141,4 +107,3 @@ server.listen(PORT, () => {
 // app.listen(PORT, () => {
 //   console.log(`listening to http://localhost:${PORT}`)
 // })
-

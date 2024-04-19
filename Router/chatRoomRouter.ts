@@ -64,7 +64,7 @@ async function getAllMessagesFrompgClient(projectId: any) {
 
 async function showChatroom(req: Request, res: Response) {
     let { projectId } = req.query;
-    console.log(projectId);
+    console.log("client got messages info by project id: ",projectId);
     
     let userId = req.session.userId;
 
@@ -159,6 +159,7 @@ async function editMyMessage(req: Request, res: Response) {
     console.log(justEditedMessage);
 
     res.status(200).json({
+        userId: userId,
         message: "Your message has been edited.",
         date: justEditedMessage
     })
@@ -168,7 +169,39 @@ async function editMyMessage(req: Request, res: Response) {
 
 
 
+// ==================== Get Last Message For Socket IO ====================
+
+export async function getJustSentMessage(projectId: number) {
+    return (await pgClient.query(`
+      SELECT project_id, 
+      messages.id as messages_id, 
+      users.id as users_id, 
+      profile_image, 
+      username, 
+      messages.content, 
+      to_char(created_at, 'YYYY-MM-DD') AS created_date,
+      to_char(created_at, 'HH24:MI') AS created_time,
+      edited_at
+      FROM users INNER JOIN messages
+      ON users.id = user_id
+      WHERE project_id = $1
+      ORDER BY created_at DESC 
+      LIMIT 1;`, [projectId])).rows[0]
+  }
 
 
-
-
+  export async function getLastEditMessage(messageId: number) {
+    return (await pgClient.query(`
+    SELECT project_id, 
+      messages.id as messages_id, 
+      users.id as users_id, 
+      profile_image, 
+      username, 
+      messages.content, 
+      to_char(created_at, 'YYYY-MM-DD') AS created_date,
+      to_char(created_at, 'HH24:MI') AS created_time,
+      edited_at
+      FROM users INNER JOIN messages
+      ON users.id = user_id
+      WHERE messages.id = $1;`, [messageId])).rows[0]
+  }
