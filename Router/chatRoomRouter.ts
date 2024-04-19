@@ -82,6 +82,7 @@ async function showChatroom(req: Request, res: Response) {
             allMessages: allMessages
         })
 
+        
         // console.log(allMessages)
     } catch (err) {
         serverError(err, res);

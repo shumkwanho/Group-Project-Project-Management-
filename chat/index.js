@@ -90,8 +90,8 @@ async function getAllMessages(projectId) {
 
     if (res.ok) {
 
-        
-        
+
+
 
         let messagesBox = document.querySelector("#message-box")
 
@@ -166,7 +166,7 @@ async function sendMessage(projectId) {
         let userId = response.userId;
         socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
         console.log("send message success");
-        content.value = "";
+        document.querySelector("#text-content").value = "";
         // window.location.reload();
     }
 
@@ -176,13 +176,27 @@ async function sendMessage(projectId) {
 socket.on('receive-newMessage', async lastMessageInfo => {
     console.log(lastMessageInfo);
     let msg = await lastMessageInfo.justSentMessage;
+    let userId = await lastMessageInfo.userId;
     let messagesBox = document.querySelector("#message-box")
+
     messagesBox.innerHTML +=
         `
-        <div class="myMessage">
-        <span class="content">${msg.content}</span>
-        <span class="create-time">${msg.created_time}</span>
-        </div>
+        ${userId == msg.users_id ?
+            `
+            <div class="myMessage">
+            <span class="content">${msg.content}</span>
+            <span class="create-time">${msg.created_time}</span>
+            </div>
+            `
+            :
+            `
+            <div class="message">
+            <span class="username">${msg.username}</span>
+            <span class="content">${msg.content}</span>
+            <span class="create-time">${msg.created_time}</span>
+            </div>
+            `
+        }
         `
 })
 
