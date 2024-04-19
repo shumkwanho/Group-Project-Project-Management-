@@ -129,6 +129,7 @@ app.use("/chatroom", chatRoomRouter)
 
 app.use("/testLogin", testLoginRouter)
 app.use("/chat", express.static("chat"))
+app.use("/utils", express.static("utils"))
 
 app.use(express.static("public"))
 // app.use(isLoggedIn, express.static("private"))

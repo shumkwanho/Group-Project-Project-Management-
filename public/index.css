@@ -1,7 +1,13 @@
-form{
+.login-container {
     display: flex;
     flex-direction: column;
-    max-width: 200px;
+    max-width: 150px;
     margin: auto;
 }
 
+.register-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 150px;
+    margin: auto;
+}
