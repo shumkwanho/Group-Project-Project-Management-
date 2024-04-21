@@ -25,3 +25,16 @@ export function isEmptyOrSpace(input) {
     const trimmed = input.trim();
     return trimmed.length === 0;
 };
+
+export function isPasswordValid(password) {
+    if (password.length < 10) {
+        return false;
+    }
+
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return hasUppercase && hasLowercase && hasNumber && hasSymbol;
+}
