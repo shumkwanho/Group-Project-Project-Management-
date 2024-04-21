@@ -31,7 +31,7 @@ projectCreationForm.addEventListener("submit", async (e) => {
 
         let projId = await projectInit(newProjectData);
         console.log(projId);
-        window.location.href = `../../ProjectPage/projectPage.html/?id=${projId}`;
+        window.location.href = `../../ProjectPage/?id=${projId}`;
 
     } else {
         //save response and update prompt count
@@ -322,7 +322,7 @@ async function projectInit(projJSON) {
     let result = await res.json()
     console.log(result.data);
 
-    return result.id;
+    return result.data.id;
 }
 
 function addPreReq(projJSON) {

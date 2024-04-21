@@ -93,7 +93,10 @@ app.use("/auth", authRouter)
 app.use("/chatroom", chatRoomRouter)
 
 app.use("/testLogin", testLoginRouter)
+
+app.use("/ProjectPage", express.static("public/ProjectPage"))
 app.use("/chat", express.static("public/chatPage"))
+app.use("/main", express.static("public/mainPage"))
 // app.use('/chat', express.static(path.join(__dirname, 'chat')))
 
 app.use(express.static("uploads"))
