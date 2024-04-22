@@ -5,7 +5,6 @@ import grant from "grant";
 import path from "path";
 import fs from "fs";
 import http from "http";
-import fetch from "cross-fetch";
 import { projectRouter } from "./Router/projectRouter";
 import { taskRouter } from "./Router/taskRouter";
 import { authRouter } from "./Router/authRouter";

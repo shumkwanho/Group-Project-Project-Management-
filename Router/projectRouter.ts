@@ -14,9 +14,10 @@ projectRouter.post("/init", initProject)
 
 // request: project id
 async function inspectProject(req: Request, res: Response) {
-    try {
+    try {        
         const {id} = req.query
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
+        
         if (targetProject == undefined) {
             res.status(400).json({ message: "Cannot find target project" })
             return
@@ -179,6 +180,8 @@ async function initProject(req: Request, res: Response) {
                 for (let relation of task[i].pre_req){
                     await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`,[taskId,rootId + relation])
                 }                
+            }else{
+                await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`,[rootId,taskId])
             }
         }
         await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[rootId+1,rootId])
@@ -195,16 +198,3 @@ async function initProject(req: Request, res: Response) {
 
 
 
-
-
-
-// select tasks.id, name,description, pre_req_fulfilled,start_date,duration,pre_req_task_id 
-// from tasks left outer join task_relation on tasks.id = task_id 
-// where project_id = 68 group by tasks.id , pre_req_task_id
-// order by case when pre_req_task_id is null then 0 else 1 end, pre_req_task_id
-
-// select tasks.id, name,description, pre_req_fulfilled,start_date,duration,pre_req_task_id 
-// from tasks left outer join (select task_id,pre_req_task_id from task_relation) on tasks.id = task_id 
-// where project_id = 71
-// group by tasks.id
-// order by case when pre_req_task_id is null then 0 else 1 end, pre_req_task_id;

@@ -2,7 +2,7 @@ console.log("hello index")
 
 import { identifyInput, isEmptyOrSpace, isPasswordValid } from "../utils/checkInput.js";
 
-let isNewUsernameEmailOk = false;
+let isNewUsernameEmailOkay = false;
 
 const userLogin = document.querySelector("#user-login");
 const userRegistration = document.querySelector("#user-registration");
@@ -30,6 +30,7 @@ userLogin.addEventListener("submit", async (e) => {
         Swal.fire({
             title: 'Login Failed',
             text: 'Please enter a valid username or email',
+            showConfirmButton: false,
         });
 
     } else if (inputType === 'email') {
@@ -61,18 +62,26 @@ userLogin.addEventListener("submit", async (e) => {
 
         Swal.fire({
             title: 'Login Successful',
-            text: `Welcome Back! ${response.data.username}`,
+            text: `Welcome Back ${response.data.username}!! Redirecting you to main page.`,
+            showConfirmButton: false,
+            timer: 1800,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            }
         }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "./mainPage"
+            if (result.dismiss === Swal.DismissReason.timer) {
+                window.location.href = `./main?id=${response.data.id}`
             };
         })
+
     } else {
 
         console.log(response.error);
         Swal.fire({
             title: 'Login Failed',
             text: 'Incorrect username, email and/or password',
+            showConfirmButton: false,
         });
     }
 })
@@ -85,7 +94,9 @@ userRegistration.addEventListener("submit", async (e) => {
     const email = newEmail.value;
     const username = newUsername.value;
 
-    if (isNewUsernameEmailOk) {
+    console.log(email, username);
+
+    if (isNewUsernameEmailOkay) {
         runUserRegistration(email, username);
 
     } else {
@@ -95,11 +106,13 @@ userRegistration.addEventListener("submit", async (e) => {
             Swal.fire({
                 title: 'Invalid Input',
                 text: 'Enter email and username',
+                showConfirmButton: false,
             });
         } else if (identifyInput(username) != "username") {
             Swal.fire({
                 title: 'Username Input Not Accepted',
                 text: 'Enter another username',
+                showConfirmButton: false,
             });
         } else {
 
@@ -119,10 +132,11 @@ userRegistration.addEventListener("submit", async (e) => {
                     Swal.fire({
                         title: 'Email / Username already exists',
                         text: 'Enter another email / username',
+                        showConfirmButton: false,
                     });
                 } else {
                     displayPasswordInput(email, username);
-                    isNewUsernameEmailOk = true;
+                    isNewUsernameEmailOkay = true;
 
                 }
             } else {
@@ -143,12 +157,17 @@ function displayPasswordInput(email, username) {
     document.getElementById("create-new-account-button").remove();
 
     let passwordInput = `
+    <div class="form-floating mb-3">
+    <input type="password" class="form-control rounded-3" id="password1" placeholder="Password">
     <label for="password1">Password</label>
-    <input type="text" id="password1" name="password1" value="MyPassword123!" required>
+    </div>
 
-    <label for="password2">Re-enter password</label>
-    <input type="text" id="password2" name="password2" value="MyPassword123!" required>
-    <button type="submit">Register</button>`;
+    <div class="form-floating mb-3">
+    <input type="password" class="form-control rounded-3" id="password2" placeholder="Re-enter Password">
+    <label for="password2">Re-enter Password</label>
+    </div>
+
+    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Create New Account</button>`;
 
     userRegistration.insertAdjacentHTML("beforeend", passwordInput);
 }
@@ -167,6 +186,7 @@ async function runUserRegistration(email, username) {
         Swal.fire({
             title: 'Invalid password input',
             text: 'Please re-enter the same password you entered',
+            showConfirmButton: false,
         });
 
     } else {
@@ -176,6 +196,7 @@ async function runUserRegistration(email, username) {
             Swal.fire({
                 title: 'Invalid password input',
                 text: 'Password must be as least 10 characters long, and a combination of uppercase letters, lowercase letters, numbers and symbol',
+                showConfirmButton: false,
             });
 
         } else {
@@ -204,10 +225,16 @@ async function runUserRegistration(email, username) {
                 //direct to main page
                 Swal.fire({
                     title: 'User Registration Successful',
-                    text: `Welcome!! ${response.data.username}`,
+                    text: `Welcome ${response.data.username}!! Redirecting to main page`,
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "./mainPage"
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location.href = `./main?id=${response.data.id}`
                     };
                 })
             }
