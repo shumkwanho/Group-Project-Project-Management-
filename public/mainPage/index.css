@@ -138,15 +138,28 @@ body {
 .create-project {
     box-sizing: content-box;
     break-inside: avoid;
-    background-color: rgb(124, 124, 124);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 600;
+    background-color: rgb(184, 211, 210);
     border: .5px solid rgb(215, 215, 215);
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
-    min-height: 200px;
+    min-height: 250px;
+    max-height: 250px;
 }
 
-.create-project img {
+.center-image {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.center-image img {
     max-width: 100%;
 }
 

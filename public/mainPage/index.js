@@ -1,5 +1,5 @@
 var searchParams = new URLSearchParams(window.location.search);
-const usertId = searchParams.get("user");
+const userId = searchParams.get("id");
 console.log("current main page user id: ", userId);
 
 // const project = document.querySelector(".project")
@@ -18,12 +18,13 @@ async function getAllUserInfo(userId) {
     let userInfo = response.userInfo;
     let projectInfo = response.projectInfo;
     let overrunTaskInfo = response.overrunTaskInfo;
+    let meetDeadlineTaskInfo = response.meetDeadlineTaskInfo;
     let currentTaskInfo = response.currentTaskInfo;
     let finishedProjects = response.finishedProjects;
 
     let notification = querySelector("#notification")
     let personalArea = querySelector(".personal-area")
-
+    let projectArea = querySelector(".project-area")
 
     if (res.ok) {
 
@@ -53,10 +54,30 @@ async function getAllUserInfo(userId) {
             <button class="edit-profile">Edit profile</button>
         </div>
         `
+        projectArea.innerHTML = `
+        <div class="create-project">
+            <div class="project-name">Create new project</div>
+            <img src="/profile-image/mydog.jpg" alt="" class="create-project-image">
+        </div>
+        `
 
+        if (overrunTaskInfo.length > 0) {
+            for (let eachProject of currentTaskInfo) {
+                projectArea.innerHTML += `
 
+        <div class="project">
+            <img src="/profile-image/mydog.jpg" alt="" class="project-image">
+            <button class="edit-project-image">btn</button>
+            <div class="project-name">Project 1</div>
+            <div class="current-task">Task 1</div>
+            <div class="current-task">Task 2</div>
+            <div class="current-task">Task 3</div>
+            <div class="current-task">Task 4</div>
+        </div>
+        `
 
-
+            }
+        }
 
 
 

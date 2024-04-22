@@ -102,48 +102,50 @@ async function getMainPageInfo(req: Request, res: Response) {
             console.log("specificProjectId: ", specificProjectId);
 
             let allCurrentTasks = await getCurrentTask(specificProjectId);
+            let duration
 
             if (allCurrentTasks.length > 0) {
                 for await (let eachCurrentTask of allCurrentTasks) {
 
+                    let task_start_date = eachCurrentTask.task_start_date
+                    let taskDuration = Number(eachCurrentTask.duration)
+
+                    let taskDeadline = Number(getFinishDate(task_start_date, taskDuration));
+
+                    duration = Number(taskDeadline - today);
+
+                    if (duration < 0) {
+                        allOverrunTasks.push(eachCurrentTask)
+                    } else if (duration == 0) {
+                        meetDeadlineTasks.push(eachCurrentTask)
+                    } else {
                     currentTaskInfo.push(eachCurrentTask);
+                    }
                 }
             }
-
         }
 
-        if (currentTaskInfo.length > 0) {
+        // if (currentTaskInfo.length > 0) {
 
-            let duration
+        //     let duration
 
-            for await (let eachTask of currentTaskInfo) {
+        //     for await (let eachTask of currentTaskInfo) {
 
-                // let finishDate = getFinishDate(eachTask.task_start_date, eachTask.duration)
-                let task_start_date = eachTask.task_start_date
-                let taskDuration = Number(eachTask.duration)
+        //         let task_start_date = eachTask.task_start_date
+        //         let taskDuration = Number(eachTask.duration)
 
-                console.log("task start date: ",task_start_date);
-                console.log("task duration: ", duration);
+        //         let taskDeadline = Number(getFinishDate(task_start_date, taskDuration));
 
-                let taskDeadline = Number(getFinishDate(task_start_date, taskDuration));
+        //         duration = Number(taskDeadline - today);
 
-                console.log("GG taskDeadline: ",  taskDeadline);
+        //         if (duration < 0) {
+        //             allOverrunTasks.push(eachTask)
+        //         } else if (duration == 0) {
+        //             meetDeadlineTasks.push(eachTask)
+        //         }
 
-                // let taskDeadline = Number(finishDate);
-
-                duration = Number(taskDeadline - today);
-
-                // console.log("GG today: ", today);
-                // console.log("GG duration: ", finishDate);
-
-                if (duration < 0) {
-                    allOverrunTasks.push(eachTask)
-                } else if (duration == 0) {
-                    meetDeadlineTasks.push(eachTask)
-                }
-
-            }
-        }
+        //     }
+        // }
 
 
         let allFinishedProjects = await getAllFinishedProjects(userId)
