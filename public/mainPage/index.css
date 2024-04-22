@@ -1,4 +1,164 @@
-nav{
+.row {
+    --bs-gutter-x: 0;
+}
+
+/* background-color: #4158D0;
+background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%); */
+/* background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(176,229,208,1) 42%, rgba(92,202,238,0.41) 93.6% ); */
+/* background-image: linear-gradient( 2.1deg,  rgba(116,253,210,1) 5%, rgba(0,191,247,1) 95.8% ); */
+
+#main-page-background {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to top left, #f3f3f3 15%, rgba(255, 153, 150, 0) 60%, #80D0C7), linear-gradient(to top right, #92d4ff, rgba(255, 153, 150, 0), #76bfb8) #85bffa;
+    overflow: hidden;
+}
+
+#main-page-area {
+    background-color: rgb(255, 255, 255, 0.85);
+    display: flex;
+    flex-direction: column;
+    height: 85%;
+    width: 90%;
+    min-width: 800px;
+    border: .5px solid rgb(215, 215, 215);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 35px;
+    padding: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+
+
+
+
+#top-bar {
+    min-height: 50px;
+    max-height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(124, 124, 124);
+    border: .5px solid rgb(215, 215, 215);
+    border-radius: 15px;
+    padding: 0 15px;
+    margin-bottom: 20px;
+}
+
+
+
+
+
+.user-project-area {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+
+
+
+
+.personal-area {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgb(124, 124, 124);
+    /* border-radius: 15px; */
+    padding-right: 15px;
+    justify-content: space-between;
+    max-height: auto;
+}
+
+.personal-area img {
+    max-width: 100%;
+}
+
+
+
+
+
+.project-area {
+    /* display: flex;
+    flex-direction: row; */
+    padding: 0 20px;
+    columns: 3;
+    column-gap: 20px;
+    break-inside: avoid;
+    overflow: auto;
+}
+
+
+
+
+
+
+.create-project {
+    box-sizing: content-box;
+    break-inside: avoid;
+    background-color: rgb(124, 124, 124);
+    border: .5px solid rgb(215, 215, 215);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    min-height: 200px;
+}
+
+.create-project img {
+    max-width: 100%;
+}
+
+.project {
+    position: relative;
+    box-sizing: content-box;
+    break-inside: avoid;
+    background-color: rgb(124, 124, 124);
+    border: .5px solid rgb(215, 215, 215);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.project img {
+    max-width: 100%;
+}
+
+.edit-project-image {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    opacity: 0.75;
+}
+
+
+
+
+
+
+.completed-project-area {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgb(124,124, 124);
+    padding-left: 15px;
+    overflow: auto;
+}
+
+.completed-project {
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
+    margin-bottom: 10px;
+    background-color: rgb(124, 124, 124);
+    border: .5px solid rgb(215, 215, 215);
+    border-radius: 20px;
+    padding: 15px;
+}
+
+/* nav{
     display: flex;
     justify-content: end;
     max-width: 90vw;
@@ -74,4 +234,4 @@ nav div{
 .completed-project{
     padding: 10px;
     height: 500px;
-}
+} */
