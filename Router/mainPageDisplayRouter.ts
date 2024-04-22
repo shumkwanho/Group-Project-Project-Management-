@@ -80,7 +80,7 @@ async function getAllFinishedProjects(userId: any) {
 
 async function getMainPageInfo(req: Request, res: Response) {
     let { userId } = req.query;
-    let currentUserId = req.session.userId;
+    // let currentUserId = req.session.userId;
 
     try {
 
@@ -98,8 +98,6 @@ async function getMainPageInfo(req: Request, res: Response) {
         for await (let eachProject of allCurrentProjects) {
 
             let specificProjectId = eachProject.project_id;
-
-            console.log("specificProjectId: ", specificProjectId);
 
             let allCurrentTasks = await getCurrentTask(specificProjectId);
             let duration
@@ -151,8 +149,7 @@ async function getMainPageInfo(req: Request, res: Response) {
         let allFinishedProjects = await getAllFinishedProjects(userId)
 
 
-        res.json({
-            currentUserId: currentUserId,
+        res.status(200).json({
             userInfo: userInfo,
             projectInfo: allCurrentProjects,
             overrunTaskInfo: allOverrunTasks,
@@ -161,13 +158,13 @@ async function getMainPageInfo(req: Request, res: Response) {
             finishedProjects: allFinishedProjects
         })
 
-        // console.log("currentUserId: ", currentUserId);
-        // console.log("userInfo: ", userInfo);
-        // console.log("allCurrentProjects: ", allCurrentProjects);
-        // console.log("allOverrunTasks: ", allOverrunTasks);
-        // console.log("meetDeadlineTasks: ", meetDeadlineTasks);
-        // console.log("currentTaskInfo: ", currentTaskInfo);
-        // console.log("allFinishedProjects:", allFinishedProjects);
+
+        console.log("userInfo: ", userInfo);
+        console.log("allCurrentProjects: ", allCurrentProjects);
+        console.log("allOverrunTasks: ", allOverrunTasks);
+        console.log("meetDeadlineTasks: ", meetDeadlineTasks);
+        console.log("currentTaskInfo: ", currentTaskInfo);
+        console.log("allFinishedProjects:", allFinishedProjects);
 
 
 
