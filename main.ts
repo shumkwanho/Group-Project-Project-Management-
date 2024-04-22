@@ -14,16 +14,17 @@ import { pgClient } from "./utils/pgClient";
 import { isLoggedIn } from "./utils/guard";
 import { getJustSentMessage } from "./Router/chatRoomRouter";
 import { getLastEditMessage } from "./Router/chatRoomRouter";
+import { mainPageDisplayRouter } from "./Router/mainPageDisplayRouter";
 
 const app = express()
 
 
 
 const server = new http.Server(app);
-console.log("what server is: ", server);
+// console.log("what server is: ", server);
 
 export const io = new SOCKETIO(server);
-console.log("what io is: ", io);
+// console.log("what io is: ", io);
 
 io.on('connection', function (socket: any) {
 
@@ -91,7 +92,7 @@ app.use("/project", projectRouter)
 app.use("/task", taskRouter)
 app.use("/auth", authRouter)
 app.use("/chatroom", chatRoomRouter)
-
+app.use("/mainpage", mainPageDisplayRouter)
 app.use("/testLogin", testLoginRouter)
 
 app.use("/ProjectPage", express.static("public/ProjectPage"))
