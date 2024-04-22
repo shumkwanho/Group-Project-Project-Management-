@@ -1,7 +1,7 @@
 const project = document.querySelector(".project")
 
 project.addEventListener("click",(e)=>{
-    window.location.href = "../ProjectPage/proJectPage.html"
+    window.location.href = "../ProjectPage/index.html"
 })
 
 document.querySelector("#new-project").addEventListener("click", (e) =>{

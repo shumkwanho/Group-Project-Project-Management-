@@ -2,10 +2,8 @@ nav{
     display: flex;
     justify-content: end;
     max-width: 90vw;
-    border: 1px solid black;
     height: 50px;
     align-items: center;
-    border-radius: 5px;
 }
 
 nav div{
@@ -13,24 +11,40 @@ nav div{
 }
 
 .container{
-    width: 90vw;
-    border: 1px solid black;
-    border-radius: 5px;
+
     margin-top: 30px;
     display: flex;
     padding: 20px;
-    height: 80vh;
-}
-.task-list-container{
-    border: 1px solid black;
-    border-radius: 5px;
-    width: 25%;
-    margin-right: 30px;
+    height:600px;
+    justify-content: center;
 }
 
-.project-graph{
+.jira{
+    height: 500px;
+    display: flex;
+    margin-top: 20px;
+}
+
+.to-do-list{
+    height:80%;
+    width: 20%;
+    margin: 10px 20px;
+}
+
+.ongoing{
+    height:80%;
+    width: 20%;
+    margin: 10px 20px;
+}
+
+.finished{
+    height:80%;
+    width: 20%;
+    margin: 10px 20px;
+}
+
+
+.border{
     border: 1px solid black;
     border-radius: 5px;
-    width: 70%;
-    padding: 20px;
 }
