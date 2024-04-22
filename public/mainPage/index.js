@@ -47,6 +47,7 @@ async function getAllUserInfo(userId) {
         projectArea.innerHTML = `
         <div class="create-project">
             <div class="project-name white-word">Create project</div>
+            <br>
             <div class="center-image">
                 <img src="./create_project.png" alt="" class="create-project-image">
             </div>
