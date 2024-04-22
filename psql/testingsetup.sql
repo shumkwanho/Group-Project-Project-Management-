@@ -53,7 +53,7 @@ CREATE TABLE "projects"(
     "image" VARCHAR(255),
     "start_date" DATE ,
     "min_duration" BIGINT,
-    "actua;_finish_date" DATE 
+    "actual_finish_date" DATE 
 );
 
 ALTER TABLE
