@@ -3,6 +3,7 @@ import { checkPassword, hashPassword } from "../utils/hash";
 import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
 import { isLoggedIn } from "../utils/guard";
+import { generatePassword, generateRandomNumChar } from "../utils/randomGenerator";
 
 export const authRouter = Router();
 
@@ -10,6 +11,7 @@ authRouter.post("/registration", userRegistration);
 authRouter.post("/check-user-exist", checkUserExist);
 authRouter.post("/username-login", usernameLogin);
 authRouter.post("/email-login", emailLogin);
+authRouter.get("/google-login", googleLogin);
 authRouter.post("/logout", isLoggedIn, logout);
 authRouter.get("/user", isLoggedIn, getUserInfo);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
@@ -27,7 +29,10 @@ async function userRegistration(req: Request, res: Response) {
             [username, email]
         )).rows[0];
 
-        if (checkUniqueQuery) {
+        let isUsernameExist = await checkUsername(username);
+        let isEmailExist = await checkEmail(email);
+
+        if (isUsernameExist || isEmailExist) {
             res.status(400).json({
                 message: "user registration failed",
                 error: "username and/or email already exist(s) in database"
@@ -191,6 +196,77 @@ async function emailLogin(req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
 };
+
+async function googleLogin(req: Request, res: Response) {
+
+    try {
+        const accessToken = req.session?.['grant'].response.access_token;
+        const fetchRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        });
+
+        
+        const result = await fetchRes.json();
+        console.log(result);
+
+        const email = result.email;
+
+        //check if google email already exist in DB
+        let checkUniqueQuery = (await pgClient.query(
+            "SELECT id, username, email FROM users WHERE email = $1",
+            [email]
+        )).rows[0];
+
+
+        if (checkUniqueQuery) {
+
+            //if google email exist in DB, login with google email
+            req.session.userId = checkUniqueQuery.id;
+            req.session.username = checkUniqueQuery.username;
+
+        } else {
+
+            //if google email does not exist in DB, register with google email
+
+            //generate random password
+            let password = generatePassword(10);
+            let hashedPassword = await hashPassword(password);
+
+            //handle generate unique username
+            let gmail = result.email;
+            let [username, domain] = gmail.split("@");
+
+            while (await checkUsername(username)) {
+                username += `_${generateRandomNumChar(1)}`;
+            }
+
+            //create new user account
+            //username: gmail domain + random
+            //password: random 10 chars
+            let userQueryResult = (await pgClient.query(
+                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username;",
+                [username, email, hashedPassword]
+            )).rows[0];
+
+            //login with new user info
+            console.log(userQueryResult.username);
+
+            req.session.userId = userQueryResult.id;
+            req.session.username = userQueryResult.username;
+
+        }
+
+        req.session.save();
+
+        res.redirect("/mainPage")
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 async function logout(req: Request, res: Response) {
     try {
@@ -399,3 +475,21 @@ async function updateProfileImage(req: Request, res: Response) {
 function isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
 };
+
+async function checkUsername (username: string) {
+    let checkUniqueQuery = (await pgClient.query(
+        "SELECT username FROM users WHERE username = $1",
+        [username]
+    )).rows[0];
+
+    return checkUniqueQuery;
+}
+
+async function checkEmail (email: string) {
+    let checkUniqueQuery = (await pgClient.query(
+        "SELECT id FROM users WHERE username = $1",
+        [email]
+    )).rows[0];
+
+    return checkUniqueQuery;
+}
