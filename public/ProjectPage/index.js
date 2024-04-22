@@ -9,6 +9,7 @@ async function getProjectData(id) {
 	return data
 }
 
+
 window.addEventListener("load", async (e) => {
 	const data = await getProjectData(id)
 	let projectData = [{ id: 1, text: data.name, start_date: data.start_date, duration: data.min_duration, parent: 0, open: true }]
