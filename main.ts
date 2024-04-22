@@ -1,29 +1,32 @@
 import express from "express";
 import expressSession from "express-session";
 import dotenv from "dotenv";
+import grant from "grant";
+import path from "path";
+import fs from "fs";
+import http from "http";
+import fetch from "cross-fetch";
 import { projectRouter } from "./Router/projectRouter";
 import { taskRouter } from "./Router/taskRouter";
 import { authRouter } from "./Router/authRouter";
 import { chatRoomRouter } from "./Router/chatRoomRouter";
 import { testLoginRouter } from "./Router/testLoginRouter";
-import path from "path";
-import fs from "fs";
-import http from "http";
 import { Server as SOCKETIO } from "socket.io";
 import { pgClient } from "./utils/pgClient";
 import { isLoggedIn } from "./utils/guard";
 import { getJustSentMessage } from "./Router/chatRoomRouter";
 import { getLastEditMessage } from "./Router/chatRoomRouter";
+import { error } from "console";
+import { mainPageDisplayRouter } from "./Router/mainPageDisplayRouter";
 
+const PORT = 8080
 const app = express()
 
-
-
 const server = new http.Server(app);
-console.log("what server is: ", server);
+// console.log("what server is: ", server);
 
 export const io = new SOCKETIO(server);
-console.log("what io is: ", io);
+// console.log("what io is: ", io);
 
 io.on('connection', function (socket: any) {
 
@@ -63,27 +66,43 @@ io.on('connection', function (socket: any) {
   })
 })
 
+dotenv.config();
 
-
-const PORT = 8080
-dotenv.config()
+if (!process.env.SECRET || !process.env.GOOGLE_CLIENT_SECRET) {
+  throw error("SECRET missing in .env");
+}
 
 app.use(
   expressSession({
-    secret: "project_manager",
+    secret: process.env.SECRET,
     resave: true,
     saveUninitialized: true,
   })
 );
 
+const grantExpress = grant.express({
+  defaults: {
+    origin: "http://localhost:8080",
+    transport: "session",
+    state: true,
+  },
+  google: {
+    key: process.env.GOOGLE_CLIENT_ID || "",
+    secret: process.env.GOOGLE_CLIENT_SECRET || "",
+    scope: ["profile", "email"],
+    callback: "/auth/google-login",
+  },
+});
+
+app.use(grantExpress as express.RequestHandler);
+
 declare module "express-session" {
   interface SessionData {
     userId?: number;
     username?: string;
+    grant?: any;
   }
 }
-
-
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -91,7 +110,7 @@ app.use("/project", projectRouter)
 app.use("/task", taskRouter)
 app.use("/auth", authRouter)
 app.use("/chatroom", chatRoomRouter)
-
+app.use("/mainpage", mainPageDisplayRouter)
 app.use("/testLogin", testLoginRouter)
 
 app.use("/ProjectPage", express.static("public/ProjectPage"))
@@ -108,7 +127,3 @@ app.use(isLoggedIn, express.static("private"))
 server.listen(PORT, () => {
   console.log(`listening to http://localhost:${PORT}`)
 })
-
-// app.listen(PORT, () => {
-//   console.log(`listening to http://localhost:${PORT}`)
-// })

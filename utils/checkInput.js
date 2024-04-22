@@ -26,6 +26,10 @@ export function isEmptyOrSpace(input) {
     return trimmed.length === 0;
 };
 
+
+//Password requirement:
+//must be as least 10 characters long
+//contains: uppercase letters, lowercase letters, numbers and symbols
 export function isPasswordValid(password) {
     if (password.length < 10) {
         return false;

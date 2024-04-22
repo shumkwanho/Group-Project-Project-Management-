@@ -64,7 +64,7 @@ userLogin.addEventListener("submit", async (e) => {
             text: `Welcome Back! ${response.data.username}`,
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "./mainPage/index.html"
+                window.location.href = "./mainPage"
             };
         })
     } else {
@@ -207,7 +207,7 @@ async function runUserRegistration(email, username) {
                     text: `Welcome!! ${response.data.username}`,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "./mainPage/mainPage.html"
+                        window.location.href = "./mainPage"
                     };
                 })
             }
