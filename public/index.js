@@ -71,7 +71,7 @@ userLogin.addEventListener("submit", async (e) => {
             }
         }).then((result) => {
             if (result.dismiss === Swal.DismissReason.timer) {
-                window.location.href = "./mainPage"
+                window.location.href = `./main?id=${response.data.id}`
             };
         })
 
@@ -234,7 +234,7 @@ async function runUserRegistration(email, username) {
                     }
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
-                        window.location.href = "./mainPage"
+                        window.location.href = `./main?id=${response.data.id}`
                     };
                 })
             }

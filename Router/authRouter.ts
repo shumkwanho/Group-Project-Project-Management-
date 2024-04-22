@@ -41,17 +41,16 @@ async function userRegistration(req: Request, res: Response) {
 
             let hashedPassword = await hashPassword(password);
 
-            let userQueryResult = await pgClient.query(
-                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING username, email, registration_date;",
+            let userQueryResult = (await pgClient.query(
+                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username;",
                 [username, email, hashedPassword]
-            );
+            )).rows[0];
 
             res.json({
                 message: "user registration successful",
                 data: {
-                    email: userQueryResult.rows[0].email,
-                    username: userQueryResult.rows[0].username,
-                    created_at: userQueryResult.rows[0].registration_date
+                    id: userQueryResult.id,
+                    username: userQueryResult.username
                 }
             });
         }
@@ -131,7 +130,10 @@ async function usernameLogin(req: Request, res: Response) {
 
                 res.json({
                     message: "login successful",
-                    data: { username: userQuery.username }
+                    data: {
+                        id: userQuery.id,
+                        username: userQuery.username
+                    }
                 });
             };
         }
@@ -187,7 +189,10 @@ async function emailLogin(req: Request, res: Response) {
 
                 res.json({
                     message: "login successful",
-                    data: { username: userQuery.username }
+                    data: { 
+                        id: userQuery.id,
+                        username: userQuery.username
+                    }
                 });
             };
         }
@@ -208,10 +213,9 @@ async function googleLogin(req: Request, res: Response) {
             }
         });
 
-        
-        const result = await fetchRes.json();
-        console.log(result);
+        const result: any = await fetchRes.json();
 
+        console.log(result);
         const email = result.email;
 
         //check if google email already exist in DB
@@ -261,7 +265,7 @@ async function googleLogin(req: Request, res: Response) {
 
         req.session.save();
 
-        res.redirect("/mainPage")
+        res.redirect(`/main?id=${req.session.userId}`)
 
     } catch (error) {
         console.log(error);
