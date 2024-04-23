@@ -1,9 +1,12 @@
+import { isEmptyOrSpace } from "../../utils/checkInput";
+
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
 console.log("current main page user id: ", userId);
 
 const logoutButton = document.querySelector("#logout-button");
 const editProfile = document.querySelector("#edit-profile");
+const updatePassword = document.querySelector("#update-password");
 
 // const project = document.querySelector(".project")
 
@@ -186,7 +189,7 @@ async function runLogout() {
 }
 
 //editProfile button
-//currently only edit username
+//currently only able to edit username
 editProfile.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -195,7 +198,13 @@ editProfile.addEventListener("submit", async (e) => {
     let userInfoRes = await fetch('/auth/user')
     let currentUserInfo = await userInfoRes.json();
 
-    if (username === currentUserInfo.data.username) {
+    if (isEmptyOrSpace(username)){
+        Swal.fire({
+            title: 'Username cannot be blank or only space',
+            showConfirmButton: false
+        });
+
+    } else if (username === currentUserInfo.data.username) {
         Swal.fire({
             title: 'Username unchanged!',
             confirmButtonText: "Pick another name"
@@ -233,4 +242,10 @@ editProfile.addEventListener("submit", async (e) => {
             }
         }
     }
+})
+
+updatePassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    //
 })
