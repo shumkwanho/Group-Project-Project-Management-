@@ -48,3 +48,15 @@ nav div{
     border: 1px solid black;
     border-radius: 5px;
 }
+
+.task-list{
+    display: block;
+}
+
+.task{
+    margin: 10px 10px;
+    height: 30px;
+    font-size: 25px;
+    display: flex;
+    padding-left: 10px;
+}

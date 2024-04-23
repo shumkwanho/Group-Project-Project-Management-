@@ -13,6 +13,7 @@ async function getProjectData(id) {
 
 window.addEventListener("load", async (e) => {
 	try {
+		console.log("hi");
 		const data = await getProjectData(projectId)
 		createGanttChart(data)
 	} catch (error) {
@@ -167,3 +168,11 @@ function createGanttChart(data) {
 		links: taskRelation
 	});
 }
+
+async function displayTaskList(projectId){
+	const res = await fetch(`/task/all/?id=${projectId}`)
+	const tasks = (await res.json()).data.tasks
+	const users = (await res.json())
+}
+
+displayTaskList(projectId).then(console.log)
