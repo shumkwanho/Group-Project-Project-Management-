@@ -35,3 +35,11 @@ VALUES (
     CURRENT_TIMESTAMP,
     CURRENT_DATE
 );
+
+insert into projects (name, min_duration) values ('Redhold', 19);
+insert into projects (name, min_duration) values ('Alpha', 46);
+insert into projects (name, min_duration) values ('Bigtax', 23);
+insert into projects (name, min_duration) values ('Overhold', 35);
+
+insert into user_project_relation (user_id, project_id) values (1, 1);
+insert into user_project_relation (user_id, project_id) values (2, 1);

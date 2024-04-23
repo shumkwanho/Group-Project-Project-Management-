@@ -42,7 +42,7 @@ async function userRegistration(req: Request, res: Response) {
             let hashedPassword = await hashPassword(password);
 
             let userQueryResult = (await pgClient.query(
-                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username;",
+                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username",
                 [username, email, hashedPassword]
             )).rows[0];
 
