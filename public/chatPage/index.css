@@ -1,5 +1,6 @@
 body {
     background-color: #c8d7d6 !important;
+    /* backdrop-filter: brightness(0.5) */
 }
 
 .white-word {
@@ -31,6 +32,7 @@ body {
     width: 100%;
     border-radius: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    z-index: 5;
 }
 
 #member-area {
