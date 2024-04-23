@@ -24,7 +24,7 @@
             <nav id="top-bar" class="row white-word">
                 <div id="and-then-logo" class="col-2">LOGO</div>
                 <div id="notification" class="col-8">Notification / Hello user, welcome back ;]</div>
-                <button type="button" id="logout-btn" class="col-2">logout</button>
+                <button type="button" id="logout-button" class="col-2">logout</button>
             </nav>
 
             <!-- <nav>
@@ -47,7 +47,8 @@
                     </div>
 
                     <div class="user-edit-btn">
-                        <button class="edit-profile">Edit profile</button>
+                        <button type="button" class="edit-profile" data-bs-toggle="modal"
+                            data-bs-target="#editProfileModal">Edit profile</button>
                     </div>
 
                 </section>
@@ -134,12 +135,44 @@
 
     </div>
 
+    <!-- edit button modal -->
+    <div class="modal fade" id="editProfileModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="signInModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2" id="editProfileLabel">Edit Profile</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-5 pt-0">
+                    <form id="edit-profile">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-3" id="username" placeholder="username">
+                            <label for="username">New Username</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control rounded-3 " id="password" placeholder="password">
+                            <label for="password">New Password</label>
+                        </div>
+
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
+                            id="login-button">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="index.js"></script>
+    <script src="../../utils/profileImage/src/profile-image.js"></script>
+
 </body>
 
 </html>

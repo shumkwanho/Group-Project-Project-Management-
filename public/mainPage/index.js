@@ -2,6 +2,8 @@ var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
 console.log("current main page user id: ", userId);
 
+const logoutButton = document.querySelector("#logout-button");
+
 // const project = document.querySelector(".project")
 
 // project.addEventListener("click",(e)=>{
@@ -24,7 +26,7 @@ async function getAllUserInfo(userId) {
     let finishedProjects = response.finishedProjects;
 
     let notification = document.querySelector("#notification")
-    let personalArea = document.querySelector(".personal-area")
+    let userContent = document.querySelector(".user-content")
     let projectArea = document.querySelector(".project-area")
     let completedProjectArea = document.querySelector(".completed-project-area")
 
@@ -136,23 +138,54 @@ async function getAllUserInfo(userId) {
             }
         }
 
+        //if no profile image was uploaded, use default
+        let imageElm = "";
+        if (userInfo.profile_image == null) {
+            let defaultProfileImage = new ProfileImage(userInfo.username)
+            imageElm = defaultProfileImage.svg();
+        } else {
+            imageElm = `<img src="/profile-image/${userInfo.profile_image}" alt="" id="user-profile">`
+        }
 
-        personalArea.innerHTML = `
+        userContent.innerHTML = `
         <div class="user-content">
             <div class="image-cropper">
-                <img src="/profile-image/${userInfo.profile_image}" alt="" id="user-profile">
+            ${imageElm}
             </div>
             <div class="username">${userInfo.username}</div>
             <div class="project-count">Current projects : ${projectCount}</div>
             <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>
-        </div>
-
-        <div class="user-edit-btn">
-            <button class="edit-profile">Edit profile</button>
         </div>
         `
 
 
     }
 
+}
+
+logoutButton.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+        title: "Do you want to logout",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            runLogout();
+        }
+    });
+
+})
+
+async function runLogout() {
+    let res = await fetch ("/auth/logout", {
+        method: "POST"
+    })
+
+    if (res.ok) {
+        window.location.href = '/';
+    }
 }
