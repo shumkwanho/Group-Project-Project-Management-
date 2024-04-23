@@ -42,7 +42,8 @@ async function getMessagesDate(projectId: any) {
     SELECT to_char(created_at, 'YYYY-MM-DD') AS created_date  
     FROM messages 
     WHERE project_id = $1 
-    GROUP BY created_date;`, [projectId])).rows
+    GROUP BY created_date 
+    ORDER BY created_date ASC;;`, [projectId])).rows
 }
 
 async function getAllMessagesFrompgClient(projectId: any) {
@@ -100,7 +101,7 @@ async function saveMessageTopgClient(userId: number, projectId: number, content:
         user_id, project_id, content, created_at )
         VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
         RETURNING id;`, [userId, projectId, content])).rows[0].id
-}
+} 
 
 async function pickJustSentMessage(messageId: number) {
     return (await pgClient.query(
