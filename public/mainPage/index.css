@@ -23,7 +23,7 @@ body {
 }
 
 #main-page-area {
-    
+
     display: flex;
     flex-direction: column;
     height: 85%;
@@ -33,7 +33,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    
+
 }
 
 
@@ -52,7 +52,7 @@ body {
     border-radius: 30px;
     padding: 0 15px;
     margin-bottom: 20px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
 
@@ -69,7 +69,7 @@ body {
     border-radius: 30px;
     padding: 15px 0;
     overflow: hidden;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
 
@@ -90,6 +90,12 @@ body {
 
 .personal-area img {
     max-width: 100%;
+}
+
+.user-content .username {
+    margin: 15px 0;
+    font-size: 25px;
+    font-weight: 600;
 }
 
 .user-content .image-cropper {
@@ -130,6 +136,11 @@ body {
     width: calc(100% - 500px);
 }
 
+.project-area, .completed-project-area {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
 
 
@@ -144,14 +155,19 @@ body {
     align-content: center;
     justify-content: center;
     font-weight: 600;
-    background-color: rgb(184, 211, 210);
+    background-color: #c9cfcf;
     border: .5px solid rgb(215, 215, 215);
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
     min-height: 250px;
     max-height: 250px;
+    cursor: pointer;
 }
+
+.create-project:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.15);
+  }
 
 .center-image {
     display: flex;
@@ -170,12 +186,17 @@ body {
     position: relative;
     box-sizing: content-box;
     break-inside: avoid;
-    background-color: rgb(124, 124, 124);
+    background-color: #b9cde1;
     border: .5px solid rgb(215, 215, 215);
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
+    cursor: pointer;
 }
+
+.project:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.15);
+  }
 
 .project-name {
     display: flex;
@@ -205,7 +226,7 @@ body {
 .completed-project-area {
     display: flex;
     flex-direction: column;
-    border-left: 1px solid rgb(124,124, 124);
+    border-left: 1px solid rgb(124, 124, 124);
     padding-left: 15px;
     overflow: auto;
     min-width: 250px;
@@ -218,11 +239,17 @@ body {
     flex-direction: column;
     min-height: 150px;
     margin-bottom: 10px;
-    background-color: rgb(124, 124, 124);
+    background-color: #cad0d0;
+    color: #ffffff;
     border: .5px solid rgb(215, 215, 215);
     border-radius: 20px;
     padding: 15px;
+    cursor: pointer;
 }
+
+.completed-project:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.15);
+  }
 
 /* nav{
     display: flex;

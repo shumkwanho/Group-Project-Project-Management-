@@ -12,10 +12,16 @@ projectRouter.put("/", updateProject)
 projectRouter.delete("/", deleteProject)
 projectRouter.post("/init", initProject)
 
+projectRouter.get("/get-users", inspectProjectUser)
+projectRouter.post("/add-user", addProjectUser);
+projectRouter.delete("/remove-user", removeProjectUser);
+
 // request: project id
 async function inspectProject(req: Request, res: Response) {
     try {        
         const {id} = req.query
+        console.log(id);
+        
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
         
         if (targetProject == undefined) {
@@ -165,8 +171,6 @@ async function deleteProject(req: Request, res: Response) {
     }
 }
 
-//******bill testing ******/
-
 async function initProject(req: Request, res: Response) {
     try {
         const newProject = (await pgClient.query(`insert into projects (name,start_date) values ($1,$2) returning *`,[req.body.name , req.body.start_date])).rows[0]
@@ -198,8 +202,118 @@ async function initProject(req: Request, res: Response) {
         res.status(500).json({ message: "Internal Server Error" })
     }
   
-    
 }
 
+//can only perform in project page (get project id from query)
+//response: array of user id in number
+async function inspectProjectUser (req: Request, res: Response) {
+    try {
+        const project_id = req.query.id;
 
+        //check existing users from project
+        let checkQuery = (await pgClient.query(
+            "SELECT user_id FROM user_project_relation WHERE project_id = $1",
+            [project_id]
+        )).rows;
 
+        //gather users' info from users table
+        let users = [];
+
+        for (let obj of checkQuery) {
+            let userQuery = (await pgClient.query(
+                "SELECT id, username, profile_image FROM users WHERE id = $1",
+                [obj.user_id]
+            )).rows[0];
+
+            users.push(userQuery)
+        }
+
+        res.json({
+            message: "get users from project successful",
+            data: users
+        });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+//assign one new user to a project
+//can only perform in project page (get project id from query)
+//request: user id
+async function addProjectUser(req: Request, res: Response) {
+    try {
+        const project_id = req.query.id;
+        const user_id = req.body.id;
+
+        //check if relation already exist
+        let checkQuery = (await pgClient.query(
+            "SELECT id FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
+            [user_id, project_id]
+        )).rows[0];
+
+        if (checkQuery !== undefined) {
+            //user project relation already exists
+            res.status(400).json({
+                message: "add new user to project failed",
+                error: "user already assigned to project"
+            });
+
+        } else {
+            //temporary all permission level are set to 0
+            const permission_level = 0;
+
+            let relationQueryResult = (await pgClient.query(
+                "INSERT INTO user_project_relation (user_id, project_id, permission_level) VALUES ($1, $2, $3) RETURNING id",
+                [user_id, project_id, permission_level]
+            )).rows[0];
+
+            res.json({
+                message: "add new user to project successful",
+                data: { user_project_relation_id: relationQueryResult.id }
+            })
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    };
+
+}
+
+//remove existing user from a project
+//can only perform in project page (get project id from query)
+//request: user id
+async function removeProjectUser (req: Request, res: Response) {
+    try {
+        const project_id = req.query.id;
+        const user_id = req.body.id;
+
+        //check if relation exists
+        let checkQuery = (await pgClient.query(
+            "SELECT id FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
+            [user_id, project_id]
+        )).rows[0];
+
+        if (checkQuery == undefined) {
+
+            res.status(400).json({
+                message: "remove user from project failed",
+                error: "user is not assigned to project"
+            });
+
+        } else {
+            
+            let id = checkQuery.id;
+
+            await pgClient.query( "DELETE FROM user_project_relation WHERE id = $1", [id] )
+
+            res.json({ message: "remove user from project successful" });
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    };
+}

@@ -124,7 +124,7 @@ async function getAllMessages(projectId) {
     let allMessages = response.allMessages;
     let allMembers = response.groupMembers;
     let edited
-    console.log("edited? : ", edited);
+    // console.log("edited? : ", edited);
 
     // console.log(allMessagesDate);
 

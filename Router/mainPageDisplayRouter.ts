@@ -45,7 +45,7 @@ async function getUserInfo(userId: any) {
 
 async function getCurrentProjects(userId: any) {
     return (await pgClient.query(`
-    SELECT user_id, project_id, projects.name, projects.image, permission_level  
+    SELECT user_id, project_id, projects.name, projects.image, permission_level, min_duration 
         FROM user_project_relation 
         INNER JOIN projects 
         ON project_id = projects.id

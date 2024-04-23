@@ -45,7 +45,7 @@ async function getAllUserInfo(userId) {
 
 
         projectArea.innerHTML = `
-        <div class="create-project" onclick="location='http://localhost:8080/projectPage/'">
+        <div class="create-project" onclick="location='http://localhost:8080/init-project'">
             <div class="project-name white-word">Create project</div>
             <br>
             <div class="center-image">
@@ -59,7 +59,7 @@ async function getAllUserInfo(userId) {
             for await (let eachProject of projectInfo) {
                 projectArea.innerHTML += `
             <section class="project" id="projectId-${eachProject.project_id}" 
-            onclick="location='http://localhost:8080/projectPage/?id=${eachProject.project_id}'">
+            onclick="location='http://localhost:8080/project/?id=${eachProject.project_id}'">
                 ${eachProject.image ? `
                 <img src="/profile-image/${eachProject.image}" alt="" class="project-image">
                 `
@@ -67,46 +67,68 @@ async function getAllUserInfo(userId) {
                         ""
                     }
                 <button class="edit-project-image">btn</button>
-                <div class="project-name">${eachProject.name}</div>
+                <div class="project-name white-word">${eachProject.name}</div>
             </section>
         `
+
+                if (Number(eachProject.min_duration) <= 10) {
+                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "200px" ; 
+                } else if (Number(eachProject.min_duration) > 10 && Number(eachProject.min_duration) <= 30) {
+                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "300px" ; 
+                } else if (Number(eachProject.min_duration) > 30 && Number(eachProject.min_duration) <= 60) {
+                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "400px" ; 
+                } else {
+                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "500px" ;
+                }
                 projectCount++
             }
         }
 
 
 
-        if (overrunTaskInfo) {
-            for await (let eachOverrunTask of overrunTaskInfo) {
-                document.querySelector(`#projectId-${eachOverrunTask.project_id}`).innerHTML += `
-                <div class="current-task overrun-task">Current task: ${eachOverrunTask.name}</div>
+
+
+        if (currentTaskInfo) {
+            for await (let eachCurrentTask of currentTaskInfo) {
+                document.querySelector(`#projectId-${eachCurrentTask.project_id}`).innerHTML += `
+                <div class="current-task white-word">Current task: ${eachCurrentTask.name}</div>
                 `
+
+                document.querySelector(`#projectId-${eachCurrentTask.project_id}`).style.background = "#b8d3d2"
             }
         }
 
         if (meetDeadlineTaskInfo) {
             for await (let eachDeadlineTask of meetDeadlineTaskInfo) {
                 document.querySelector(`#projectId-${eachDeadlineTask.project_id}`).innerHTML += `
-                <div class="current-task overrun-task">Current task: ${eachDeadlineTask.name}</div>
+                <div class="current-task deadline-task white-word">Current task: ${eachDeadlineTask.name}</div>
                 `
+
+                document.querySelector(`#projectId-${eachDeadlineTask.project_id}`).style.background = "#e7cd77";
             }
         }
 
-        if (currentTaskInfo) {
-            for await (let eachCurrentTask of currentTaskInfo) {
-                document.querySelector(`#projectId-${eachCurrentTask.project_id}`).innerHTML += `
-                <div class="current-task overrun-task">Current task: ${eachCurrentTask.name}</div>
+        if (overrunTaskInfo) {
+            for await (let eachOverrunTask of overrunTaskInfo) {
+                document.querySelector(`#projectId-${eachOverrunTask.project_id}`).innerHTML += `
+                <div class="current-task overrun-task white-word">Current task: ${eachOverrunTask.name}</div>
                 `
+
+                document.querySelector(`#projectId-${eachOverrunTask.project_id}`).style.background = "#b4454c";
             }
         }
+
+
+
+
 
 
         if (finishedProjects) {
             for await (let eachfinishedProject of finishedProjects) {
                 completedProjectArea.innerHTML += `
-                <div class="completed-project">
-                    <div class="completed-project-name">${eachfinishedProject.name}</div>
-                    <div class="completed-project-date">${eachfinishedProject.actual_finish_date}</div>
+                <div class="completed-project" onclick="location='http://localhost:8080/project/?id=${eachfinishedProject.project_id}'">
+                    <div class="completed-project-name white-word">${eachfinishedProject.name}</div>
+                    <div class="completed-project-date white-word">${eachfinishedProject.actual_finish_date}</div>
                 </div>
                 `
 
