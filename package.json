@@ -6,8 +6,9 @@
   "scripts": {
     "start": "ts-node main.ts",
     "dev": "ts-node-dev main.ts",
-    "database": "psql -f ./psql/testingsetup.sql",
-    "bill_data": "psql -f ./psql/testingsetup.sql && psql -f ./psql/bill_seed.sql"
+    "database": "psql -f ./psql/testingSetup.sql",
+    "seed": "psql -f ./psql/seed.sql",
+    "bill_data": "psql -f ./psql/testingSetup.sql && psql -f ./psql/billSeed.sql"
   },
   "repository": {
     "type": "git",
