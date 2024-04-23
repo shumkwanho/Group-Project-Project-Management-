@@ -4,7 +4,7 @@ var searchParams = new URLSearchParams(window.location.search);
 const projectId = searchParams.get("id");
 
 async function getProjectData(id) {
-	const res = await fetch(`/project/?id=${id}`)
+	const res = await fetch(`/projectRou/?id=${id}`)
 
 	const data = (await res.json()).data
 	return data

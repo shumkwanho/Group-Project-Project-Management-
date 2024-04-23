@@ -105,14 +105,14 @@ declare module "express-session" {
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use("/project", projectRouter)
+app.use("/projectRou", projectRouter)
 app.use("/task", taskRouter)
 app.use("/auth", authRouter)
 app.use("/chatroom", chatRoomRouter)
 app.use("/mainpage", mainPageDisplayRouter)
 app.use("/testLogin", testLoginRouter)
 
-app.use("/ProjectPage", express.static("public/ProjectPage"))
+app.use("/project", express.static("public/ProjectPage"))
 app.use("/chat", express.static("public/chatPage"))
 app.use("/main", express.static("public/mainPage"))
 // app.use('/chat', express.static(path.join(__dirname, 'chat')))
@@ -120,8 +120,8 @@ app.use("/main", express.static("public/mainPage"))
 app.use(express.static("uploads"))
 app.use(express.static("public"))
 app.use("/utils", express.static("utils"))
-app.use(isLoggedIn, express.static("private"))
-
+app.use("/init-project", express.static("private"))
+// isLoggedIn, 
 
 server.listen(PORT, () => {
   console.log(`listening to http://localhost:${PORT}`)
