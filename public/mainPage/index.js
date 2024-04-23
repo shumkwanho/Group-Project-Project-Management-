@@ -1,8 +1,12 @@
+import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
+
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
 console.log("current main page user id: ", userId);
 
 const logoutButton = document.querySelector("#logout-button");
+const editProfile = document.querySelector("#edit-profile");
+const updatePassword = document.querySelector("#update-password");
 
 // const project = document.querySelector(".project")
 
@@ -30,6 +34,8 @@ async function getAllUserInfo(userId) {
     let projectArea = document.querySelector(".project-area")
     let completedProjectArea = document.querySelector(".completed-project-area")
 
+    let newUsernameInput = document.querySelector("#new-username")
+
     let projectCount = 0
     let finishProjectCount = 0
 
@@ -45,7 +51,6 @@ async function getAllUserInfo(userId) {
         `
             }`
 
-
         projectArea.innerHTML = `
         <div class="create-project" onclick="location='http://localhost:8080/init-project'">
             <div class="project-name white-word">Create project</div>
@@ -55,7 +60,6 @@ async function getAllUserInfo(userId) {
             </div>
         </div>
         `
-
 
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
@@ -85,10 +89,6 @@ async function getAllUserInfo(userId) {
                 projectCount++
             }
         }
-
-
-
-
 
         if (currentTaskInfo) {
             for await (let eachCurrentTask of currentTaskInfo) {
@@ -120,11 +120,6 @@ async function getAllUserInfo(userId) {
             }
         }
 
-
-
-
-
-
         if (finishedProjects) {
             for await (let eachfinishedProject of finishedProjects) {
                 completedProjectArea.innerHTML += `
@@ -141,7 +136,10 @@ async function getAllUserInfo(userId) {
         //if no profile image was uploaded, use default
         let imageElm = "";
         if (userInfo.profile_image == null) {
-            let defaultProfileImage = new ProfileImage(userInfo.username)
+            let defaultProfileImage = new ProfileImage(
+                userInfo.username, {
+                    backgroundColor: "black",
+                })
             imageElm = defaultProfileImage.svg();
         } else {
             imageElm = `<img src="/profile-image/${userInfo.profile_image}" alt="" id="user-profile">`
@@ -157,12 +155,12 @@ async function getAllUserInfo(userId) {
             <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>
         </div>
         `
-
-
+        newUsernameInput.setAttribute("value", userInfo.username);
     }
 
 }
 
+//logout button
 logoutButton.addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -189,3 +187,118 @@ async function runLogout() {
         window.location.href = '/';
     }
 }
+
+//editProfile button
+//currently only able to edit username
+editProfile.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.querySelector("#new-username").value;
+
+    let userInfoRes = await fetch('/auth/user')
+    let currentUserInfo = await userInfoRes.json();
+
+    if (isEmptyOrSpace(username)){
+        Swal.fire({
+            title: 'Username cannot be blank or only space',
+            showConfirmButton: false
+        });
+
+    } else if (username === currentUserInfo.data.username) {
+        Swal.fire({
+            title: 'Username unchanged!',
+            confirmButtonText: "Pick another name"
+        });
+
+    } else {
+        let res = await fetch("/auth/username-update", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username })
+        });
+
+        let result = await res.json();
+
+        if (res.ok) {
+
+            Swal.fire({
+                title: 'Username update successful!',
+                confirmButtonText: "Continue"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                    getAllUserInfo(userId)
+                }
+            });
+
+        } else {
+            if (result.error == "newUsernameExist") {
+                Swal.fire({
+                    title: 'Username already taken!',
+                    confirmButtonText: "Pick another name"
+                });
+            }
+        }
+    }
+})
+
+updatePassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    //check if both passwords are the same
+    const password = document.querySelector("#password1").value;
+    const passwordConfirm = document.querySelector("#password2").value;
+
+    console.log(password)
+    console.log(passwordConfirm)
+
+    if (passwordConfirm != password) {
+
+        Swal.fire({
+            title: 'Invalid password input',
+            text: 'Please re-enter the same password you entered',
+            showConfirmButton: false,
+        });
+
+    } else {
+
+        if (!isPasswordValid(password)) {
+
+            Swal.fire({
+                title: 'Invalid password input',
+                text: 'Password must be as least 10 characters long, and a combination of uppercase letters, lowercase letters, numbers and symbol',
+                showConfirmButton: false,
+            });
+
+        } else { 
+
+            let res = await fetch ("/auth/password-update", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ password })
+            });
+
+            let result = await res.json();
+
+            if (res.ok) {
+                console.log(result);
+            } else {
+                if (result.error == "sameAsCurrentPassword") {
+
+                    Swal.fire({
+                        title: 'Password unchanged',
+                        text: 'New password is same as current password',
+                        showConfirmButton: false,
+                    });
+
+                } else {
+                    console.log(result.error);
+                }
+            }
+        }
+    }
+})

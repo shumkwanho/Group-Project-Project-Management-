@@ -34,7 +34,7 @@ async function getGroupMembers(projectId: any) {
     profile_image
     FROM users INNER JOIN user_project_relation
     ON users.id = user_id
-    WHERE project_id = $1;`,[projectId])).rows
+    WHERE project_id = $1;`, [projectId])).rows
 }
 
 async function getMessagesDate(projectId: any) {
@@ -42,7 +42,8 @@ async function getMessagesDate(projectId: any) {
     SELECT to_char(created_at, 'YYYY-MM-DD') AS created_date  
     FROM messages 
     WHERE project_id = $1 
-    GROUP BY created_date;`, [projectId])).rows
+    GROUP BY created_date 
+    ORDER BY created_date ASC;;`, [projectId])).rows
 }
 
 async function getAllMessagesFrompgClient(projectId: any) {
@@ -64,15 +65,15 @@ async function getAllMessagesFrompgClient(projectId: any) {
 
 async function showChatroom(req: Request, res: Response) {
     let { projectId } = req.query;
-    console.log("client got messages info by project id: ",projectId);
-    
+    console.log("client got messages info by project id: ", projectId);
+
     let userId = req.session.userId;
 
     try {
         let allMessagesDate = await getMessagesDate(projectId);
         let groupMembers = await getGroupMembers(projectId);
         let allMessages = await getAllMessagesFrompgClient(projectId);
-    
+
 
         res.status(200).json({
             userId: userId,
@@ -82,7 +83,7 @@ async function showChatroom(req: Request, res: Response) {
             allMessages: allMessages
         })
 
-        
+
         // console.log(allMessages)
     } catch (err) {
         serverError(err, res);
@@ -154,15 +155,19 @@ async function editMyMessage(req: Request, res: Response) {
     let { messageId, content } = req.body;
     let userId: any = req.session.userId;
 
-    let justEditedMessage = await changeMessageTopgClient(messageId, content);
+    try {
+        let justEditedMessage = await changeMessageTopgClient(messageId, content);
 
-    console.log(justEditedMessage);
+        console.log(justEditedMessage);
 
-    res.status(200).json({
-        userId: userId,
-        message: "Your message has been edited.",
-        date: justEditedMessage
-    })
+        res.status(200).json({
+            userId: userId,
+            message: "Your message has been edited.",
+            date: justEditedMessage
+        })
+    } catch (err) {
+        serverError(err, res);
+    }
 }
 
 
@@ -187,10 +192,10 @@ export async function getJustSentMessage(projectId: number) {
       WHERE project_id = $1
       ORDER BY created_at DESC 
       LIMIT 1;`, [projectId])).rows[0]
-  }
+}
 
 
-  export async function getLastEditMessage(messageId: number) {
+export async function getLastEditMessage(messageId: number) {
     return (await pgClient.query(`
     SELECT project_id, 
       messages.id as messages_id, 
@@ -204,4 +209,4 @@ export async function getJustSentMessage(projectId: number) {
       FROM users INNER JOIN messages
       ON users.id = user_id
       WHERE messages.id = $1;`, [messageId])).rows[0]
-  }
+}
