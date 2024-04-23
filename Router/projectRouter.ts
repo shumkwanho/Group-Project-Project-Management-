@@ -6,10 +6,10 @@ import { getMinDuration } from "../utils/MinDuration";
 export const projectRouter = Router()
 
 projectRouter.get("/", inspectProject)
+projectRouter.get("/user_relation", getUserTaskRelation)
 projectRouter.post("/", createProject)
 projectRouter.put("/", updateProject)
 projectRouter.delete("/", deleteProject)
-
 projectRouter.post("/init", initProject)
 
 projectRouter.get("/get-users", inspectProjectUser)
@@ -20,13 +20,15 @@ projectRouter.delete("/remove-user", removeProjectUser);
 async function inspectProject(req: Request, res: Response) {
     try {        
         const {id} = req.query
+        console.log(id);
+        
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
         
         if (targetProject == undefined) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY tasks.id`, [id])).rows
+        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name, description,pre_req_fulfilled, tasks.start_date,duration,tasks.actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY tasks.id`, [id])).rows
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
 
 
@@ -48,6 +50,10 @@ async function inspectProject(req: Request, res: Response) {
 
 }
 
+
+async function getUserTaskRelation(req: Request, res: Response) {
+    const tasks = await pgClient.query(`select `)
+}
 
 
 // request:project name,project photo -> create new project and project id  (if photo = null, dont pass into backendside

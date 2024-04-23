@@ -1,6 +1,6 @@
 console.log("hello project creation");
 
-import { getFinishDate } from "../../utils/getFinishDate.js";
+import { getFinishDate } from "../utils/getFinishDate.js";
 
 let promptCount = 1; //tracking the current prompt 
 let taskCount = []; //tracking how many task information to be filled
@@ -311,7 +311,7 @@ function printTaskNameCheckboxes() {
 async function projectInit(projJSON) {
     addPreReq(projJSON);
 
-    const res = await fetch("/project/init", {
+    const res = await fetch("/projectRou/init", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
