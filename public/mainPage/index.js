@@ -45,7 +45,7 @@ async function getAllUserInfo(userId) {
 
 
         projectArea.innerHTML = `
-        <div class="create-project">
+        <div class="create-project" onclick="location='http://localhost:8080/projectPage/'">
             <div class="project-name white-word">Create project</div>
             <br>
             <div class="center-image">
@@ -58,16 +58,17 @@ async function getAllUserInfo(userId) {
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
                 projectArea.innerHTML += `
-        <div class="project" id="projectId-${eachProject.project_id}">
-            ${eachProject.image ? `
-            <img src="/profile-image/${eachProject.image}" alt="" class="project-image">
-            `
+            <section class="project" id="projectId-${eachProject.project_id}" 
+            onclick="location='http://localhost:8080/projectPage/?id=${eachProject.project_id}'">
+                ${eachProject.image ? `
+                <img src="/profile-image/${eachProject.image}" alt="" class="project-image">
+                `
                         :
                         ""
                     }
-            <button class="edit-project-image">btn</button>
-            <div class="project-name">${eachProject.name}</div>
-        </div>
+                <button class="edit-project-image">btn</button>
+                <div class="project-name">${eachProject.name}</div>
+            </section>
         `
                 projectCount++
             }
