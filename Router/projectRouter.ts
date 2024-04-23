@@ -18,12 +18,12 @@ projectRouter.delete("/remove-user", removeProjectUser);
 
 // request: project id
 async function inspectProject(req: Request, res: Response) {
-    try {        
-        const {id} = req.query
+    try {
+        const { id } = req.query
         console.log(id);
-        
+
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
-        
+
         if (targetProject == undefined) {
             res.status(400).json({ message: "Cannot find target project" })
             return
@@ -32,10 +32,11 @@ async function inspectProject(req: Request, res: Response) {
         const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
 
 
-
         for (let task of tasksOfTargetProject) {
+            const userTaskRelation = (await pgClient.query(`select username,users.id as userID,profile_image from tasks join user_task_relation on tasks.id = task_id join user_project_relation on user_project_relation.id = user_project_relation_id join users on user_id = users.id where tasks.id = $1;`,[task.id])).rows
             let taskRelation = await getTaskRelation(task.id!.toString())
             task.relation = taskRelation
+            task.userRelation = userTaskRelation
         }
 
         targetProject.tasks = tasksOfTargetProject
@@ -173,40 +174,40 @@ async function deleteProject(req: Request, res: Response) {
 
 async function initProject(req: Request, res: Response) {
     try {
-        const newProject = (await pgClient.query(`insert into projects (name,start_date) values ($1,$2) returning *`,[req.body.name , req.body.start_date])).rows[0]
+        const newProject = (await pgClient.query(`insert into projects (name,start_date) values ($1,$2) returning *`, [req.body.name, req.body.start_date])).rows[0]
         let user = req.session.id
-        await pgClient.query(`insert into user_project_relation (user_id,project_id) values ($1,$2)`,[user,newProject.id])
+        await pgClient.query(`insert into user_project_relation (user_id,project_id) values ($1,$2)`, [user, newProject.id])
         let task = req.body.tasks
         let rootId
-        for (let i = 0 ; i <= Object.keys(task).length ; i++ ){
+        for (let i = 0; i <= Object.keys(task).length; i++) {
             if (i == 0) {
-                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration) values ($1,'root task',$2, 0) returning *`,[newProject.id, req.body.start_date])).rows[0].id
+                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration) values ($1,'root task',$2, 0) returning *`, [newProject.id, req.body.start_date])).rows[0].id
                 continue
             }
-            const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`,[newProject.id,task[i].name , task[i].start_date,task[i].duration])).rows[0].id
-            
-            if (task[i].pre_req.length > 0){
-                for (let relation of task[i].pre_req){
-                    await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`,[taskId,rootId + relation])
-                }                
-            }else{
-                await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`,[rootId,taskId])
+            const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`, [newProject.id, task[i].name, task[i].start_date, task[i].duration])).rows[0].id
+
+            if (task[i].pre_req.length > 0) {
+                for (let relation of task[i].pre_req) {
+                    await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`, [taskId, rootId + relation])
+                }
+            } else {
+                await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`, [rootId, taskId])
             }
         }
-        await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[rootId+1,rootId])
-        const addDurationIntoProj = (await pgClient.query(`update projects set min_duration = $1 where id = $2 returning *`,[await getMinDuration(rootId),newProject.id])).rows[0]
+        await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`, [rootId + 1, rootId])
+        const addDurationIntoProj = (await pgClient.query(`update projects set min_duration = $1 where id = $2 returning *`, [await getMinDuration(rootId), newProject.id])).rows[0]
 
-        res.json({messgae:"init project sucessfully", data:addDurationIntoProj})
+        res.json({ messgae: "init project sucessfully", data: addDurationIntoProj })
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" })
     }
-  
+
 }
 
 //can only perform in project page (get project id from query)
 //response: array of user id in number
-async function inspectProjectUser (req: Request, res: Response) {
+async function inspectProjectUser(req: Request, res: Response) {
     try {
         const project_id = req.query.id;
 
@@ -232,7 +233,7 @@ async function inspectProjectUser (req: Request, res: Response) {
             message: "get users from project successful",
             data: users
         });
-        
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -285,7 +286,7 @@ async function addProjectUser(req: Request, res: Response) {
 //remove existing user from a project
 //can only perform in project page (get project id from query)
 //request: user id
-async function removeProjectUser (req: Request, res: Response) {
+async function removeProjectUser(req: Request, res: Response) {
     try {
         const project_id = req.query.id;
         const user_id = req.body.id;
@@ -304,14 +305,14 @@ async function removeProjectUser (req: Request, res: Response) {
             });
 
         } else {
-            
+
             let id = checkQuery.id;
 
-            await pgClient.query( "DELETE FROM user_project_relation WHERE id = $1", [id] )
+            await pgClient.query("DELETE FROM user_project_relation WHERE id = $1", [id])
 
             res.json({ message: "remove user from project successful" });
         }
-        
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });

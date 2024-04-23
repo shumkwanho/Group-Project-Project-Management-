@@ -21,6 +21,7 @@ CREATE TABLE "tasks"(
     "start_date" DATE,
     "duration" BIGINT,
     "actual_finish_date" DATE
+    "user_id" BIGINT
 );
 
 ALTER TABLE
@@ -105,5 +106,7 @@ ALTER TABLE
     "tasks" ADD CONSTRAINT "tasks_project_id_foreign" FOREIGN KEY("project_id") REFERENCES "projects"("id");
 ALTER TABLE
     "user_task_relation" ADD CONSTRAINT "user_task_relation_task_id_foreign" FOREIGN KEY("task_id") REFERENCES "tasks"("id");
+ALTER TABLE
+    "tasks" ADD CONSTRAINT "task_user_id_foreign" FOREIGN KEY("user_id") REFERENCES "users"("id");
 
 \c project_manager
