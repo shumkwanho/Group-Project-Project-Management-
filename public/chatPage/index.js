@@ -221,6 +221,7 @@ document.querySelector("#sendMessage").addEventListener("submit", async (event) 
 
 async function sendMessage(projectId) {
     const content = await document.querySelector(".text-content").value;
+    
 
     if (content.trim() != "") {
         let res = await fetch('/chatroom', {
@@ -239,6 +240,7 @@ async function sendMessage(projectId) {
             console.log("send message success");
             document.querySelector(".text-content").value = "";
             socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
+            
         }
     }
 }
@@ -278,6 +280,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
         }
         `
     // document.querySelector("#text-content").value = "";
+    messagesBox.scrollTop = messagesBox.scrollHeight - messagesBox.clientHeight
 })
 
 
