@@ -70,7 +70,10 @@ userLogin.addEventListener("submit", async (e) => {
                 Swal.showLoading();
             }
         }).then((result) => {
+            //login successful
+            //to be done: want to close modal
             if (result.dismiss === Swal.DismissReason.timer) {
+                window.location.reload();
                 window.location.href = `./main?id=${response.data.id}`
             };
         })
@@ -233,7 +236,10 @@ async function runUserRegistration(email, username) {
                         Swal.showLoading();
                     }
                 }).then((result) => {
+                    //login successful
+                    //to be done: want to close modal
                     if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location.reload();
                         window.location.href = `./main?id=${response.data.id}`
                     };
                 })
