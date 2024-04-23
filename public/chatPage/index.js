@@ -153,11 +153,10 @@ async function getAllMessages(projectId) {
 
 
         let messagesBox = document.querySelector("#message-box")
-
         // console.log(allMessages);
 
         for (let eachMessageDate of allMessagesDate) {
-
+            // messagesBox.innerHTML += "<div>123"
             messagesBox.innerHTML +=
                 `<div class="displayCreatedDate"><div>${eachMessageDate.created_date}</div></div>`
 
@@ -196,7 +195,13 @@ async function getAllMessages(projectId) {
                         }`
                 }
             }
+            // messagesBox.innerHTML += "</div>"
+
         }
+        messagesBox.scrollTop = messagesBox.scrollHeight - messagesBox.clientHeight
+        console.log(messagesBox.scrollTop)
+        // messagesBox.scrollTop =0
+
         socket.emit('join', projectId);
     }
 }

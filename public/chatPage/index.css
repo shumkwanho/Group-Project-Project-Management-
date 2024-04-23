@@ -19,7 +19,7 @@ body {
     transform: translate(-50%, -50%);
     height: 60%;
     width: 55%;
-    min-width: 600px;
+    min-width: 700px;
 }
 
 #memberAndMessages {
@@ -49,6 +49,11 @@ body {
     min-width: 150px;
     height: auto;
     border-radius: 15px;
+    overflow-y: auto;
+}
+
+#member-area::-webkit-scrollbar {
+    display: none;
 }
 
 #member-area>.list-title {
@@ -152,20 +157,22 @@ body {
 }
 
 #message-box {
-    /* background-color: rgb(255, 255, 255); */
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 95%;
-    /* padding: 5px 5px 0 5px; */
-    margin-bottom: 10px;
-    overflow-y: auto;
+       /* background-color: rgb(255, 255, 255); */
+       position: relative;
+       /* display: flex; */
+       justify-content: flex-end;
+       height: auto;
+       width: auto;
+       /* padding: 5px 5px 0 5px; */
+       margin-bottom: 10px;
+       /* overflow-y: auto; */
+       overflow-y: auto;
+   
 }
 
-/* #message-box::-webkit-scrollbar {
+#message-box::-webkit-scrollbar {
     display: none;
-} */
+}
 
 
 
@@ -213,6 +220,7 @@ body {
 }
 
 .message>.content {
+    max-width: 350px;
     padding: 2px 10px 2px 20px;
     border-radius: 13px 13px 13px 2px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px -1px, rgba(0, 0, 0, 0.06) 0px 1px 3px -1px;
@@ -221,6 +229,7 @@ body {
     /* background-color: #454545;
     color: #ffffff; */
     margin-right: 5px;
+    word-wrap: break-word;
 }
 
 .myMessage>.content {
@@ -231,6 +240,7 @@ body {
     background-color: #a1d9d7;
     color: #ffffff;
     margin-right: 5px;
+    word-wrap: break-word;
 }
 
 .message>.create-time,
