@@ -174,7 +174,9 @@ async function getAllMessages(projectId) {
                                 `
                 <span class="edited">edited</span>
                 ` : ""}
-                <button class="edit-content" onclick="editMessage(${eachMessage.messages_id},'${eachMessage.content}')">Edit</button>
+                <button class="edit-content" onclick="editMessage(${eachMessage.messages_id},'${eachMessage.content}')">
+                <img src="./edit-text.png" class="edit-text" alt="edit-text">
+                </button>
                 </div>
                 `
                             :
@@ -211,7 +213,7 @@ document.querySelector("#sendMessage").addEventListener("submit", async (event) 
 })
 
 async function sendMessage(projectId) {
-    const content = await document.querySelector("#text-content").value;
+    const content = await document.querySelector(".text-content").value;
 
     if (content.trim() != "") {
         let res = await fetch('/chatroom', {
@@ -227,9 +229,9 @@ async function sendMessage(projectId) {
         if (res.ok) {
             let response = await res.json();
             let userId = response.userId;
-            socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
             console.log("send message success");
-            document.querySelector("#text-content").value = "";
+            document.querySelector(".text-content").value = "";
+            socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
         }
     }
 }
@@ -253,7 +255,9 @@ socket.on('receive-newMessage', async lastMessageInfo => {
             <div class="myMessage" id="msgId-${msg.messages_id}">
             <span class="content">${msg.content}</span>
             <span class="create-time">${msg.created_time}</span>
-            <button class="edit-content" onclick="editMessage(${msg.messages_id},'${msg.content}')">Edit</button>
+            <button class="edit-content" onclick="editMessage(${msg.messages_id},'${msg.content}')">
+            <img src="./edit-text.png" class="edit-text" alt="edit-text">
+            </button>
             </div>
             `
             :
@@ -266,6 +270,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
             `
         }
         `
+        // document.querySelector("#text-content").value = "";
 })
 
 
@@ -278,7 +283,7 @@ async function editMessage(messageId, content) {
     document.querySelector("#texting-box").innerHTML =
         `
         <form id="sendMessage" onsubmit="confirmEdit(event,${messageId})">
-            <input type="text" name="text_content" id="edit-content" class="text-content" value="${content}">
+            <input type="text" name="text_content" id="edit-content" class="text-content white-word" value="${content}">
             <button id="text-send" type="submit">Edit</button>
         </form>
     `
@@ -307,6 +312,15 @@ async function confirmEdit(event, messageId) {
 
         socket.emit('editMessage', { messageId: messageId, userId: userId, content: content });
         console.log("Edit message success");
+
+
+        document.querySelector("#texting-box").innerHTML =
+            `
+            <form id="sendMessage">
+                <input type="text" name="text_content" id="text-content" class="text-content white-word" placeholder="|">
+                <button id="text-send" type="submit">Send</button>
+            </form>
+        `
     }
 }
 
@@ -329,7 +343,9 @@ socket.on('receive-editMessage', async info => {
             <span class="content">${msg.content}</span>
             <span class="create-time">${msg.created_time}</span>
             <span class="edited">edited</span>
-            <button class="edit-content" onclick="editMessage(${msg.messages_id},'${msg.content}')">Edit</button>
+            <button class="edit-content" onclick="editMessage(${msg.messages_id},'${msg.content}')">
+            <img src="./edit-text.png" class="edit-text" alt="edit-text">
+            </button>
             `
             :
             `
