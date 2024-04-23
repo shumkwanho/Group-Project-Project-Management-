@@ -14,7 +14,6 @@ CREATE TABLE "tasks"(
     "id" SERIAL NOT NULL,
     "project_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "description" VARCHAR(255) NULL,
     "pre_req_fulfilled" BOOLEAN NOT NULL,
     "start_date" DATE NOT NULL,
     "duration" BIGINT NOT NULL,

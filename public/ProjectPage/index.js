@@ -5,8 +5,8 @@ const projectId = searchParams.get("id");
 
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
-
 	const data = (await res.json()).data
+
 	return data
 }
 
@@ -14,8 +14,33 @@ async function getProjectData(id) {
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
-		createGanttChart(data)
-		displayTaskList(projectId)
+		console.log(data);
+		await drawPage(projectId)
+		const finishbtns = document.querySelectorAll(".finish-btn")
+		finishbtns.forEach((btn)=>{
+			btn.addEventListener("click",async (e)=>{
+				let taskId = (e.currentTarget.parentElement.id).slice(5)
+				await fetch('/task/finish', {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({id:taskId})
+				})
+			})
+		})
+
+
+
+		
+		
+		const assignBtns = document.querySelectorAll(".assign-btn")
+		assignBtns.forEach((btn)=>{
+			btn.addEventListener("click",async (e)=>{
+				let taskId = (e.currentTarget.parentElement.id).slice(5)
+				await assignTask(taskId)
+			})
+		})
 	} catch (error) {
 		console.log(error);
 	}
@@ -67,6 +92,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 	const taskdata = (await getProjectData(projectId)).tasks
 	const taskid = taskdata[id - 1].id
+
 	console.log(taskid);
 	const req = {
 		taskId: taskid,
@@ -169,10 +195,9 @@ function createGanttChart(data) {
 	});
 }
 
-async function displayTaskList(projectId) {
-	const data = await getProjectData(projectId)
+async function displayTaskList(data) {
 	const tasks = data.tasks
-	const users = data.users
+
 
 	for (let task of tasks) {
 		if ((task.name).includes("root")) {
@@ -180,33 +205,81 @@ async function displayTaskList(projectId) {
 		}
 		if (task.actual_finish_date) {
 			document.querySelector(".finished").innerHTML += `
+			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
                     <div class="task-name" id="${task.id}">${task.name}</div>
-                    <img src="/profile-image/01.jpg" alt="" class="profile-pic">
-				</div>`
+                    <div>${task.userRelation[0]? task.userRelation[0].username:""}</div>
+				</div>
+			</div>`
+				
 		} else if (task.pre_req_fulfilled) {
 			document.querySelector(".ongoing").innerHTML += `
-			<div class="task-container">
+			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
-                    <div class="task-name" id="${task.id}">${task.name}</div>
-                    <img src="/profile-image/01.jpg" alt="" class="profile-pic">
+                    <div class="task-name">${task.name}</div>
+                    <div>${task.userRelation[0]? task.userRelation[0].username:""}</div>
                 </div>
                 <button class="finish-btn">+</button>
 			</div>`
 		} else {
 			document.querySelector(".to-do-list").innerHTML += `
-                <div class="task border">
-                    <div class="task-name" id="${task.id}"> ${task.name}</div>
-                    <img src="/profile-image/01.jpg" alt="" class="profile-pic">
-                </div>`
+			<div class="task-container" id="task_${task.id}">
+			<div class="task border">
+				<div class="task-name">${task.name}</div>
+				<div>${task.userRelation[0]? task.userRelation[0].username:""}</div>
+				</div>
+			<button class="assign-btn">+</button>
+		</div>`
 		}
 	}
 }
 
-const btns = document.querySelectorAll(".finish-btn")
+async function drawPage(projectId){
+	const data = await getProjectData(projectId)
+	createGanttChart(data)
+	await displayTaskList(data)
+}
 
-console.log(btns)
+async function assignTask (taskId){
 
-btns.forEach((userItem) => {
-	console.log(userItem)
-  });
+	const data = await getProjectData(projectId)
+	const userList = data.users
+	const inputOption = {}
+	for (let user of userList){
+		inputOption[user.id] = user.username
+	}
+	const { value: person } = await Swal.fire({
+		title: "Select Person",
+		input: "select",
+		inputOptions: inputOption,
+		inputPlaceholder: "Select person",
+		showCancelButton: true,
+		inputValidator: (value) => {
+			return new Promise((resolve) => {
+			  if (value) {
+				resolve();
+			  } else {
+				resolve("You need to choose a person");
+			  }
+			});
+		  }
+	  }).then(async (result)=>{
+
+		try {
+				const userId = result.value
+		const res = await fetch("/task/userTaskRelation", {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({taskId:taskId,userId:userId,projectId:projectId}),
+		});
+		if (res.ok) {
+			console.log("HAHA");
+		}
+		} catch (error) {
+			console.log(error);
+		}
+	
+	  });
+}

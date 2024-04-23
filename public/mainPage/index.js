@@ -1,9 +1,12 @@
+import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
+
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
 console.log("current main page user id: ", userId);
 
 const logoutButton = document.querySelector("#logout-button");
 const editProfile = document.querySelector("#edit-profile");
+const updatePassword = document.querySelector("#update-password");
 
 // const project = document.querySelector(".project")
 
@@ -186,7 +189,7 @@ async function runLogout() {
 }
 
 //editProfile button
-//currently only edit username
+//currently only able to edit username
 editProfile.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -195,7 +198,13 @@ editProfile.addEventListener("submit", async (e) => {
     let userInfoRes = await fetch('/auth/user')
     let currentUserInfo = await userInfoRes.json();
 
-    if (username === currentUserInfo.data.username) {
+    if (isEmptyOrSpace(username)){
+        Swal.fire({
+            title: 'Username cannot be blank or only space',
+            showConfirmButton: false
+        });
+
+    } else if (username === currentUserInfo.data.username) {
         Swal.fire({
             title: 'Username unchanged!',
             confirmButtonText: "Pick another name"
@@ -230,6 +239,65 @@ editProfile.addEventListener("submit", async (e) => {
                     title: 'Username already taken!',
                     confirmButtonText: "Pick another name"
                 });
+            }
+        }
+    }
+})
+
+updatePassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    //check if both passwords are the same
+    const password = document.querySelector("#password1").value;
+    const passwordConfirm = document.querySelector("#password2").value;
+
+    console.log(password)
+    console.log(passwordConfirm)
+
+    if (passwordConfirm != password) {
+
+        Swal.fire({
+            title: 'Invalid password input',
+            text: 'Please re-enter the same password you entered',
+            showConfirmButton: false,
+        });
+
+    } else {
+
+        if (!isPasswordValid(password)) {
+
+            Swal.fire({
+                title: 'Invalid password input',
+                text: 'Password must be as least 10 characters long, and a combination of uppercase letters, lowercase letters, numbers and symbol',
+                showConfirmButton: false,
+            });
+
+        } else { 
+
+            let res = await fetch ("/auth/password-update", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ password })
+            });
+
+            let result = await res.json();
+
+            if (res.ok) {
+                console.log(result);
+            } else {
+                if (result.error == "sameAsCurrentPassword") {
+
+                    Swal.fire({
+                        title: 'Password unchanged',
+                        text: 'New password is same as current password',
+                        showConfirmButton: false,
+                    });
+
+                } else {
+                    console.log(result.error);
+                }
             }
         }
     }
