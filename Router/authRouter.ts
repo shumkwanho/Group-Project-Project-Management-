@@ -14,6 +14,7 @@ authRouter.post("/email-login", emailLogin);
 authRouter.get("/google-login", googleLogin);
 authRouter.post("/logout", isLoggedIn, logout);
 authRouter.get("/user", isLoggedIn, getUserInfo);
+authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
@@ -307,19 +308,18 @@ async function getUserInfo(req: Request, res: Response) {
         //check if user is logged in
         if (req.session.username) {
 
-            let userId = req.session.userId
-            let username = req.session.username
+            let id = req.session.userId
 
             const userQueryResult = (
                 await pgClient.query(
                     "SELECT id, username, email, profile_image, last_login, registration_date FROM users WHERE id = $1;",
-                    [userId]
+                    [id]
                 )).rows[0];
 
             res.json({
                 message: "check user info successful",
                 data: {
-                    id: userQueryResult.userId,
+                    id: userQueryResult.id,
                     username: userQueryResult.username,
                     email: userQueryResult.email,
                     profile_image: userQueryResult.profile_image,
@@ -339,6 +339,48 @@ async function getUserInfo(req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
 };
+
+async function inspectPassword(req: Request, res: Response) {
+    try {
+        //can only update password if an user has logged in
+        if (!req.session.username) {
+
+            res.status(400).json({
+                message: "update password failed",
+                error: "no active login session"
+            });
+        } else {
+            const { password } = req.body;
+            let userId = req.session.userId;
+
+            const userQuery = (
+                await pgClient.query(
+                    "SELECT password FROM users WHERE id = $1;",
+                    [userId]
+                )).rows[0];
+
+            let isPasswordMatched = await checkPassword({
+                plainPassword: password,
+                hashedPassword: userQuery.password
+            });
+
+            if (isPasswordMatched) {
+                res.json({
+                    message: "passwordMatched",
+                })
+
+            } else {
+                res.status(400).json({
+                    message: "passwordNotMatched"
+                })
+            }
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
+}
 
 async function updatePassword(req: Request, res: Response) {
     try {
@@ -370,7 +412,7 @@ async function updatePassword(req: Request, res: Response) {
             if (isPasswordMatched) {
                 res.status(400).json({
                     message: "password update failed",
-                    error: "new password same as current password"
+                    error: "sameAsCurrentPassword"
                 })
             } else {
 

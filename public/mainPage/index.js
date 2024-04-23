@@ -1,4 +1,4 @@
-import { isEmptyOrSpace } from "../../utils/checkInput.js";
+import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
@@ -247,5 +247,58 @@ editProfile.addEventListener("submit", async (e) => {
 updatePassword.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    //
+    //check if both passwords are the same
+    const password = document.querySelector("#password1").value;
+    const passwordConfirm = document.querySelector("#password2").value;
+
+    console.log(password)
+    console.log(passwordConfirm)
+
+    if (passwordConfirm != password) {
+
+        Swal.fire({
+            title: 'Invalid password input',
+            text: 'Please re-enter the same password you entered',
+            showConfirmButton: false,
+        });
+
+    } else {
+
+        if (!isPasswordValid(password)) {
+
+            Swal.fire({
+                title: 'Invalid password input',
+                text: 'Password must be as least 10 characters long, and a combination of uppercase letters, lowercase letters, numbers and symbol',
+                showConfirmButton: false,
+            });
+
+        } else { 
+
+            let res = await fetch ("/auth/password-update", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ password })
+            });
+
+            let result = await res.json();
+
+            if (res.ok) {
+                console.log(result);
+            } else {
+                if (result.error == "sameAsCurrentPassword") {
+
+                    Swal.fire({
+                        title: 'Password unchanged',
+                        text: 'New password is same as current password',
+                        showConfirmButton: false,
+                    });
+
+                } else {
+                    console.log(result.error);
+                }
+            }
+        }
+    }
 })

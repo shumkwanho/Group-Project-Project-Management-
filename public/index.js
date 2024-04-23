@@ -183,9 +183,6 @@ async function runUserRegistration(email, username) {
 
     if (passwordConfirm != password) {
 
-        console.log(password);
-        console.log(passwordConfirm)
-
         Swal.fire({
             title: 'Invalid password input',
             text: 'Please re-enter the same password you entered',
