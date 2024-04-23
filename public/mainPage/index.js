@@ -1,4 +1,4 @@
-import { isEmptyOrSpace } from "../../utils/checkInput";
+import { isEmptyOrSpace } from "../../utils/checkInput.js";
 
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
