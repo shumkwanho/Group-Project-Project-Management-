@@ -169,10 +169,10 @@ function createGanttChart(data) {
 	});
 }
 
-async function displayTaskList(projectId){
-	const res = await fetch(`/task/all/?id=${projectId}`)
-	const tasks = (await res.json()).data.tasks
-	const users = (await res.json())
-}
+// async function displayTaskList(projectId){
+// 	const res = await fetch(`/task/all/?id=${projectId}`)
+// 	const tasks = (await res.json()).data.tasks
+// 	const users = (await res.json())
+// }
 
-displayTaskList(projectId).then(console.log)
+// displayTaskList(projectId).then(console.log)
