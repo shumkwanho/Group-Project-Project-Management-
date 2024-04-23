@@ -51,6 +51,11 @@
                             data-bs-target="#editProfileModal">Edit profile</button>
                     </div>
 
+                    <div class="update-password-btn">
+                        <button type="button" class="update-password" data-bs-toggle="modal"
+                            data-bs-target="#updatePasswordModal">Update Password</button>
+                    </div>
+
                 </section>
 
 
@@ -149,17 +154,48 @@
                     <form id="edit-profile">
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="username" placeholder="username">
-                            <label for="username">New Username</label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-3 " id="password" placeholder="password">
-                            <label for="password">New Password</label>
+                            <input type="text" class="form-control rounded-3" id="new-username" placeholder="username">
+                            <label for="new-username">New Username</label>
                         </div>
 
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="login-button">Login</button>
+                            id="submit-edit-button">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- update password modal -->
+    <div class="modal fade" id="updatePasswordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="signInModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2" id="updatePasswordLabel">Update Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+    
+                <div class="modal-body p-5 pt-0">
+                    <form id="update-password">
+    
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control rounded-3 " id="password" placeholder="password">
+                            <label for="password">Old Password</label>
+                        </div>
+    
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control rounded-3 " id="password1" placeholder="password">
+                            <label for="password1">New Password</label>
+                        </div>
+    
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control rounded-3 " id="password2" placeholder="password">
+                            <label for="password2">Confirm New Password</label>
+                        </div>
+    
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
+                            id="update-password-button">Submit</button>
                     </form>
                 </div>
             </div>

@@ -16,6 +16,7 @@ authRouter.post("/logout", isLoggedIn, logout);
 authRouter.get("/user", isLoggedIn, getUserInfo);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
+authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 
 async function userRegistration(req: Request, res: Response) {
     try {
@@ -318,8 +319,8 @@ async function getUserInfo(req: Request, res: Response) {
             res.json({
                 message: "check user info successful",
                 data: {
-                    id: userId,
-                    username: username,
+                    id: userQueryResult.userId,
+                    username: userQueryResult.username,
                     email: userQueryResult.email,
                     profile_image: userQueryResult.profile_image,
                     last_login: userQueryResult.last_login,
@@ -475,6 +476,52 @@ async function updateProfileImage(req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
 };
+
+async function usernameUpdate(req: Request, res: Response) {
+    try {
+        //username update can only be performed if an user has logged in
+        //check if user is logged in
+        if (!req.session.username) {
+
+            res.status(400).json({
+                message: "update username failed",
+                error: "no active login session"
+            });
+            
+        } else {
+
+            let username = req.body.username;
+
+            //check if username is currently being used by another user
+            let checkUniqueQuery = (await pgClient.query(
+                "SELECT id FROM users WHERE username = $1",
+                [username]
+            )).rows[0];
+
+            if (checkUniqueQuery !== undefined) {
+                res.status(400).json({
+                    message: "username update failed",
+                    error: "newUsernameExist"
+                });
+            } else {
+                let id = req.session.userId;
+                let updateUsernameQuery = (await pgClient.query(
+                    "UPDATE users SET username = $1 WHERE id = $2 RETURNING username",
+                    [username, id]
+                )).rows[0];
+
+                res.json({
+                    message: "username update successful",
+                    data: updateUsernameQuery
+                });
+            }
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
+}
 
 function isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
