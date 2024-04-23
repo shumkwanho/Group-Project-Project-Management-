@@ -13,9 +13,9 @@ async function getProjectData(id) {
 
 window.addEventListener("load", async (e) => {
 	try {
-		console.log("hi");
 		const data = await getProjectData(projectId)
 		createGanttChart(data)
+		displayTaskList(projectId)
 	} catch (error) {
 		console.log(error);
 	}
@@ -73,7 +73,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 		taskName: item.text,
 		duration: item.duration,
 		startDate: getFinishDate(item.start_date, 1),
-		finishDate: item.progress == 1? "finished":null
+		finishDate: item.progress == 1 ? "finished" : null
 	}
 	let res = await fetch('/task', {
 		method: "PUT",
@@ -169,10 +169,44 @@ function createGanttChart(data) {
 	});
 }
 
-// async function displayTaskList(projectId){
-// 	const res = await fetch(`/task/all/?id=${projectId}`)
-// 	const tasks = (await res.json()).data.tasks
-// 	const users = (await res.json())
-// }
+async function displayTaskList(projectId) {
+	const data = await getProjectData(projectId)
+	const tasks = data.tasks
+	const users = data.users
 
-// displayTaskList(projectId).then(console.log)
+	for (let task of tasks) {
+		if ((task.name).includes("root")) {
+			continue
+		}
+		if (task.actual_finish_date) {
+			document.querySelector(".finished").innerHTML += `
+                <div class="task border">
+                    <div class="task-name" id="${task.id}">${task.name}</div>
+                    <img src="/profile-image/01.jpg" alt="" class="profile-pic">
+				</div>`
+		} else if (task.pre_req_fulfilled) {
+			document.querySelector(".ongoing").innerHTML += `
+			<div class="task-container">
+                <div class="task border">
+                    <div class="task-name" id="${task.id}">${task.name}</div>
+                    <img src="/profile-image/01.jpg" alt="" class="profile-pic">
+                </div>
+                <button class="finish-btn">+</button>
+			</div>`
+		} else {
+			document.querySelector(".to-do-list").innerHTML += `
+                <div class="task border">
+                    <div class="task-name" id="${task.id}"> ${task.name}</div>
+                    <img src="/profile-image/01.jpg" alt="" class="profile-pic">
+                </div>`
+		}
+	}
+}
+
+const btns = document.querySelectorAll(".finish-btn")
+
+console.log(btns)
+
+btns.forEach((userItem) => {
+	console.log(userItem)
+  });

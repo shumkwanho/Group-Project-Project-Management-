@@ -1,7 +1,6 @@
 console.log("hello index")
 
 import { identifyInput, isEmptyOrSpace, isPasswordValid } from "../utils/checkInput.js";
-import { defaultProfileImage } from "../utils/defaultProfileImage.js";
 
 let isNewUsernameEmailOkay = false;
 
@@ -214,9 +213,6 @@ async function runUserRegistration(email, username) {
 
             if (res.ok) {
 
-                //assign a default profile image to user
-                defaultProfileImage(username);
-
                 //login with new user-info
                 await fetch("/auth/username-login", {
                     method: "POST",
@@ -245,14 +241,3 @@ async function runUserRegistration(email, username) {
         }
     }
 }
-
-function runImage() {
-    let image = new ProfileImage("bill yuen");
-
-
-    document.querySelector(".temp").innerHTML = image.svg();
-
-    console.log(image.png())
-}
-
-runImage();

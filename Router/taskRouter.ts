@@ -6,7 +6,6 @@ import { getMinDuration } from "../utils/MinDuration";
 export const taskRouter = Router()
 
 taskRouter.get("/", inspectTask)
-taskRouter.get("/all", inspectAllTask)
 taskRouter.post("/", createTask)
 taskRouter.post("/relation", createTaskRelation)
 taskRouter.put("/", updateTask)
@@ -31,20 +30,7 @@ async function inspectTask(req: Request, res: Response) {
     }
 }
 
-async function inspectAllTask(req: Request, res: Response) {
-    try {
-        let projectId = req.query.id
-        const taskResult = (await pgClient.query(`select id, name,start_date,actual_finish_date from tasks where project_id = $1 order by id`, [projectId])).rows
-        const userResult = (await pgClient.query(`select username, users.id,profile_image from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [projectId])).rows
-        const result = {tasks:taskResult, users:userResult}
-        
-        res.json({messgae:"get Successfully",data:result})
 
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal Server Error" })
-    }
-}
 
 
 // request projectId, taskName,description,deadline,StartDate,duration,PreReqTask
