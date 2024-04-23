@@ -319,7 +319,7 @@ async function getUserInfo(req: Request, res: Response) {
             res.json({
                 message: "check user info successful",
                 data: {
-                    id: userQueryResult.userId,
+                    id: userQueryResult.id,
                     username: userQueryResult.username,
                     email: userQueryResult.email,
                     profile_image: userQueryResult.profile_image,

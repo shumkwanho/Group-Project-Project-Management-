@@ -35,6 +35,10 @@ body {
     z-index: 5;
 }
 
+.row {
+    --bs-gutter-x: 0rem;
+}
+
 #member-area {
     background-color: #b8d3d2;
     margin: 15px;
@@ -139,7 +143,7 @@ body {
 
 #message-list {
     /* background-color: rgb(127, 197, 255); */
-    /* padding: 10px; */
+    padding: 0 !important;
     margin: 15px 15px 15px 0;
     display: flex;
     flex-direction: column;
@@ -149,18 +153,19 @@ body {
 
 #message-box {
     /* background-color: rgb(255, 255, 255); */
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     height: 95%;
-    padding: 5px 5px 0 5px;
+    /* padding: 5px 5px 0 5px; */
     margin-bottom: 10px;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
-#message-box::-webkit-scrollbar {
+/* #message-box::-webkit-scrollbar {
     display: none;
-}
+} */
 
 
 
@@ -219,6 +224,7 @@ body {
 }
 
 .myMessage>.content {
+    max-width: 350px;
     padding: 2px 20px 2px 10px;
     border-radius: 10px 10px 2px 10px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px -1px, rgba(0, 0, 0, 0.06) 0px 1px 3px -1px;

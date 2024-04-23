@@ -1,5 +1,7 @@
 const socket = io.connect();
 
+// import PerfectScrollbar from 'perfect-scrollbar';
+
 // socket.on('newConnection', function(data){
 //     console.log(data);
 // })
@@ -270,7 +272,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
             `
         }
         `
-        // document.querySelector("#text-content").value = "";
+    // document.querySelector("#text-content").value = "";
 })
 
 
