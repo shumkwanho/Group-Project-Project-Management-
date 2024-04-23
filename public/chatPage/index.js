@@ -111,32 +111,53 @@ getAllMessages(projectId);
 
 async function getAllMessages(projectId) {
 
-    // const res = await fetch(
-    //     `https://jsonplaceholder.typicode.com/posts/${postId}`
-    //   );
-
     let res = await fetch(`/chatroom?projectId=${projectId}`)
 
     let response = await res.json();
-
-    // console.log("userId: ", response.userId);
-    // console.log("allResponse: ", response);
 
     let allMessagesDate = response.allMessagesDate;
     let allMessages = response.allMessages;
     let allMembers = response.groupMembers;
     let edited
-    // console.log("edited? : ", edited);
-
-    // console.log(allMessagesDate);
 
     if (res.ok) {
+        let chatroomBox = document.querySelector(".chatroom-box")
 
-        let memberBox = document.querySelector("#member-list")
+        chatroomBox.innerHTML = `
+        <article id="memberAndMessages" class="row">
+            <section id="member-area" class="col-2">
+        
+                <div class="list-title white-word">
+                    <div>Teammates</div>
+                </div>
+        
+                <div id="member-list" class="white-word">
+                </div>
 
+            </section>
+
+            <section id="message-list" class="col">
+
+                <div id="message-box">
+                </div>
+
+                <div id="texting-box">
+                    <form id="sendMessage">
+                        <input type="text" name="text_content" id="text-content" class="text-content white-word">
+                        <button id="text-send" type="submit">Send</button>
+                    </form>
+                </div>
+
+            </section>
+        </article>
+
+        <button type="button" id="quit-chat" onclick="quitChat()">Quit Chat</button>
+        `
+
+        let memberList = document.querySelector("#member-list")
 
         for (let eachMember of allMembers) {
-            memberBox.innerHTML +=
+            memberList.innerHTML +=
                 `
             <div class="member">
             <div class="username">${eachMember.username}</div>
@@ -206,8 +227,6 @@ async function getAllMessages(projectId) {
     }
 }
 
-// window.location.href = `http://localhost:8080/chat/?pId=${pId}`;
-
 
 
 
@@ -221,7 +240,7 @@ document.querySelector("#sendMessage").addEventListener("submit", async (event) 
 
 async function sendMessage(projectId) {
     const content = await document.querySelector(".text-content").value;
-    
+
 
     if (content.trim() != "") {
         let res = await fetch('/chatroom', {
@@ -240,7 +259,7 @@ async function sendMessage(projectId) {
             console.log("send message success");
             document.querySelector(".text-content").value = "";
             socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
-            
+
         }
     }
 }
@@ -369,15 +388,26 @@ socket.on('receive-editMessage', async info => {
 })
 
 
-// <script>
-// function getParams() {
-//   // const urlParams = new URLSearchParams(window.location.search);
-//   const urlParams = new URLSearchParams('id=4&comment=25');
-//   const id = urlParams.get('id');
-//   const comment = urlParams.get('comment');
 
-//   return { id: id, comment: comment };
-// }
 
-// const { id, comment } = getParams();
-// </script>
+
+//===================== Quit Chatroom ====================
+
+async function quitChat() {
+    let chatroomBox = document.querySelector(".chatroom-box")
+        chatroomBox.innerHTML = ""
+}
+
+
+    // <script>
+    // function getParams() {
+    //   // const urlParams = new URLSearchParams(window.location.search);
+    //   const urlParams = new URLSearchParams('id=4&comment=25');
+    //   const id = urlParams.get('id');
+    //   const comment = urlParams.get('comment');
+    
+    //   return { id: id, comment: comment };
+    // }
+    
+    // const { id, comment } = getParams();
+    // </script>

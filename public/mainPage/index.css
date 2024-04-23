@@ -144,6 +144,11 @@ body {
     break-inside: avoid;
     overflow: auto;
     width: calc(100% - 500px);
+    overflow-y: scroll;
+}
+
+.project-area::-webkit-scrollbar {
+    display: none;
 }
 
 .project-area, .completed-project-area {
