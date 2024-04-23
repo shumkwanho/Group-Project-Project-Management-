@@ -174,7 +174,8 @@ async function deleteProject(req: Request, res: Response) {
 async function initProject(req: Request, res: Response) {
     try {
         const newProject = (await pgClient.query(`insert into projects (name,start_date) values ($1,$2) returning *`,[req.body.name , req.body.start_date])).rows[0]
-        
+        let user = req.session.id
+        await pgClient.query(`insert into user_project_relation (user_id,project_id) values ($1,$2)`,[user,newProject.id])
         let task = req.body.tasks
         let rootId
         for (let i = 0 ; i <= Object.keys(task).length ; i++ ){

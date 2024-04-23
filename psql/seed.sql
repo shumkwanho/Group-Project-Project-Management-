@@ -189,7 +189,7 @@ insert into user_project_relation (user_id, project_id) values (1, 1);
 
 
 --project 10 taskname ,startdate , duration, dependencies
-insert into tasks (project_id, name, duration, start_date) values (1, 'root Project', 0,'2024-04-01');
+insert into tasks (project_id, name, duration, start_date) values (1, 'root task', 0,'2024-04-01');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Sonair', 4,'2024-04-01');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Tres-Zap', 3,'2024-04-05');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Tin', 6,'2024-04-05');
