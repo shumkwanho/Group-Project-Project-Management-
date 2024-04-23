@@ -6,10 +6,10 @@ import { getMinDuration } from "../utils/MinDuration";
 export const projectRouter = Router()
 
 projectRouter.get("/", inspectProject)
+projectRouter.get("/user_relation", getUserTaskRelation)
 projectRouter.post("/", createProject)
 projectRouter.put("/", updateProject)
 projectRouter.delete("/", deleteProject)
-
 projectRouter.post("/init", initProject)
 
 // request: project id
@@ -46,6 +46,10 @@ async function inspectProject(req: Request, res: Response) {
 
 }
 
+
+async function getUserTaskRelation(req: Request, res: Response) {
+    const tasks = await pgClient.query(`select `)
+}
 
 
 // request:project name,project photo -> create new project and project id  (if photo = null, dont pass into backendside
