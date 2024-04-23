@@ -320,6 +320,7 @@ async function getAllMessages(projectId) {
 
     if (res.ok) {
         let chatroomBox = document.querySelector(".chatroom-box")
+		chatroomBox.style.display = "block";
 
         chatroomBox.innerHTML = `
         <article id="memberAndMessages" class="row">
