@@ -15,7 +15,6 @@ async function getProjectData(id) {
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
-		console.log(data);
 		await drawPage(projectId)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn)=>{
@@ -96,6 +95,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 
 	console.log(taskid);
 	const req = {
+		projectId: projectId,
 		taskId: taskid,
 		taskName: item.text,
 		duration: item.duration,
@@ -287,7 +287,29 @@ async function assignTask (taskId){
 
 
 
+document.querySelector(".add-teammate").addEventListener("click",(e)=>{
 
+})
+document.querySelector(".remove-teammate").addEventListener("click",(e)=>{
+	
+})
+document.querySelector(".quit-team").addEventListener("click",async (e)=>{
+	const res = await fetch("/task/remove-user", {
+			method: "DELETE",
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		});
+	if (res.ok) {
+		console.log("yeah");
+	}
+})
+
+const mainPage = document.querySelector(".main-page").addEventListener("click",async (e)=>{
+	const res = await fetch("/auth/user")
+	const data = (await res.json()).data
+	window.location.href = `../main/?id=${data.id}`
+})
 
 
 
@@ -612,20 +634,3 @@ document.querySelector("#quit-chat").addEventListener("submit", async (event) =>
 		// window.location.reload();
 // }
 
-document.querySelector(".add-teammate").addEventListener("click",(e)=>{
-
-})
-document.querySelector(".remove-teammate").addEventListener("click",(e)=>{
-	
-})
-document.querySelector(".quit-team").addEventListener("click",async (e)=>{
-	const res = await fetch("/task/remove-user", {
-			method: "DELETE",
-			headers: {
-				'Content-Type': 'application/json',
-			}
-		});
-	if (res.ok) {
-		console.log("yeah");
-	}
-})
