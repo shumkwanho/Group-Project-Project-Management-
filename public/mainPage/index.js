@@ -345,7 +345,8 @@ projectCreationClose.addEventListener("click", (e) => {
             if (result.isDenied) {
               resetProgress();
               $("#projectCreationModal").modal("hide");
-              //not able to reset 
+              //not able to reset modal content??
+              //using window reload for now
               window.location.reload();
             }
           });
