@@ -191,7 +191,7 @@ async function initProject(req: Request, res: Response) {
                 }
             } else {
                 await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`, [rootId, taskId])
-                await pgClient.query(`update tasks set pre_req_fulfilled = true where task_id = $1`,[taskId])
+                await pgClient.query(`update tasks set pre_req_fulfilled = true where id = $1`,[taskId])
             }
         }
         await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`, [rootId + 1, rootId])

@@ -404,7 +404,7 @@ projectCreationForm.addEventListener("submit", async (e) => {
 
         let projId = await projectInit(newProjectData);
         console.log(projId);
-        window.location.href = `../ProjectPage/?id=${projId}`;
+        window.location.href = `../project/?id=${projId}`;
 
     } else {
         //save response and update prompt count
