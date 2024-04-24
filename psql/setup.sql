@@ -44,7 +44,7 @@ CREATE TABLE "projects"(
     "image" VARCHAR(255) NULL,
     "start_date" DATE NOT NULL,
     "min_duration" BIGINT NULL,
-    "actual_finish_date" DATE NOT NULL
+    "actual_finish_date" DATE NULL
 );
 ALTER TABLE
     "projects" ADD PRIMARY KEY("id");
@@ -67,7 +67,6 @@ CREATE TABLE "user_project_relation"(
     "id" SERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "project_id" BIGINT NOT NULL,
-    "permission_level" BIGINT NOT NULL
 );
 ALTER TABLE
     "user_project_relation" ADD PRIMARY KEY("id");

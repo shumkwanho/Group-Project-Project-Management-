@@ -17,6 +17,7 @@ nav div {
     height: 600px;
     justify-content: center;
     z-index: 0;
+    width: 90vw;
 }
 
 .jira {

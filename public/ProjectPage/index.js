@@ -8,7 +8,6 @@ const projectId = searchParams.get("id");
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
 	const data = (await res.json()).data
-
 	return data
 }
 
@@ -612,3 +611,21 @@ document.querySelector("#quit-chat").addEventListener("submit", async (event) =>
 
 		// window.location.reload();
 // }
+
+document.querySelector(".add-teammate").addEventListener("click",(e)=>{
+
+})
+document.querySelector(".remove-teammate").addEventListener("click",(e)=>{
+	
+})
+document.querySelector(".quit-team").addEventListener("click",async (e)=>{
+	const res = await fetch("/task/remove-user", {
+			method: "DELETE",
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		});
+	if (res.ok) {
+		console.log("yeah");
+	}
+})
