@@ -199,6 +199,22 @@ async function displayTaskList(data) {
 
 
 	for (let task of tasks) {
+		let imageElm = "";
+
+		if (task.userRelation[0]) {
+			if (!(task.userRelation[0].profile_image)) {
+				let defaultProfileImage = new ProfileImage(
+					task.userRelation[0].username, {
+					backgroundColor: "black",
+				})
+				imageElm = defaultProfileImage.svg();
+			} else {
+				imageElm = `<img src="/profile-image/${task.userRelation[0].profile_image}" alt="" id="user-profile">`
+			}
+		}
+
+
+
 		if ((task.name).includes("root")) {
 			continue
 		}
@@ -207,7 +223,7 @@ async function displayTaskList(data) {
 			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
                     <div class="task-name" id="${task.id}">${task.name}</div>
-                    <div>${task.userRelation[0] ? task.userRelation[0].username : ""}</div>
+                    <div>${task.userRelation[0] ? imageElm : ""}</div>
 				</div>
 			</div>`
 
@@ -216,7 +232,7 @@ async function displayTaskList(data) {
 			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
                     <div class="task-name">${task.name}</div>
-                    <div>${task.userRelation[0] ? task.userRelation[0].username : ""}</div>
+                    <div>${task.userRelation[0] ? imageElm : ""}</div>
                 </div>
                 <button class="finish-btn">+</button>
 			</div>`
@@ -225,7 +241,7 @@ async function displayTaskList(data) {
 			<div class="task-container" id="task_${task.id}">
 			<div class="task border">
 				<div class="task-name">${task.name}</div>
-				<div>${task.userRelation[0] ? task.userRelation[0].username : ""}</div>
+				<div>${task.userRelation[0] ? imageElm : ""}</div>
 				</div>
 			<button class="assign-btn">+</button>
 		</div>`
