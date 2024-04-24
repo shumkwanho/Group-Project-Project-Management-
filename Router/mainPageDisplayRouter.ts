@@ -49,7 +49,7 @@ async function getCurrentProjects(userId: any) {
         FROM user_project_relation 
         INNER JOIN projects 
         ON project_id = projects.id
-        WHERE user_id = $1;`, [userId])).rows
+        WHERE actual_finish_date ISNULL AND user_id = $1;`, [userId])).rows
 }
 
 async function getCurrentTask(projectId: any) {
