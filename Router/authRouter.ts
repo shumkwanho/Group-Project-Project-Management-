@@ -17,7 +17,7 @@ authRouter.get("/user", isLoggedIn, getUserInfo);
 authRouter.get("/other-user", isLoggedIn, getOtherUserInfo);
 authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
-authRouter.post("/profile-image-update", updateProfileImage);
+authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 
 async function userRegistration(req: Request, res: Response) {
@@ -492,8 +492,8 @@ async function updateProfileImage(req: Request, res: Response) {
             let id = req.session.userId;
             let username = req.session.username;
 
-            //max file size = 2mb, need to remind users in front end
-            const MAX_FILE_SIZE = 2 * 1024 ** 2;
+            //max file size = 5mb, need to remind users in front end
+            const MAX_FILE_SIZE = 5 * 1024 ** 2;
 
             const imageForm = formidable({
                 uploadDir: __dirname + "/../uploads/profile-image",
@@ -512,47 +512,50 @@ async function updateProfileImage(req: Request, res: Response) {
 
             imageForm.parse(req, async (err, fields, files) => {
 
-                console.log("___________")
-                console.log(files)
-
                 if (err) {
                     res.status(500).json({ message: "internal server error" });
                 };
 
-                let fileSize = (files['profile-image']![0] as formidable.File).size;
-                let filename = (files['profile-image']![0] as formidable.File).newFilename;
+                if (files instanceof Object) {
 
-                if (isEmpty(files)) {
-                    //check if an image is uploaded
-                    console.log("no image has been uploaded");
-                    res.status(400).json({
-                        message: "profile picture update failed",
-                        error: "no image"
-                    })
+                    let fileSize = (files['profile-image']![0] as formidable.File).size;
+                    let filename = (files['profile-image']![0] as formidable.File).newFilename;
 
-                } else if (fileSize > MAX_FILE_SIZE) {
-                    //check if image uploaded exceed max file size
-                    res.status(400).json({
-                        message: "profile image update failed",
-                        error: "file size exceed maximum"
-                    })
+                    if (isEmpty(files)) {
+                        //check if an image is uploaded
+                        console.log("no image has been uploaded");
+                        res.status(400).json({
+                            message: "profile picture update failed",
+                            error: "no image"
+                        })
 
+                    } else if (fileSize > MAX_FILE_SIZE) {
+                        //check if image uploaded exceed max file size
+                        res.status(400).json({
+                            message: "profile image update failed",
+                            error: "file size exceed maximum"
+                        })
+
+                    } else {
+
+                        const userQueryResult = (
+                            await pgClient.query(
+                                "UPDATE users SET profile_image = $1 WHERE id = $2 RETURNING id, username, profile_image;",
+                                [filename, id]
+                            )).rows[0];
+
+                        res.json({
+                            message: "profile image update successful",
+                            data: {
+                                id: userQueryResult.id,
+                                username: userQueryResult.username,
+                                profile_image: userQueryResult.profile_image
+                            }
+                        })
+
+                    }
                 } else {
-
-                    const userQueryResult = (
-                        await pgClient.query(
-                            "UPDATE users SET profile_image = $1 WHERE id = $2 RETURNING id, username, profile_image;",
-                            [filename, id]
-                        )).rows[0];
-
-                    res.json({
-                        message: "profile image update successful",
-                        data: {
-                            id: userQueryResult.id,
-                            username: userQueryResult.username,
-                            profile_image: userQueryResult.profile_image
-                        }
-                    })
+                    console.log("not and object")
                 }
             })
         }
