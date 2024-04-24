@@ -171,6 +171,9 @@ function chartRelation(data) {
 		let relation = data.tasks[i].relation.preTask
 		if (relation.length > 0) {
 			for (let j = 0; j < relation.length; j++) {
+				if (relation[j] == rootTaskId) {
+					continue
+				}
 				let temp = {}
 				temp.id = idCount
 				temp.source = relation[j] - rootTaskId + 1
@@ -299,6 +302,8 @@ document.querySelector(".quit-team").addEventListener("click",async (e)=>{
 			},
 			body: JSON.stringify({ projectId :projectId}),
 		});
+	const data = await res.json()
+	console.log(data.id);
 	if (res.ok) {
 		console.log("yeah");
 		window.location.href = `../main/?id=${data.id}`
