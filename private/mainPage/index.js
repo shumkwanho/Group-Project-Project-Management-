@@ -327,41 +327,36 @@ updatePassword.addEventListener("submit", async (e) => {
 })
 
 //upload profile image
+//conditions to be handled
 uploadProfileImage.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
 
-    console.log(formData);
-    
     const res = await fetch("/auth/profile-image-update", {
         method: "POST",
         body: formData,
     });
 
-    let result = await res.json();
+    let response = await res.json();
 
-    console.log(result);
+    if (res.ok) {
 
-
-
-    // if (res.ok) {
-
-    //     console.log("ok")
-
-    //     Swal.fire({
-    //         title: 'Profile Image Uploaded',
-    //         confirmButtonText: "Continue"
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             window.location.reload();
-    //             getAllUserInfo(userId)
-    //         }
-    //     });
+        Swal.fire({
+            title: 'Profile Image Uploaded',
+            confirmButtonText: "Continue"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload();
+                getAllUserInfo(userId)
+            }
+        });
         
-    // } else {
-    //     console.log(result);
-    // }
+    } else {
+        //not able to catch error from backend??
+        //status 400 conditions to be handled
+        console.log(response);
+    }
 })
 
 projectCreationClose.addEventListener("click", (e) => {
