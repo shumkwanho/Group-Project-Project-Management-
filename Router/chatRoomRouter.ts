@@ -148,7 +148,7 @@ async function changeMessageTopgClient(messageId: number, content: string) {
         SET content = $1, 
         edited_at = CURRENT_TIMESTAMP
         WHERE Id = $2
-        RETURNING content, edited_at`, [content, messageId])).rows[0]
+        RETURNING content, edited_at, project_id`, [content, messageId])).rows[0]
 }
 
 async function editMyMessage(req: Request, res: Response) {
