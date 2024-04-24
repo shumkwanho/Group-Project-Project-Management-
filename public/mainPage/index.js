@@ -326,35 +326,42 @@ updatePassword.addEventListener("submit", async (e) => {
     }
 })
 
+//upload profile image
+//tbc!!!!!!!!
 uploadProfileImage.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
 
+    console.log(formData);
+    
     const res = await fetch("/auth/profile-image-update", {
         method: "POST",
         body: formData,
     });
-
     let result = await res.json();
 
-    if (res.ok) {
+    console.log(result);
 
-        console.log("ok")
 
-        // Swal.fire({
-        //     title: 'Profile Image Uploaded',
-        //     confirmButtonText: "Continue"
-        // }).then((result) => {
-        //     if (result.isConfirmed) {
-        //         window.location.reload();
-        //         getAllUserInfo(userId)
-        //     }
-        // });
+
+    // if (res.ok) {
+
+    //     console.log("ok")
+
+    //     Swal.fire({
+    //         title: 'Profile Image Uploaded',
+    //         confirmButtonText: "Continue"
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             window.location.reload();
+    //             getAllUserInfo(userId)
+    //         }
+    //     });
         
-    } else {
-        console.log(result);
-    }
+    // } else {
+    //     console.log(result);
+    // }
 })
 
 projectCreationClose.addEventListener("click", (e) => {
