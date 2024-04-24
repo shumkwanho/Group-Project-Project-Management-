@@ -15,6 +15,8 @@ userLogin.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
+    const form = document.querySelector("#user-login");
+
     const userInput = document.querySelector("#username_email").value;
     const password = document.querySelector("#password").value;
 
@@ -56,9 +58,13 @@ userLogin.addEventListener("submit", async (e) => {
         });
     }
 
+    form.reset();
+
     let response = await res.json();
 
     if (res.ok) {
+
+        $("#projectCreationModal").modal("hide");
 
         Swal.fire({
             title: 'Login Successful',
@@ -71,7 +77,7 @@ userLogin.addEventListener("submit", async (e) => {
             }
         }).then((result) => {
             //login successful
-            //to be done: want to close modal
+
             if (result.dismiss === Swal.DismissReason.timer) {
                 window.location.reload();
                 window.location.href = `./main?id=${response.data.id}`
@@ -94,13 +100,13 @@ userRegistration.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
+    const form = document.querySelector("#user-registration");
+
     const email = newEmail.value;
     const username = newUsername.value;
 
-    console.log(email, username);
-
     if (isNewUsernameEmailOkay) {
-        runUserRegistration(email, username);
+        runUserRegistration(email, username, form);
 
     } else {
         //double check if email is an valid input
@@ -111,12 +117,18 @@ userRegistration.addEventListener("submit", async (e) => {
                 text: 'Enter email and username',
                 showConfirmButton: false,
             });
+
+            form.reset();
+
         } else if (identifyInput(username) != "username") {
             Swal.fire({
                 title: 'Username Input Not Accepted',
                 text: 'Enter another username',
                 showConfirmButton: false,
             });
+
+            form.reset();
+
         } else {
 
             let res = await fetch("/auth/check-user-exist", {
@@ -137,6 +149,7 @@ userRegistration.addEventListener("submit", async (e) => {
                         text: 'Enter another email / username',
                         showConfirmButton: false,
                     });
+
                 } else {
                     displayPasswordInput(email, username);
                     isNewUsernameEmailOkay = true;
@@ -175,7 +188,7 @@ function displayPasswordInput(email, username) {
     userRegistration.insertAdjacentHTML("beforeend", passwordInput);
 }
 
-async function runUserRegistration(email, username) {
+async function runUserRegistration(email, username, form) {
 
     //check if both passwords are the same
     const password = document.querySelector("#password1").value;
@@ -208,6 +221,8 @@ async function runUserRegistration(email, username) {
                 },
                 body: JSON.stringify({ username, email, password })
             });
+
+            form.reset();
 
             let response = await res.json();
 

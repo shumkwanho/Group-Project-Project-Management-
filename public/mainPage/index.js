@@ -1,6 +1,34 @@
 import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
 
+//****************************//
+// Project Creation related
+//****************************//
+
+let promptCount = 1; //tracking the current prompt 
+let taskCount = []; //tracking how many task information to be filled
+let taskCountCurrent = 0; //tracking which task information is currently being filled
+
+//(if a task is depend on the completion of another task)
+//tracking how many sub-task information to be filled
+let taskDependanceCount = [];
+let motherTaskCountCurrent = 0;
+
+let newProjectData = {
+    name: "",
+    start_date: "2024-01-01",
+    tasks: {},
+}
+
+const projectCreationForm = document.querySelector("#projectCreationForm");
+const projectCreationPromptContent = document.querySelector("#projectCreationPromptContent");
+const projectCreationModalLabel = document.querySelector("#projectCreationModalLabel");
+const projectCreationClose = document.querySelector("#project-creation-close");
+
+printPromptContent(promptCount)
+
+//****************************//
+
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
 console.log("current main page user id: ", userId);
@@ -9,15 +37,6 @@ const logoutButton = document.querySelector("#logout-button");
 const editProfile = document.querySelector("#edit-profile");
 const updatePassword = document.querySelector("#update-password");
 
-// const project = document.querySelector(".project")
-
-// project.addEventListener("click",(e)=>{
-//     window.location.href = "../Project Page/proJectPage.html"
-// })
-
-// document.querySelector("#new-project").addEventListener("click", (e) =>{
-//     window.location.href = "../../project_init.html"
-// });
 getAllUserInfo(userId)
 async function getAllUserInfo(userId) {
     let res = await fetch(`/mainpage/?userId=${userId}`)
@@ -304,28 +323,34 @@ updatePassword.addEventListener("submit", async (e) => {
     }
 })
 
-//
-// Project Creation
-//
+projectCreationClose.addEventListener("click", (e) => {
+    e.preventDefault();
 
-let promptCount = 1; //tracking the current prompt 
-let taskCount = []; //tracking how many task information to be filled
-let taskCountCurrent = 0; //tracking which task information is currently being filled
+    if (promptCount == 1) {
+        $("#projectCreationModal").modal("hide");
+        window.location.reload();
 
-//(if a task is depend on the completion of another task)
-//tracking how many sub-task information to be filled
-let taskDependanceCount = [];
-let motherTaskCountCurrent = 0;
+    } else if (promptCount > 1) {
 
-let newProjectData = {
-    name: "",
-    start_date: "2024-01-01",
-    tasks: {},
-}
+        Swal.fire({
+            title: "All your progress will be cleared!",
+            text: "Are you sure?",
+            showConfirmButton: false,
+            showDenyButton: true,
+            showCancelButton: true,
+            denyButtonText: `Close and Reset`,
+            cancelButtonText: `Continue`
 
-const projectCreationForm = document.querySelector("#projectCreationForm");
-const projectCreationPromptContent = document.querySelector("#projectCreationPromptContent");
-const projectCreationModalLabel = document.querySelector("#projectCreationModalLabel");
+          }).then((result) => {
+            if (result.isDenied) {
+              resetProgress();
+              $("#projectCreationModal").modal("hide");
+              //not able to reset 
+              window.location.reload();
+            }
+          });
+    }
+})
 
 projectCreationForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -599,7 +624,6 @@ function printTaskNameInput() {
 }
 
 function printTaskNameCheckboxes() {
-
     let printResult = "";
     for (let i = 0; i < (taskCount.length); i++) {
         let taskNum = taskCount[i];
@@ -647,3 +671,23 @@ function addPreReq(projJSON) {
     }
     console.log(projJSON);
 };
+
+function resetProgress() {
+    promptCount = 1;
+    taskCount = [];
+    taskCountCurrent = 0
+    taskDependanceCount = [];
+    motherTaskCountCurrent = 0;
+
+    printPromptContent(promptCount);
+
+    try {
+        console.log(`current Q: ${promptCount}`);
+        console.log(`taskCount: ${taskCount}`)
+        console.log(`taskDependanceCount: ${taskDependanceCount}`)
+        console.log(`taskCountCurrent: ${taskCountCurrent}`)
+        console.log(`motherTaskCountCurrent: ${motherTaskCountCurrent}`)
+    } catch (error) {
+        console.log(error);
+    }
+}
