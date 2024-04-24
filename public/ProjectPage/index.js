@@ -319,35 +319,41 @@ async function getAllMessages(projectId) {
     let edited
 
     if (res.ok) {
+		let darkenArea = document.querySelector(".darken-area")
+		darkenArea.style.display = "block";
+
         let chatroomBox = document.querySelector(".chatroom-box")
 		chatroomBox.style.display = "block";
 
         chatroomBox.innerHTML = `
         <article id="memberAndMessages" class="row">
-            <section id="member-area" class="col-2">
-        
-                <div class="list-title white-word">
-                    <div>Teammates</div>
-                </div>
-        
-                <div id="member-list" class="white-word">
-                </div>
 
-            </section>
+				<section id="member-area" class="col-2">
+			
+					<div class="list-title white-word">
+						<div>Teammates</div>
+					</div>
+			
+					<div id="member-list" class="white-word">
+					</div>
 
-            <section id="message-list" class="col">
+				</section>
 
-                <div id="message-box">
-                </div>
 
-                <div id="texting-box">
-                    <form id="sendMessage">
-                        <input type="text" name="text_content" id="text-content" class="text-content white-word">
-                        <button id="text-send" type="submit">Send</button>
-                    </form>
-                </div>
+				<section id="message-list" class="col">
 
-            </section>
+					<div id="message-box">
+					</div>
+
+					<div id="texting-box">
+						<form id="sendMessage">
+							<input type="text" name="text_content" id="text-content" class="text-content white-word">
+							<button id="text-send" type="submit">Send</button>
+						</form>
+					</div>
+
+				</section>
+			
         </article>
 
         <button type="submit" id="quit-chat" onclick="window.location.reload()">Quit Chat</button>
