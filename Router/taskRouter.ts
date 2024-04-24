@@ -58,9 +58,9 @@ async function createTask(req: Request, res: Response) {
 
 async function createTaskRelation(req: Request, res: Response) {
     try {
-         const { preTask, taskId } = req.body
-    await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
-    res.json({ message: "update sucessfully" })
+        const { preTask, taskId } = req.body
+        await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
+        res.json({ message: "update sucessfully" })
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Internal Server Error" })
@@ -69,19 +69,24 @@ async function createTaskRelation(req: Request, res: Response) {
 
 async function userTaskRelation(req: Request, res: Response) {
     try {
-        const {taskId,userId, projectId} = req.body
-        
-    const userProjectRelationId = (await pgClient.query(`select * from user_project_relation where user_id = $1 and project_id = $2`,[userId,projectId])).rows[0].id
-    const userTaskRelationId = (await pgClient.query(`select * from user_task_relation where user_project_relation_id = $1`,[userProjectRelationId])).rows[0].id
-   console.log(userTaskRelationId);
-   
-    
-    if (userTaskRelationId) { 
-        await pgClient.query(`update user_task_relation set user_project_relation_id = $1, task_id = $2 where id = $3`,[userProjectRelationId,taskId,userTaskRelationId ])
-    }else{
-        await pgClient.query(`insert into user_task_relation (user_project_relation_id,task_id) values ($1,$2)`,[userProjectRelationId,taskId])
-    }
-    res.json({message: "success"})
+        const { taskId, userId, projectId } = req.body
+
+
+        const userProjectRelationId = (await pgClient.query(`select * from user_project_relation where user_id = $1 and project_id = $2`, [userId, projectId])).rows[0].id
+        console.log(userProjectRelationId);
+        if (!userProjectRelationId) {
+            res.status(400).json({ message: "The user is not involved in this project" })
+        }
+
+        const taskAssigned = (await pgClient.query(`select * from user_task_relation where task_id = $1`, [taskId])).rows[0]
+
+
+        if (taskAssigned) {
+            await pgClient.query(`update user_task_relation set user_project_relation_id = $1, task_id = $2 where id = $3`, [userProjectRelationId, taskId, taskAssigned.id])
+        } else {
+            await pgClient.query(`insert into user_task_relation (user_project_relation_id,task_id) values ($1,$2)`, [userProjectRelationId, taskId])
+        }
+        res.json({ message: "success" })
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Internal Server Error" })
@@ -110,9 +115,9 @@ async function updateTask(req: Request, res: Response) {
 
 async function finishTask(req: Request, res: Response) {
     console.log(req.body);
-    
+
     const taskId = req.body.id
-    await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`,[taskId])
+    await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`, [taskId])
 }
 
 

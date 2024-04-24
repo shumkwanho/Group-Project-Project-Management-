@@ -200,7 +200,7 @@ insert into tasks (project_id, name, duration, start_date) values (1, 'Hatity', 
 insert into tasks (project_id, name, duration, start_date) values (1, 'Mat Lam Tam', 6,'2024-04-11');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Transcof', 9,'2024-04-09');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Stringtough', 2,'2024-04-15');
-insert into tasks (project_id, name, duration, start_date) values (1, 'Tampflex', 8,'2024-04-16');
+insert into tasks (project_id, name, duration, start_date) values (1, 'Tampflex', 8,'2024-04-18');
 
 -- project 10 task relation
 insert into task_relation (task_id, pre_req_task_id) values (2, 1);
