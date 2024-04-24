@@ -172,8 +172,6 @@ async function deleteProject(req: Request, res: Response) {
 
 async function initProject(req: Request, res: Response) {
     try {
-
-
         const newProject = (await pgClient.query(`insert into projects (name,start_date) values ($1,$2) returning *`, [req.body.name, req.body.start_date])).rows[0]
 
         let user = req.session.userId
@@ -182,7 +180,7 @@ async function initProject(req: Request, res: Response) {
         let rootId
         for (let i = 0; i <= Object.keys(tasks).length; i++) {
             if (i == 0) {
-                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration) values ($1,'root task',$2, 0) returning *`, [newProject.id, req.body.start_date])).rows[0].id
+                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration, actual_finish_date) values ($1,'root task',$2, 0,NOW()) returning *`, [newProject.id, req.body.start_date])).rows[0].id
                 continue
             }
             const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`, [newProject.id, tasks[i].name, tasks[i].start_date, tasks[i].duration])).rows[0].id
@@ -193,6 +191,7 @@ async function initProject(req: Request, res: Response) {
                 }
             } else {
                 await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`, [rootId, taskId])
+                await pgClient.query(`update tasks set pre_req_fulfilled = true where task_id = $1`,[taskId])
             }
         }
         await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`, [rootId + 1, rootId])
