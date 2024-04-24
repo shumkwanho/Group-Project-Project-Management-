@@ -91,8 +91,8 @@ body {
 .member>.username:hover {
     /* transform: scale(1.1); */
     /* filter: brightness(5) saturate(0.8); */
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5)); 
-  }
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
 
 .member>.image-cropper {
     margin-left: 10px;
@@ -116,10 +116,10 @@ body {
     width: auto; */
 }
 
-.image-cropper:hover {
+.member>.image-cropper:hover {
     /* transform: scale(1.1); */
     filter: brightness(1.2) saturate(0.8);
-  }
+}
 
 @media screen and (max-width: 1350px) {
     #member-area>.list-title {
@@ -152,22 +152,23 @@ body {
     margin: 15px 15px 15px 0;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     width: 75%;
     height: auto;
 }
 
 #message-box {
-       /* background-color: rgb(255, 255, 255); */
-       position: relative;
-       /* display: flex; */
-       justify-content: flex-end;
-       height: auto;
-       width: auto;
-       /* padding: 5px 5px 0 5px; */
-       margin-bottom: 10px;
-       /* overflow-y: auto; */
-       overflow-y: auto;
-   
+    /* background-color: rgb(255, 255, 255); */
+    position: relative;
+    /* display: flex; */
+    justify-content: flex-end;
+    height: auto;
+    width: auto;
+    /* padding: 5px 5px 0 5px; */
+    margin-bottom: 10px;
+    /* overflow-y: auto; */
+    overflow-y: auto;
+
 }
 
 #message-box::-webkit-scrollbar {
@@ -289,7 +290,8 @@ body {
     /* padding: 0 5px; */
 }
 
-#sendMessage {
+#sendMessage,
+#sendEditMessage {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -302,19 +304,8 @@ body {
     width: 100%;
 }
 
-#sendEditMessage {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    background-color: #2d2d2d;
-    border-radius: 15px;
-    height: 40px;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.text-content {
+.text-content,
+.edit-text-content {
     width: calc(100% - 85px);
     height: 30px;
     border-radius: 5px;
@@ -325,7 +316,8 @@ body {
     margin-left: 15px;
 }
 
-#text-send {
+.text-send,
+.edit-text-send {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -340,7 +332,8 @@ body {
     height: 30px;
 }
 
-#text-send:hover {
+.text-send:hover,
+.edit-text-send:hover {
     /* background-color: #8fd1cf; */
     border: .5px solid #8fd1cf !important;
     color: #8fd1cf;
@@ -367,4 +360,69 @@ body {
 
 #quit-chat:hover {
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.15);
-  }
+}
+
+
+
+
+.outer-user-card {
+    display: none;
+    position: relative;
+    background-color: rgb(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 9;
+}
+
+.user-card {
+    display: none;
+    background-color: #f0f0f0;
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    padding: 15px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 400px;
+    width: 400px;
+    z-index: 10;
+    border-radius: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    
+}
+
+.user-card>.image-cropper {
+    margin-left: 10px;
+    height: 250px;
+    width: 250px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    
+}
+
+.user-card>.image-cropper>img {
+    min-height: 250px;
+    min-width: 250px;
+    object-fit: cover;
+    display: inline;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    cursor: none;
+    /* height: 100%;
+    width: auto; */
+}
+
+.user-card .username {
+    margin: 10px 0;
+    font-size: 25px;
+    font-weight: 600;
+}

@@ -288,13 +288,13 @@ async function assignTask(taskId) {
 
 
 
-document.querySelector(".add-teammate").addEventListener("click",(e)=>{
+document.querySelector(".add-teammate").addEventListener("click", (e) => {
 
 })
-document.querySelector(".remove-teammate").addEventListener("click",(e)=>{
-	
+document.querySelector(".remove-teammate").addEventListener("click", (e) => {
+
 })
-document.querySelector(".quit-team").addEventListener("click",async (e)=>{
+document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
 			method: "DELETE",
 			headers: {
@@ -310,10 +310,9 @@ document.querySelector(".quit-team").addEventListener("click",async (e)=>{
 	}
 })
 
-const mainPage = document.querySelector(".main-page").addEventListener("click",async (e)=>{
+const mainPage = document.querySelector(".main-page").addEventListener("click", async (e) => {
 	const res = await fetch("/auth/user")
 	const data = (await res.json()).data
-	console.log(data);
 	window.location.href = `../main/?id=${data.id}`
 })
 
@@ -342,6 +341,7 @@ document.querySelector(".open-chatroom").addEventListener("click", async (e) => 
 
 window["editMessage"] = editMessage;
 window["confirmEdit"] = confirmEdit;
+window["getOtherUserInfo"] = getOtherUserInfo;
 
 async function getAllMessages(projectId) {
 
@@ -362,8 +362,8 @@ async function getAllMessages(projectId) {
 			memberList.innerHTML +=
 				`
             <div class="member">
-            <div class="username">${eachMember.username}</div>
-            <div class="image-cropper">
+            <div class="username" onclick="getOtherUserInfo(${eachMember.user_id})">${eachMember.username}</div>
+            <div class="image-cropper" onclick="getOtherUserInfo(${eachMember.user_id})">
             ${eachMember.profile_image ? `<img src="/profile-image/${eachMember.profile_image}" class="profilePic" />` :
 					`<img src="01.jpg" class="profilePic" />`}
             </div>
@@ -603,15 +603,111 @@ socket.on('receive-editMessage', async info => {
 document.querySelector(".quit-chat").addEventListener("click", async (event) => {
 	event.preventDefault()
 
-    let chatroomBox = document.querySelector(".chatroom-box")
-	console.log(chatroomBox);
-        chatroomBox.innerHTML = ""
+	let darkenArea = document.querySelector(".darken-area")
+	darkenArea.style.display = "none";
+
+	let chatroomBox = document.querySelector(".chatroom-box")
+	chatroomBox.style.display = "none";
+
+	let memberAndMessages = document.querySelector("#memberAndMessages")
+
+	memberAndMessages.innerHTML = `
+			<section id="member-area" class="col-2">
+                <div class="list-title white-word">
+                    <div>Teammates</div>
+                </div>
+                <div id="member-list" class="white-word">
+                </div>
+            </section>
+            <section id="message-list" class="col">
+                <div id="message-box">
+                </div>
+                <div class="texting-box">
+                    <form id="sendMessage">
+                        <input type="text" id="text-content" class="text-content white-word">
+                        <button id="text-send" type="submit">Send</button>
+                    </form>
+                </div>
+            </section>
+	`
 })
 
 // async function quitChat() {
-	// event.preventDefault()
-    
+// event.preventDefault()
 
-		// window.location.reload();
+
+// window.location.reload();
 // }
 
+
+//===================== Get Other User Info ===================
+
+async function getOtherUserInfo(userId) {
+	let res = await fetch(`/auth/other-user?userId=${userId}`);
+	let response = await res.json();
+	let myUserId = response.myUserId;
+	let user_id = response.data.id;
+	let username = response.data.username;
+	let email = response.data.email;
+	let profileImage = response.data.profile_image
+
+	console.log(response);
+	document.querySelector(".darken-area").style.display = "none";
+	document.querySelector(".outer-user-card").style.display = "block";
+	document.querySelector(".user-card").style.display = "flex";
+
+	document.querySelector(".user-card").innerHTML = `
+    <div class="image-cropper">
+        ${profileImage ? `<img src="/profile-image/${profileImage}" class="profilePic" />`
+			:
+			`<img src="01.jpg" class="profilePic" />`}
+    </div>
+
+    <div class="username">${username}</div>
+
+    <div class="e-mail">${email}</div>
+
+    `
+}
+
+document.querySelector(".darken-area").addEventListener("click", async (event) => {
+	event.preventDefault()
+	document.querySelector(".darken-area").style.display = "none";
+	document.querySelector(".chatroom-box").style.display = "none";
+
+	let memberAndMessages = document.querySelector("#memberAndMessages")
+
+	memberAndMessages.innerHTML = `
+			<section id="member-area" class="col-2">
+                <div class="list-title white-word">
+                    <div>Teammates</div>
+                </div>
+                <div id="member-list" class="white-word">
+                </div>
+            </section>
+            <section id="message-list" class="col">
+                <div id="message-box">
+                </div>
+                <div class="texting-box">
+                    <form id="sendMessage">
+                        <input type="text" id="text-content" class="text-content white-word">
+                        <button id="text-send" type="submit">Send</button>
+                    </form>
+                </div>
+            </section>
+	`
+
+	// document.querySelector(".outer-user-card").style.display = "none";
+	// document.querySelector(".user-card").style.display = "none";
+	// document.querySelector(".user-card").innerHTML = ""
+})
+
+
+
+document.querySelector(".outer-user-card").addEventListener("click", async (event) => {
+	event.preventDefault()
+	document.querySelector(".darken-area").style.display = "block";
+	document.querySelector(".outer-user-card").style.display = "none";
+	document.querySelector(".user-card").style.display = "none";
+	document.querySelector(".user-card").innerHTML = ""
+})
