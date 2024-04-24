@@ -1,5 +1,6 @@
 import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
+import { getCurrentDate } from "../utils/getCurrentDate.js"
 
 //****************************//
 // Project Creation related
@@ -363,7 +364,7 @@ projectCreationForm.addEventListener("submit", async (e) => {
 
         let projId = await projectInit(newProjectData);
         console.log(projId);
-        window.location.href = `../../ProjectPage/?id=${projId}`;
+        window.location.href = `../ProjectPage/?id=${projId}`;
 
     } else {
         //save response and update prompt count
@@ -509,14 +510,14 @@ function printPromptContent(promptCount) {
         <label for="projectCreationResponse" class="form-label">
         Q2. When will your project start??
         </label>
-        <input class="form-control" id="projectCreationResponse" type="date" value="2024-01-01" min="1997-07-01" max="2046-06-30" name="response">`;
+        <input class="form-control" id="projectCreationResponse" type="date" value="${getCurrentDate()}" min="1997-07-01" max="2046-06-30" name="response">`;
 
     } else if (promptCount == 3) {
         return `
         <label for="projectCreationResponse" class="form-label">
         Q3. How many tasks do you plan to have for this project?? (Please enter a number between 2 and 5. You may remove or add more tasks later)
         </label>
-        <input class="form-control" id="projectCreationResponse" type="number" min="2" max="5" value="5" name="response">`;
+        <input class="form-control" id="projectCreationResponse" type="number" min="2" max="5" value="2" name="response">`;
 
     } else if (promptCount == 4) {
         return `
@@ -567,7 +568,7 @@ function printPromptContent(promptCount) {
                 <label for="projectCreationResponse" class="form-label">
                 Q5b. When will Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span> start??
                 </label>
-                <input class="form-control" id="projectCreationResponse" type="date" value="2024-01-01" min="1997-07-01" max="2046-06-30" name="response">`;
+                <input class="form-control" id="projectCreationResponse" type="date" value="${getCurrentDate()}" min="1997-07-01" max="2046-06-30" name="response">`;
             }
         }
 
