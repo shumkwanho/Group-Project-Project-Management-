@@ -489,7 +489,7 @@ async function updateProfileImage(req: Request, res: Response) {
 
         } else {
 
-            let userId = req.session.userId;
+            let id = req.session.userId;
             let username = req.session.username;
 
             //max file size = 2mb, need to remind users in front end
@@ -512,8 +512,10 @@ async function updateProfileImage(req: Request, res: Response) {
 
             imageForm.parse(req, async (err, fields, files) => {
 
+                console.log("___________")
+                console.log(files)
+
                 if (err) {
-                    console.log(err);
                     res.status(500).json({ message: "internal server error" });
                 };
 
@@ -539,15 +541,15 @@ async function updateProfileImage(req: Request, res: Response) {
 
                     const userQueryResult = (
                         await pgClient.query(
-                            "UPDATE users SET profile_image = $1 WHERE id = $2 RETURNING id, profile_image;",
-                            [filename, userId]
+                            "UPDATE users SET profile_image = $1 WHERE id = $2 RETURNING id, username, profile_image;",
+                            [filename, id]
                         )).rows[0];
 
                     res.json({
                         message: "profile image update successful",
                         data: {
-                            id: userId,
-                            username: username,
+                            id: userQueryResult.id,
+                            username: userQueryResult.username,
                             profile_image: userQueryResult.profile_image
                         }
                     })
