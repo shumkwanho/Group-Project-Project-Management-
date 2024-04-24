@@ -68,7 +68,7 @@ async function getCurrentTask(projectId: any) {
 
 async function getAllFinishedProjects(userId: any) {
     return (await pgClient.query(`
-    SELECT projects.id, name, image, 
+    SELECT project_id, name, image, 
         to_char(actual_finish_date, 'YYYY-MM-DD') AS actual_finish_date 
         FROM projects 
         INNER JOIN user_project_relation
