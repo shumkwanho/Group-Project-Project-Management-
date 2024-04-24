@@ -3,7 +3,7 @@
 // insert into messages (user_id, project_id, content) values (19, 2, 'proin at turpis a pede posuere nonummy integer non velit');
 
 import { faker } from '@faker-js/faker';
-import { pgClient } from '../utils/pgClient';
+import { pgClient } from './pgClient';
 
 async function fakeMessage() {
     faker.seed(11)

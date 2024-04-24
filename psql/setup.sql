@@ -3,6 +3,7 @@ DROP DATABASE project_manager;
 CREATE DATABASE project_manager;
 
 \c project_manager
+
 CREATE TABLE "task_relation"(
     "id" SERIAL NOT NULL,
     "task_id" BIGINT NOT NULL,
@@ -14,7 +15,7 @@ CREATE TABLE "tasks"(
     "id" SERIAL NOT NULL,
     "project_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "pre_req_fulfilled" BOOLEAN NOT NULL,
+    "pre_req_fulfilled" BOOLEAN NOT NULL DEFAULT '0',
     "start_date" DATE NOT NULL,
     "duration" BIGINT NOT NULL,
     "actual_finish_date" DATE NULL
@@ -33,8 +34,11 @@ CREATE TABLE "messages"(
     "user_id" BIGINT NOT NULL,
     "project_id" BIGINT NOT NULL,
     "content" VARCHAR(255) NOT NULL,
-    "created_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL,
-    "edited_at" TIMESTAMP(0) WITH TIME ZONE NOT NULL
+    "created_at" TIMESTAMP(0) WITH
+        TIME zone NOT NULL DEFAULT 'NOW()',
+        "edited_at" TIMESTAMP(0)
+    WITH
+        TIME zone NOT NULL DEFAULT 'NOW()'
 );
 ALTER TABLE
     "messages" ADD PRIMARY KEY("id");
@@ -54,8 +58,9 @@ CREATE TABLE "users"(
     "email" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "profile_image" VARCHAR(255) NULL,
-    "last_login" TIMESTAMP(0) WITH TIME ZONE NOT NULL,
-    "registration_date" DATE NOT NULL
+    "last_login" TIMESTAMP(0) WITH
+        TIME zone NOT NULL DEFAULT 'NOW()',
+        "registration_date" DATE NOT NULL DEFAULT 'NOW()'
 );
 ALTER TABLE
     "users" ADD PRIMARY KEY("id");
@@ -67,9 +72,14 @@ CREATE TABLE "user_project_relation"(
     "id" SERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "project_id" BIGINT NOT NULL,
+    "permission_level" BIGINT NULL
 );
 ALTER TABLE
     "user_project_relation" ADD PRIMARY KEY("id");
+COMMENT
+ON COLUMN
+    "user_project_relation"."permission_level" IS '2: manager 
+1: normal sstaff';
 ALTER TABLE
     "task_relation" ADD CONSTRAINT "task_relation_task_id_foreign" FOREIGN KEY("task_id") REFERENCES "tasks"("id");
 ALTER TABLE
@@ -88,5 +98,3 @@ ALTER TABLE
     "tasks" ADD CONSTRAINT "tasks_project_id_foreign" FOREIGN KEY("project_id") REFERENCES "projects"("id");
 ALTER TABLE
     "user_task_relation" ADD CONSTRAINT "user_task_relation_task_id_foreign" FOREIGN KEY("task_id") REFERENCES "tasks"("id");
-
-\c project_manager;
