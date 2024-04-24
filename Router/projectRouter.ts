@@ -290,15 +290,25 @@ async function removeProjectUser(req: Request, res: Response) {
     try {
         
         const project_id = req.body.projectId;
-        const userName = req.body.username? req.body.username : ""
-        console.log("Project ID :",project_id);
+        let userName
+        let userId
+        if (req.body.username) {
+            userName = req.body.username 
+            userId = 0
+        }else{
+            userName = "."
+            userId = req.session.userId
+        }
+        console.log("userName",userName);
+        console.log("userId",userId)
+        
 
 
         
         //check if relation exists
         let checkQuery = (await pgClient.query(
-            "SELECT user_project_relation.id FROM user_project_relation join users on users.id = user_id WHERE (username = $1 or users.id = $1) AND project_id = $2",
-            [userName, project_id]
+            "SELECT user_project_relation.id FROM user_project_relation join users on users.id = user_id WHERE (username = $1 or users.id = $2) AND project_id = $3",
+            [userName,userId, project_id]
         )).rows[0];
 
         if (checkQuery == undefined) {
@@ -311,10 +321,15 @@ async function removeProjectUser(req: Request, res: Response) {
         } else {
 
             let id = checkQuery.id;
-
+            let userTaskRelations = (await pgClient.query(`select user_task_relation.id from users join user_project_relation on users.id = user_id join user_task_relation on user_project_relation.id = user_project_relation_id where users.id = $1 or username = $2`,[userId,userName])).rows
+            if (userTaskRelations.length > 0) {
+                for (let userTaskRelation of userTaskRelations){
+                    await pgClient.query(`DELETE FROM user_task_relation where id = $1`,[userTaskRelation.id])
+                }
+            }
             await pgClient.query("DELETE FROM user_project_relation WHERE id = $1", [id])
 
-            res.json({ message: "remove user from project successful" });
+            res.json({ message: "remove user from project successful" ,id:userId,userName:userName});
         }
 
     } catch (error) {
