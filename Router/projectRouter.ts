@@ -288,14 +288,17 @@ async function addProjectUser(req: Request, res: Response) {
 //request: user id
 async function removeProjectUser(req: Request, res: Response) {
     try {
-        const project_id = req.query.id;
-        const user_id = req.body.username? req.body.username : req.session.username
-        console.log(user_id);
+        
+        const project_id = req.body.projectId;
+        const userName = req.body.username? req.body.username : ""
+        console.log("Project ID :",project_id);
+
+
         
         //check if relation exists
         let checkQuery = (await pgClient.query(
-            "SELECT id FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
-            [user_id, project_id]
+            "SELECT user_project_relation.id FROM user_project_relation join users on users.id = user_id WHERE (username = $1 or users.id = $1) AND project_id = $2",
+            [userName, project_id]
         )).rows[0];
 
         if (checkQuery == undefined) {

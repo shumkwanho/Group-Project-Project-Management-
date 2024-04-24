@@ -108,7 +108,6 @@ async function updateTask(req: Request, res: Response) {
         const updatedTask = (await pgClient.query(`UPDATE tasks SET name = $1,duration = $2,start_date = $3 WHERE id = $4 returning *`, [taskName, duration, startDate, taskId])).rows[0]
         checkpreReqTask(taskId)
         const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`,[projectId])).rows
-        console.log(checkAllTask);
         
         if (checkAllTask.length == 0) {
             await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`,[projectId])

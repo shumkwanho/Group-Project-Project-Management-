@@ -292,20 +292,23 @@ document.querySelector(".remove-teammate").addEventListener("click",(e)=>{
 	
 })
 document.querySelector(".quit-team").addEventListener("click",async (e)=>{
-	const res = await fetch("/task/remove-user", {
+	const res = await fetch("/projectRou/remove-user", {
 			method: "DELETE",
 			headers: {
 				'Content-Type': 'application/json',
-			}
+			},
+			body: JSON.stringify({ projectId :projectId}),
 		});
 	if (res.ok) {
 		console.log("yeah");
+		window.location.href = `../main/?id=${data.id}`
 	}
 })
 
 const mainPage = document.querySelector(".main-page").addEventListener("click",async (e)=>{
 	const res = await fetch("/auth/user")
 	const data = (await res.json()).data
+	console.log(data);
 	window.location.href = `../main/?id=${data.id}`
 })
 
