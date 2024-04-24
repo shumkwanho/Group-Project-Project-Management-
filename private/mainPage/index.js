@@ -327,7 +327,6 @@ updatePassword.addEventListener("submit", async (e) => {
 })
 
 //upload profile image
-//tbc!!!!!!!!
 uploadProfileImage.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -339,6 +338,7 @@ uploadProfileImage.addEventListener("submit", async (e) => {
         method: "POST",
         body: formData,
     });
+
     let result = await res.json();
 
     console.log(result);
