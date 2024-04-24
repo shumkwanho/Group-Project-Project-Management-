@@ -73,7 +73,7 @@ async function getAllFinishedProjects(userId: any) {
         FROM projects 
         INNER JOIN user_project_relation
         ON project_id = projects.id
-        WHERE user_id = $1 AND CURRENT_TIMESTAMP > actual_finish_date 
+        WHERE user_id = $1 AND CURRENT_TIMESTAMP >= actual_finish_date 
         ORDER BY actual_finish_date DESC;`, [userId])).rows
 }
 

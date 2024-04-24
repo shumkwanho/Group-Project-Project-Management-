@@ -25,7 +25,7 @@
 <body>
 
     <main class="darken-area" style="display: none;"></main>
-
+    
 
 
     <nav class="border">
@@ -54,8 +54,45 @@
 
 
 
+
+
+    <main class="chatroom-box" style="display: none;">
+        
+        <article id="memberAndMessages" class="row">
+
+            <section id="member-area" class="col-2">
+
+                <div class="list-title white-word">
+                    <div>Teammates</div>
+                </div>
+
+                <div id="member-list" class="white-word">
+
+                </div>
+
+            </section>
+
+
+            <section id="message-list" class="col">
+
+                <div id="message-box">
+
+                </div>
+
+                <div class="texting-box">
+                    <form id="sendMessage">
+                        <input type="text" id="text-content" class="text-content white-word">
+                        <button id="text-send" type="submit">Send</button>
+                    </form>
+                </div>
+
+            </section>
+
+        </article>
+
+        <button type="button" class="quit-chat">Quit Chat</button>
+    </main>
     
-    <main class="chatroom-box" style="display: none;"></main>
 
     <button class="open-chatroom" type="button">Chatroom</button>
 

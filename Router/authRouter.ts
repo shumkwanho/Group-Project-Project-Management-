@@ -14,6 +14,7 @@ authRouter.post("/email-login", emailLogin);
 authRouter.get("/google-login", googleLogin);
 authRouter.post("/logout", isLoggedIn, logout);
 authRouter.get("/user", isLoggedIn, getUserInfo);
+authRouter.get("/other-user", isLoggedIn, getOtherUserInfo);
 authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", updateProfileImage);
@@ -191,7 +192,7 @@ async function emailLogin(req: Request, res: Response) {
 
                 res.json({
                     message: "login successful",
-                    data: { 
+                    data: {
                         id: userQuery.id,
                         username: userQuery.username
                     }
@@ -308,12 +309,12 @@ async function getUserInfo(req: Request, res: Response) {
         //check if user is logged in
         if (req.session.username) {
 
-            let id = req.session.userId
+            let userId = req.session.userId;
 
             const userQueryResult = (
                 await pgClient.query(
                     "SELECT id, username, email, profile_image, last_login, registration_date FROM users WHERE id = $1;",
-                    [id]
+                    [userId]
                 )).rows[0];
 
             res.json({
@@ -339,6 +340,44 @@ async function getUserInfo(req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
 };
+
+async function getOtherUserInfo(req: Request, res: Response) {
+    try {
+        //check if user is logged in
+        if (req.session.username) {
+
+            let {userId} = req.query;
+            let myUserId = req.session.userId;
+
+            const userQueryResult = (
+                await pgClient.query(
+                    "SELECT id, username, email, profile_image, last_login, registration_date FROM users WHERE id = $1;",
+                    [userId]
+                )).rows[0];
+
+            res.json({
+                message: "check other user info successful",
+                myUserId: myUserId,
+                data: {
+                    id: userQueryResult.id,
+                    username: userQueryResult.username,
+                    email: userQueryResult.email,
+                    profile_image: userQueryResult.profile_image,
+                    last_login: userQueryResult.last_login,
+                    registration_date: userQueryResult.registration_date
+                }
+            });
+        } else {
+            res.status(400).json({
+                message: "check username failed",
+                error: "no active login session"
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
+}
 
 async function inspectPassword(req: Request, res: Response) {
     try {
@@ -531,7 +570,7 @@ async function usernameUpdate(req: Request, res: Response) {
                 message: "update username failed",
                 error: "no active login session"
             });
-            
+
         } else {
 
             let username = req.body.username;
@@ -571,7 +610,7 @@ function isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
 };
 
-async function checkUsername (username: string) {
+async function checkUsername(username: string) {
     let checkUniqueQuery = (await pgClient.query(
         "SELECT username FROM users WHERE username = $1",
         [username]
@@ -580,7 +619,7 @@ async function checkUsername (username: string) {
     return checkUniqueQuery;
 }
 
-async function checkEmail (email: string) {
+async function checkEmail(email: string) {
     let checkUniqueQuery = (await pgClient.query(
         "SELECT id FROM users WHERE username = $1",
         [email]

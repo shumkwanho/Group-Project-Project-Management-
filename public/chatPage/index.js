@@ -115,44 +115,46 @@ async function getAllMessages(projectId) {
 
     let response = await res.json();
 
+    console.log(response);
+
     let allMessagesDate = response.allMessagesDate;
     let allMessages = response.allMessages;
     let allMembers = response.groupMembers;
     let edited
 
     if (res.ok) {
-        let chatroomBox = document.querySelector(".chatroom-box")
+        // let chatroomBox = document.querySelector(".chatroom-box")
 
-        chatroomBox.innerHTML = `
-        <article id="memberAndMessages" class="row">
-            <section id="member-area" class="col-2">
+        // chatroomBox.innerHTML = `
+        // <article id="memberAndMessages" class="row">
+        //     <section id="member-area" class="col-2">
         
-                <div class="list-title white-word">
-                    <div>Teammates</div>
-                </div>
+        //         <div class="list-title white-word">
+        //             <div>Teammates</div>
+        //         </div>
         
-                <div id="member-list" class="white-word">
-                </div>
+        //         <div id="member-list" class="white-word">
+        //         </div>
 
-            </section>
+        //     </section>
 
-            <section id="message-list" class="col">
+        //     <section id="message-list" class="col">
 
-                <div id="message-box">
-                </div>
+        //         <div id="message-box">
+        //         </div>
 
-                <div id="texting-box">
-                    <form id="sendMessage">
-                        <input type="text" name="text_content" id="text-content" class="text-content white-word">
-                        <button id="text-send" type="submit">Send</button>
-                    </form>
-                </div>
+        //         <div id="texting-box">
+        //             <form id="sendMessage">
+        //                 <input type="text" name="text_content" id="text-content" class="text-content white-word">
+        //                 <button id="text-send" type="submit">Send</button>
+        //             </form>
+        //         </div>
 
-            </section>
-        </article>
+        //     </section>
+        // </article>
 
-        <button type="button" id="quit-chat" onclick="quitChat()">Quit Chat</button>
-        `
+        // <button type="button" id="quit-chat" onclick="quitChat()">Quit Chat</button>
+        // `
 
         let memberList = document.querySelector("#member-list")
 
@@ -160,7 +162,7 @@ async function getAllMessages(projectId) {
             memberList.innerHTML +=
                 `
             <div class="member">
-            <div class="username">${eachMember.username}</div>
+            <div class="username" onclick="getOtherUserInfo(${eachMember.user_id})">${eachMember.username}</div>
             <div class="image-cropper">
             ${eachMember.profile_image ? `<img src="/profile-image/${eachMember.profile_image}" class="profilePic" />` :
                     `<img src="01.jpg" class="profilePic" />`}
@@ -269,6 +271,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
 
     let res = await fetch('/auth/user')
     let response = await res.json();
+    console.log(response.data);
     let myUserId = await response.data.id;
     console.log("my user id: ", myUserId);
 
@@ -387,6 +390,24 @@ socket.on('receive-editMessage', async info => {
         `
 })
 
+
+
+
+
+async function getOtherUserInfo(userId) {
+    let res = await fetch(`/auth/user?userId=${userId}`);
+    let response = await res.json();
+    let myUserId = response.myUserId;
+    let user_id = response.data.id;
+    let username = response.data.username;
+    let email = response.data.email;
+    let profile_image = response.data.profile_image
+    
+    
+
+}
+
+                
 
 
 
