@@ -16,7 +16,7 @@ authRouter.post("/logout", isLoggedIn, logout);
 authRouter.get("/user", isLoggedIn, getUserInfo);
 authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
-authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
+authRouter.post("/profile-image-update", updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 
 async function userRegistration(req: Request, res: Response) {
@@ -488,12 +488,14 @@ async function updateProfileImage(req: Request, res: Response) {
                         message: "profile picture update failed",
                         error: "no image"
                     })
+
                 } else if (fileSize > MAX_FILE_SIZE) {
                     //check if image uploaded exceed max file size
                     res.status(400).json({
                         message: "profile image update failed",
                         error: "file size exceed maximum"
                     })
+
                 } else {
 
                     const userQueryResult = (

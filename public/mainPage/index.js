@@ -37,6 +37,7 @@ console.log("current main page user id: ", userId);
 const logoutButton = document.querySelector("#logout-button");
 const editProfile = document.querySelector("#edit-profile");
 const updatePassword = document.querySelector("#update-password");
+const uploadProfileImage = document.querySelector("#upload-profile-image");
 
 getAllUserInfo(userId)
 async function getAllUserInfo(userId) {
@@ -168,7 +169,7 @@ async function getAllUserInfo(userId) {
 
         userContent.innerHTML = `
         <div class="user-content">
-            <div class="image-cropper">
+            <div class="image-cropper" data-bs-toggle="modal" data-bs-target="#uploadProfileImageModal">
             ${imageElm}
             </div>
             <div class="username">${userInfo.username}</div>
@@ -265,6 +266,7 @@ editProfile.addEventListener("submit", async (e) => {
     }
 })
 
+//update password button
 updatePassword.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -321,6 +323,37 @@ updatePassword.addEventListener("submit", async (e) => {
                 }
             }
         }
+    }
+})
+
+uploadProfileImage.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const res = await fetch("/auth/profile-image-update", {
+        method: "POST",
+        body: formData,
+    });
+
+    let result = await res.json();
+
+    if (res.ok) {
+
+        console.log("ok")
+
+        // Swal.fire({
+        //     title: 'Profile Image Uploaded',
+        //     confirmButtonText: "Continue"
+        // }).then((result) => {
+        //     if (result.isConfirmed) {
+        //         window.location.reload();
+        //         getAllUserInfo(userId)
+        //     }
+        // });
+        
+    } else {
+        console.log(result);
     }
 })
 

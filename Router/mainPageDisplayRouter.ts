@@ -56,7 +56,6 @@ async function getCurrentTask(projectId: any) {
 
     return (await pgClient.query(`
     SELECT project_id, tasks.id as task_id , tasks.name, 
-        tasks.description, 
         to_char(tasks.start_date, 'YYYY-MM-DD') AS task_start_date,
         duration, tasks.actual_finish_date 
         FROM tasks INNER JOIN projects
