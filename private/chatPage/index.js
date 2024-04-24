@@ -115,8 +115,6 @@ async function getAllMessages(projectId) {
 
     let response = await res.json();
 
-    console.log(response);
-
     let allMessagesDate = response.allMessagesDate;
     let allMessages = response.allMessages;
     let allMembers = response.groupMembers;
@@ -222,7 +220,6 @@ async function getAllMessages(projectId) {
 
         }
         messagesBox.scrollTop = messagesBox.scrollHeight - messagesBox.clientHeight
-        console.log(messagesBox.scrollTop)
         // messagesBox.scrollTop =0
 
         socket.emit('join', projectId);
@@ -314,7 +311,7 @@ async function editMessage(messageId, content) {
 
     document.querySelector("#texting-box").innerHTML =
         `
-        <form id="sendMessage" onsubmit="confirmEdit(event,${messageId})">
+        <form id="sendEditMessage" onsubmit="confirmEdit(event,${messageId})">
             <input type="text" name="text_content" id="edit-content" class="text-content white-word" value="${content}">
             <button id="text-send" type="submit">Edit</button>
         </form>
@@ -341,6 +338,8 @@ async function confirmEdit(event, messageId) {
         let response = await res.json();
         let userId = response.userId;
         let content = response.date.content;
+        let projectId = response.date.project_id;
+        console.log(response);
 
         socket.emit('editMessage', { messageId: messageId, userId: userId, content: content });
         console.log("Edit message success");
@@ -348,8 +347,8 @@ async function confirmEdit(event, messageId) {
 
         document.querySelector("#texting-box").innerHTML =
             `
-            <form id="sendMessage">
-                <input type="text" name="text_content" id="text-content" class="text-content white-word" placeholder="|">
+            <form id="sendMessage" onsubmit="sendMessage(${projectId})">
+                <input type="text" name="text_content" id="text-content" class="text-content white-word">
                 <button id="text-send" type="submit">Send</button>
             </form>
         `
@@ -394,6 +393,7 @@ socket.on('receive-editMessage', async info => {
 
 
 
+
 async function getOtherUserInfo(userId) {
     let res = await fetch(`/auth/user?userId=${userId}`);
     let response = await res.json();
@@ -415,8 +415,8 @@ async function getOtherUserInfo(userId) {
 //===================== Quit Chatroom ====================
 
 async function quitChat() {
-    let chatroomBox = document.querySelector(".chatroom-box")
-        chatroomBox.innerHTML = ""
+    let memberAndMessages = document.querySelector(".memberAndMessages")
+    memberAndMessages.innerHTML = ""
 }
 
 
