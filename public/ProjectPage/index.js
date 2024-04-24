@@ -15,7 +15,6 @@ async function getProjectData(id) {
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
-		console.log(data);
 		await drawPage(projectId)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
@@ -94,6 +93,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 
 	console.log(taskid);
 	const req = {
+		projectId: projectId,
 		taskId: taskid,
 		taskName: item.text,
 		duration: item.duration,
@@ -283,7 +283,39 @@ async function assignTask(taskId) {
 	});
 }
 
-// getAllMessages(projectId);
+
+
+document.querySelector(".add-teammate").addEventListener("click",(e)=>{
+
+})
+document.querySelector(".remove-teammate").addEventListener("click",(e)=>{
+	
+})
+document.querySelector(".quit-team").addEventListener("click",async (e)=>{
+	const res = await fetch("/task/remove-user", {
+			method: "DELETE",
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		});
+	if (res.ok) {
+		console.log("yeah");
+	}
+})
+
+const mainPage = document.querySelector(".main-page").addEventListener("click",async (e)=>{
+	const res = await fetch("/auth/user")
+	const data = (await res.json()).data
+	window.location.href = `../main/?id=${data.id}`
+})
+
+
+
+
+
+
+
+
 
 document.querySelector(".open-chatroom").addEventListener("click", async (e) => {
 	e.preventDefault()
@@ -563,42 +595,15 @@ socket.on('receive-editMessage', async info => {
 document.querySelector(".quit-chat").addEventListener("click", async (event) => {
 	event.preventDefault()
 
-	let chatroomBox = document.querySelector(".chatroom-box")
-	chatroomBox.style.display = "none";
-
-	let darkenArea = document.querySelector(".darken-area")
-	darkenArea.style.display = "none";
-
-	let memberMessages = document.querySelector("#memberAndMessages")
-
-	memberMessages.innerHTML = `
-		
-            <section id="member-area" class="col-2">
-
-                <div class="list-title white-word">
-                    <div>Teammates</div>
-                </div>
-
-                <div id="member-list" class="white-word">
-
-                </div>
-
-            </section>
-
-
-            <section id="message-list" class="col">
-
-                <div id="message-box">
-
-                </div>
-
-                <div id="texting-box">
-                    <form id="sendMessage">
-                        <input type="text" id="text-content" class="text-content white-word">
-                        <button id="text-send" type="submit">Send</button>
-                    </form>
-                </div>
-
-            </section>
-		`
+    let chatroomBox = document.querySelector(".chatroom-box")
+	console.log(chatroomBox);
+        chatroomBox.innerHTML = ""
 })
+
+// async function quitChat() {
+	// event.preventDefault()
+    
+
+		// window.location.reload();
+// }
+
