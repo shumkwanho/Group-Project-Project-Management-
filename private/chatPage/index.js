@@ -111,6 +111,8 @@ getAllMessages(projectId);
 
 async function getAllMessages(projectId) {
 
+    window["getOtherUserInfo"] = getOtherUserInfo;
+
     let res = await fetch(`/chatroom?projectId=${projectId}`)
 
     let response = await res.json();
@@ -143,8 +145,8 @@ async function getAllMessages(projectId) {
 
         //         <div id="texting-box">
         //             <form id="sendMessage">
-        //                 <input type="text" name="text_content" id="text-content" class="text-content white-word">
-        //                 <button id="text-send" type="submit">Send</button>
+        //                 <input type="text" name="text_content" class="text-content white-word">
+        //                 <button class="text-send" type="submit">Send</button>
         //             </form>
         //         </div>
 
@@ -240,7 +242,6 @@ document.querySelector("#sendMessage").addEventListener("submit", async (event) 
 async function sendMessage(projectId) {
     const content = await document.querySelector(".text-content").value;
 
-
     if (content.trim() != "") {
         let res = await fetch('/chatroom', {
             method: "POST",
@@ -298,7 +299,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
             `
         }
         `
-    // document.querySelector("#text-content").value = "";
+
     messagesBox.scrollTop = messagesBox.scrollHeight - messagesBox.clientHeight
 })
 
@@ -312,8 +313,8 @@ async function editMessage(messageId, content) {
     document.querySelector("#texting-box").innerHTML =
         `
         <form id="sendEditMessage" onsubmit="confirmEdit(event,${messageId})">
-            <input type="text" name="text_content" id="edit-content" class="text-content white-word" value="${content}">
-            <button id="text-send" type="submit">Edit</button>
+            <input type="text" name="text_content" class="edit-text-content white-word" value="${content}">
+            <button class="edit-text-send" type="submit">Edit</button>
         </form>
     `
 }
@@ -321,7 +322,7 @@ async function editMessage(messageId, content) {
 async function confirmEdit(event, messageId) {
     event.preventDefault()
 
-    let content = document.querySelector("#edit-content").value;
+    let content = document.querySelector(".edit-text-content").value;
 
     const res = await fetch('/chatroom', {
         method: 'PUT',
@@ -338,7 +339,6 @@ async function confirmEdit(event, messageId) {
         let response = await res.json();
         let userId = response.userId;
         let content = response.date.content;
-        let projectId = response.date.project_id;
         console.log(response);
 
         socket.emit('editMessage', { messageId: messageId, userId: userId, content: content });
@@ -347,10 +347,10 @@ async function confirmEdit(event, messageId) {
 
         document.querySelector("#texting-box").innerHTML =
             `
-            <form id="sendMessage" onsubmit="sendMessage(${projectId})">
-                <input type="text" name="text_content" id="text-content" class="text-content white-word">
-                <button id="text-send" type="submit">Send</button>
-            </form>
+        <form id="sendMessage">
+            <input type="text" name="text_content" class="text-content white-word">
+            <button class="text-send" type="submit">Send</button>
+        </form>
         `
     }
 }
@@ -394,19 +394,43 @@ socket.on('receive-editMessage', async info => {
 
 
 
+
+
 async function getOtherUserInfo(userId) {
-    let res = await fetch(`/auth/user?userId=${userId}`);
+    let res = await fetch(`/auth/other-user?userId=${userId}`);
     let response = await res.json();
     let myUserId = response.myUserId;
     let user_id = response.data.id;
     let username = response.data.username;
     let email = response.data.email;
-    let profile_image = response.data.profile_image
-    
-    
+    let profileImage = response.data.profile_image
 
+    console.log(response);
+    
+    document.querySelector(".outer-user-card").style.display = "block";
+    document.querySelector(".user-card").style.display = "flex";
+
+    document.querySelector(".user-card").innerHTML = `
+    <div class="image-cropper">
+        ${profileImage ? `<img src="/profile-image/${profileImage}" class="profilePic" />` 
+        :
+        `<img src="01.jpg" class="profilePic" />`}
+    </div>
+
+    <div class="username">${username}</div>
+
+    <div class="e-mail">${email}</div>
+
+    `
 }
 
+
+document.querySelector(".outer-user-card").addEventListener("click", async (event) => {
+    event.preventDefault()
+    document.querySelector(".outer-user-card").style.display = "none";
+    document.querySelector(".user-card").style.display = "none";
+    document.querySelector(".user-card").innerHTML = ""
+})
                 
 
 
