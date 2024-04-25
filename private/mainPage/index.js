@@ -32,12 +32,17 @@ printPromptContent(promptCount)
 
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
-console.log("current main page user id: ", userId);
+// console.log("current main page user id: ", userId);
 
 const logoutButton = document.querySelector("#logout-button");
 const editProfile = document.querySelector("#edit-profile");
 const updatePassword = document.querySelector("#update-password");
 const uploadProfileImage = document.querySelector("#upload-profile-image");
+const uploadProjectImage = document.querySelector("#upload-project-image")
+
+//for identify the project id when onclick update project image button
+let projectIdForImage;
+window["handleProjectClick"] = handleProjectClick;
 
 getAllUserInfo(userId)
 async function getAllUserInfo(userId) {
@@ -65,11 +70,11 @@ async function getAllUserInfo(userId) {
 
         notification.innerHTML = `
         ${userInfo.last_login ? `
-        Hello ${userInfo.username} , welcome back ! ;] &nbsp;&nbsp;&nbsp; Wish you a nice day
+        Hello ${userInfo.username}, welcome back ! ;] &nbsp;&nbsp;&nbsp; Wish you a nice day
         `
                 :
                 `
-        Hello ${userInfo.username} , welcome to join us ! ;]
+        Hello ${userInfo.username}, welcome to join us ! ;]
         `
             }`
 
@@ -85,19 +90,19 @@ async function getAllUserInfo(userId) {
 
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
+
+                let projectImageElm;
+
+                projectImageElm = eachProject.image ?
+                    `<img src="/project-image/${eachProject.image}" alt="" class="project-image">` : ""
+
                 projectArea.innerHTML += `
-            <section class="project" id="projectId-${eachProject.project_id}" 
-            onclick="location='http://localhost:8080/project/?id=${eachProject.project_id}'">
-                ${eachProject.image ? `
-                <img src="/profile-image/${eachProject.image}" alt="" class="project-image">
-                `
-                        :
-                        ""
-                    }
-                <button class="edit-project-image">btn</button>
-                <div class="project-name white-word">${eachProject.name}</div>
-            </section>
-        `
+                    <section class="project" id="projectId-${eachProject.project_id}" 
+                        onclick="handleProjectClick(event, ${eachProject.project_id})">
+                    ${projectImageElm}
+                    <button class="edit-project-image" data-bs-toggle="modal" data-bs-target="#uploadProjectImageModal">btn</button>
+                    <div class="project-name white-word">${eachProject.name}</div>
+                    </section>`
 
                 if (Number(eachProject.min_duration) <= 10) {
                     document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "200px" ; 
@@ -180,6 +185,16 @@ async function getAllUserInfo(userId) {
         newUsernameInput.setAttribute("value", userInfo.username);
     }
 
+}
+
+//only fire button when click (not fire the section onclick)
+function handleProjectClick(event, id) {
+    if (event.target.classList.contains('edit-project-image')) {
+        projectIdForImage = id;
+    } else {
+        const projectURL = `http://localhost:8080/project/?id=${id}`;
+        window.location.href = projectURL;
+    }
 }
 
 //logout button
@@ -274,9 +289,6 @@ updatePassword.addEventListener("submit", async (e) => {
     const password = document.querySelector("#password1").value;
     const passwordConfirm = document.querySelector("#password2").value;
 
-    console.log(password)
-    console.log(passwordConfirm)
-
     if (passwordConfirm != password) {
 
         Swal.fire({
@@ -308,7 +320,9 @@ updatePassword.addEventListener("submit", async (e) => {
             let result = await res.json();
 
             if (res.ok) {
+
                 console.log(result);
+                
             } else {
                 if (result.error == "sameAsCurrentPassword") {
 
@@ -359,6 +373,44 @@ uploadProfileImage.addEventListener("submit", async (e) => {
     }
 })
 
+//update project profile picture
+//conditions to be handled
+uploadProjectImage.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    formData.append('id', projectIdForImage);
+
+    const res = await fetch("/projectRou", {
+        method: "PUT",
+        body: formData,
+    });
+
+    let response = await res.json();
+
+    if (res.ok) {
+
+        console.log(response);
+
+        Swal.fire({
+            title: 'Project Image Uploaded',
+            confirmButtonText: "Continue"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload();
+                getAllUserInfo(userId)
+            }
+        });
+    } else {
+        //not able to catch error from backend??
+        //status 400 conditions to be handled
+        console.log(response);
+    }
+
+
+})
+
 projectCreationClose.addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -398,23 +450,21 @@ projectCreationForm.addEventListener("submit", async (e) => {
     if (promptCount == 99) {
 
         let projId = await projectInit(newProjectData);
-        console.log(projId);
         window.location.href = `../project/?id=${projId}`;
 
     } else {
         //save response and update prompt count
         promptCount = saveResponseByPromptCount(promptCount, inputTarget);
-        console.log(newProjectData);
 
-        try {
-            console.log(`current Q: ${promptCount}`);
-            console.log(`taskCount: ${taskCount}`)
-            console.log(`taskDependanceCount: ${taskDependanceCount}`)
-            console.log(`taskCountCurrent: ${taskCountCurrent}`)
-            console.log(`motherTaskCountCurrent: ${motherTaskCountCurrent}`)
-        } catch (error) {
-            console.log(error);
-        }
+        // try {
+        //     console.log(`current Q: ${promptCount}`);
+        //     console.log(`taskCount: ${taskCount}`)
+        //     console.log(`taskDependanceCount: ${taskDependanceCount}`)
+        //     console.log(`taskCountCurrent: ${taskCountCurrent}`)
+        //     console.log(`motherTaskCountCurrent: ${motherTaskCountCurrent}`)
+        // } catch (error) {
+        //     console.log(error);
+        // }
 
         //change inner html content to next prompt
         projectCreationModalLabel.innerHTML = `Creating Project: <span class="names">"${newProjectData.name}"</span>`;
@@ -687,7 +737,6 @@ async function projectInit(projJSON) {
     });
 
     let result = await res.json()
-    console.log(result.data);
 
     return result.data.id;
 }
@@ -706,7 +755,7 @@ function addPreReq(projJSON) {
             }
         }
     }
-    console.log(projJSON);
+
 };
 
 function resetProgress() {
@@ -718,13 +767,13 @@ function resetProgress() {
 
     printPromptContent(promptCount);
 
-    try {
-        console.log(`current Q: ${promptCount}`);
-        console.log(`taskCount: ${taskCount}`)
-        console.log(`taskDependanceCount: ${taskDependanceCount}`)
-        console.log(`taskCountCurrent: ${taskCountCurrent}`)
-        console.log(`motherTaskCountCurrent: ${motherTaskCountCurrent}`)
-    } catch (error) {
-        console.log(error);
-    }
+    // try {
+    //     console.log(`current Q: ${promptCount}`);
+    //     console.log(`taskCount: ${taskCount}`)
+    //     console.log(`taskDependanceCount: ${taskDependanceCount}`)
+    //     console.log(`taskCountCurrent: ${taskCountCurrent}`)
+    //     console.log(`motherTaskCountCurrent: ${motherTaskCountCurrent}`)
+    // } catch (error) {
+    //     console.log(error);
+    // }
 }

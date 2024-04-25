@@ -158,7 +158,7 @@ async function editMyMessage(req: Request, res: Response) {
     try {
         let justEditedMessage = await changeMessageTopgClient(messageId, content);
 
-        console.log(justEditedMessage);
+        (justEditedMessage);
 
         res.status(200).json({
             userId: userId,
