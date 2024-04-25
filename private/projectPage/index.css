@@ -1,48 +1,74 @@
 nav {
     display: flex;
     justify-content: end;
-    max-width: 90vw;
+    width: 100%;
     height: 50px;
     align-items: center;
+    margin: 0;
+    padding-right: 50px;
 }
 
 nav div {
     margin-right: 10px;
 }
 
-.container {
-    margin-top: 30px;
+.main{
     display: flex;
-    padding: 20px;
-    height: 600px;
-    justify-content: center;
-    z-index: 0;
-    width: 90vw;
+    width: 95vw;
+    height: 90vh;
+    margin: 20px 50px;
+    align-items: center;
 }
 
+
+.teammate-container{
+    height: 95%;
+    margin-right: 20px;
+    width:250px;
+    margin-left: 20px;
+}
+
+.right-side{
+    height: 95%;
+    padding: 30px;
+    width: calc(97% - 250px);
+}
+
+
+.chart-container{
+    height: 60%;
+}
+
+.task-container{
+    height: 37%;
+    margin-top: 30px;
+
+}
 .jira {
-    height: 500px;
+    height: 90%;
     display: flex;
-    margin-top: 20px;
     z-index: 0;
+    width: 97%;
+    margin: auto;
+    align-items: center;
 }
 
 .to-do-list {
-    height: 80%;
-    width: 20%;
+    height: 90%;
+    width: 33%;
     margin: 10px 20px;
 }
 
 .ongoing {
-    height: 80%;
-    width: 20%;
+    height: 90%;
+    width: 33%;
     margin: 10px 20px;
 }
 
 .finished {
-    height: 80%;
-    width: 20%;
-    margin: 10px 20px;
+    height: 90%;
+    width: 33%;
+    margin: 10px 10px;
 }
 
 
