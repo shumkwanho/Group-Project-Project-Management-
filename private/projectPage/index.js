@@ -38,7 +38,8 @@ window.addEventListener("load", async (e) => {
 		const assignBtns = document.querySelectorAll(".assign-btn")
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-				let taskId = (e.currentTarget.parentElement.id).slice(5)
+				let taskId = (e.currentTarget.parentElement.parentElement.id).slice(5)
+				console.log(taskId);
 				await assignTask(taskId)
 			})
 		})
@@ -202,7 +203,9 @@ function createGanttChart(data) {
 
 async function displayTaskList(data) {
 	const tasks = data.tasks
-	console.log(data);
+	const res = await fetch("/auth/user")
+	const userId = (await res.json()).data.id
+	console.log(tasks);
 
 	for (let task of tasks) {
 		let imageElm = "";
@@ -242,7 +245,7 @@ async function displayTaskList(data) {
                 </div>
 				<div class="btn-container">
 					<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
-                	<button class="finish-btn"><i class="fa-solid fa-check"></i></button>
+                	${userId == task.userRelation[0].userid? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : ""}
 				</div>
 			</div>`
 		} else {

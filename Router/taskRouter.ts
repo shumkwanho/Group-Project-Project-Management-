@@ -71,7 +71,8 @@ async function userTaskRelation(req: Request, res: Response) {
     try {
         const { taskId, userId, projectId } = req.body
 
-
+        console.log(req.body);
+        
         const userProjectRelationId = (await pgClient.query(`select * from user_project_relation where user_id = $1 and project_id = $2`, [userId, projectId])).rows[0].id
         console.log(userProjectRelationId);
         if (!userProjectRelationId) {
