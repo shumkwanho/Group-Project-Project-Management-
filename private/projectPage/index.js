@@ -8,6 +8,7 @@ const projectId = searchParams.get("id");
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
 	const data = (await res.json()).data
+	console.log(data);
 	return data
 }
 
@@ -20,6 +21,7 @@ window.addEventListener("load", async (e) => {
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
+
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
 				
 				await fetch('/task/finish', {
@@ -29,6 +31,9 @@ window.addEventListener("load", async (e) => {
 					},
 					body: JSON.stringify({ id: taskId })
 				})
+				if (res.ok) {
+					await drawPage()
+				}
 			})
 		})
 
@@ -118,6 +123,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 	const preTask = tasksData[item.source - 1];
 	const task = tasksData[item.target - 1];
 	const req = {
+		projectId:projectId,
 		preTask: preTask.id,
 		taskId: task.id
 	}
@@ -128,14 +134,16 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
+	
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 	const tasksData = (await getProjectData(projectId)).tasks
-	const preTask = parseInt(item.source)
+	const preTask = tasksData[item.source - 1]
 	const task = tasksData[item.target - 1];
 	const req = {
-		preTask: preTask,
+		projectId: projectId,
+		preTask: preTask.id,
 		taskId: task.id
 	}
 
@@ -207,7 +215,6 @@ async function displayTaskList(data) {
 	const tasks = data.tasks
 	const res = await fetch("/auth/user")
 	const userId = (await res.json()).data.id
-	console.log(tasks);
 
 	for (let task of tasks) {
 		let imageElm = "";
@@ -229,6 +236,7 @@ async function displayTaskList(data) {
 		if ((task.name).includes("root")) {
 			continue
 		}
+		
 		if (task.actual_finish_date) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
@@ -242,14 +250,20 @@ async function displayTaskList(data) {
 			
 			`
 
-		} else if (task.pre_req_fulfilled) {
+		} else if (task.pre_req_fulfilled) { 
+
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
+
 					<div class="task-name">
 						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
 						${task.name}
 					</div>
+
+
+					<div class="task-name">${task.name}</div>
+
 					<div class="task-any-fucking-icon">
 						<div class="btn-container">
 							<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
@@ -758,6 +772,7 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".user-card").style.display = "none";
 	document.querySelector(".user-card").innerHTML = ""
 })
+
 
 
 

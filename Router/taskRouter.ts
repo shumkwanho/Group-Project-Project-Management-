@@ -47,7 +47,7 @@ async function createTask(req: Request, res: Response) {
         }
         const newTask = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration) VALUES ($1,$2,$3,$4) returning *`, [projectId, taskName, startDate, duration])).rows[0]
 
-        // check duration affected
+
         res.json({ message: "create new task successfully", data: newTask })
     } catch (error) {
         console.log(error)
@@ -58,8 +58,12 @@ async function createTask(req: Request, res: Response) {
 
 async function createTaskRelation(req: Request, res: Response) {
     try {
-        const { preTask, taskId } = req.body
-        await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
+        const { projectId, preTask, taskId } = req.body
+        const ifExist = (await pgClient.query(`select * from task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])).rows[0]
+        if (!ifExist) {
+            await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
+            await changeProjectDuration(projectId)
+        }
         res.json({ message: "update sucessfully" })
     } catch (error) {
         console.log(error)
@@ -71,8 +75,7 @@ async function userTaskRelation(req: Request, res: Response) {
     try {
         const { taskId, userId, projectId } = req.body
 
-        console.log(req.body);
-        
+
         const userProjectRelationId = (await pgClient.query(`select * from user_project_relation where user_id = $1 and project_id = $2`, [userId, projectId])).rows[0].id
         console.log(userProjectRelationId);
         if (!userProjectRelationId) {
@@ -98,8 +101,8 @@ async function userTaskRelation(req: Request, res: Response) {
 // id, name,description,duration,start_date,deadline
 async function updateTask(req: Request, res: Response) {
     try {
-        const { projectId,taskId, taskName, duration, startDate, finishDate } = req.body
-        
+        const { projectId, taskId, taskName, duration, startDate, finishDate } = req.body
+
         if (finishDate == "finished") {
             await pgClient.query(`UPDATE tasks SET actual_finish_date = NOW() where id = $1`, [taskId])
         } else {
@@ -108,10 +111,10 @@ async function updateTask(req: Request, res: Response) {
 
         const updatedTask = (await pgClient.query(`UPDATE tasks SET name = $1,duration = $2,start_date = $3 WHERE id = $4 returning *`, [taskName, duration, startDate, taskId])).rows[0]
         checkpreReqTask(taskId)
-        const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`,[projectId])).rows
-        
+        const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`, [projectId])).rows
+
         if (checkAllTask.length == 0) {
-            await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`,[projectId])
+            await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`, [projectId])
         }
         res.json({ message: "updated successfully", data: updatedTask })
     } catch (error) {
@@ -131,10 +134,12 @@ async function finishTask(req: Request, res: Response) {
 
 async function deleteTaskRelation(req: Request, res: Response) {
     try {
-        const { preTask, taskId } = req.body
-
+        const { projectId, preTask, taskId } = req.body
+        const rootTaskId = await getRootTask(projectId)
         await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])
-        // check duration affected
+        const result = (await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2) returning *`, [taskId, rootTaskId])).rows
+
+        await changeProjectDuration(projectId)
         res.json({ message: "Delete Successfully" })
     } catch (error) {
         console.log(error)
@@ -161,16 +166,13 @@ async function deleteTask(req: Request, res: Response) {
 
 async function changeProjectDuration(projectId: string) {
     const rootTaskId = await getRootTask(projectId)
-    const currentDuration = (await pgClient.query(`select min_duration from projects where id = $1`, [projectId])).rows[0]
     const newDuration = await getMinDuration(rootTaskId)
-    let temp = [currentDuration, newDuration]
-    let result = Math.max(...temp)
-    await pgClient.query(`UPDATE projects SET duration = $1 WHERE id = $2`, [result, projectId])
+    await pgClient.query(`UPDATE projects SET min_duration = $1 WHERE id = $2`, [newDuration, projectId])
     return
 }
 
 async function getRootTask(projectId: string) {
-    const rootTaskId = (await pgClient.query(`select id from tasks where project_id = $1 order by id ASC LIMITED 1`, [projectId])).rows[0].id
+    const rootTaskId = (await pgClient.query(`select id from tasks where project_id = $1 order by id ASC LIMIT 1`, [projectId])).rows[0].id
     return rootTaskId
 }
 
