@@ -398,6 +398,7 @@ projectCreationForm.addEventListener("submit", async (e) => {
     if (promptCount == 99) {
 
         let projId = await projectInit(newProjectData);
+        console.log(projId);
         window.location.href = `../project/?id=${projId}`;
 
     } else {

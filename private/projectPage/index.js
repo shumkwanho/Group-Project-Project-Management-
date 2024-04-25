@@ -171,6 +171,9 @@ function chartRelation(data) {
 		let relation = data.tasks[i].relation.preTask
 		if (relation.length > 0) {
 			for (let j = 0; j < relation.length; j++) {
+				if (relation[j] == rootTaskId) {
+					continue
+				}
 				let temp = {}
 				temp.id = idCount
 				temp.source = relation[j] - rootTaskId + 1
@@ -199,6 +202,22 @@ async function displayTaskList(data) {
 
 
 	for (let task of tasks) {
+		let imageElm = "";
+
+		if (task.userRelation[0]) {
+			if (!(task.userRelation[0].profile_image)) {
+				let defaultProfileImage = new ProfileImage(
+					task.userRelation[0].username, {
+					backgroundColor: "black",
+				})
+				imageElm = defaultProfileImage.svg();
+			} else {
+				imageElm = `<img src="/profile-image/${task.userRelation[0].profile_image}" alt="" id="user-profile">`
+			}
+		}
+
+
+
 		if ((task.name).includes("root")) {
 			continue
 		}
@@ -207,7 +226,7 @@ async function displayTaskList(data) {
 			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
                     <div class="task-name" id="${task.id}">${task.name}</div>
-                    <div>${task.userRelation[0] ? task.userRelation[0].username : ""}</div>
+                    <div>${task.userRelation[0] ? imageElm : ""}</div>
 				</div>
 			</div>`
 
@@ -216,7 +235,7 @@ async function displayTaskList(data) {
 			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
                     <div class="task-name">${task.name}</div>
-                    <div>${task.userRelation[0] ? task.userRelation[0].username : ""}</div>
+                    <div>${task.userRelation[0] ? imageElm : ""}</div>
                 </div>
                 <button class="finish-btn">+</button>
 			</div>`
@@ -225,7 +244,7 @@ async function displayTaskList(data) {
 			<div class="task-container" id="task_${task.id}">
 			<div class="task border">
 				<div class="task-name">${task.name}</div>
-				<div>${task.userRelation[0] ? task.userRelation[0].username : ""}</div>
+				<div>${task.userRelation[0] ? imageElm : ""}</div>
 				</div>
 			<button class="assign-btn">+</button>
 		</div>`
@@ -293,12 +312,14 @@ document.querySelector(".remove-teammate").addEventListener("click", (e) => {
 })
 document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
-		method: "DELETE",
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ projectId: projectId }),
-	});
+			method: "DELETE",
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ projectId :projectId}),
+		});
+	const data = await res.json()
+	console.log(data.id);
 	if (res.ok) {
 		console.log("yeah");
 		window.location.href = `../main/?id=${data.id}`
@@ -308,7 +329,6 @@ document.querySelector(".quit-team").addEventListener("click", async (e) => {
 const mainPage = document.querySelector(".main-page").addEventListener("click", async (e) => {
 	const res = await fetch("/auth/user")
 	const data = (await res.json()).data
-	console.log(data);
 	window.location.href = `../main/?id=${data.id}`
 })
 

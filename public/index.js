@@ -173,6 +173,8 @@ function displayPasswordInput(email, username) {
     document.getElementById("create-new-account-button").remove();
 
     let passwordInput = `
+
+    <small>Must be as least 10 characters long</small>
     <div class="form-floating mb-3">
     <input type="password" class="form-control rounded-3" id="password1" placeholder="Password">
     <label for="password1">Password</label>
