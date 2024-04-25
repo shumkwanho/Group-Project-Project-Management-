@@ -1,4 +1,4 @@
-console.log("hello index")
+
 
 import { identifyInput, isEmptyOrSpace, isPasswordValid } from "../utils/checkInput.js";
 

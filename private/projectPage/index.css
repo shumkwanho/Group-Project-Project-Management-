@@ -1,49 +1,61 @@
+.main {
+    display: flex;
+    width: 95vw;
+    height: 90vh;
+    margin: 20px 50px;
+    flex-direction: column;
+    align-items: center;
+}
+
 nav {
     display: flex;
     justify-content: end;
-    width: 100%;
+    width: 95%;
     height: 50px;
     align-items: center;
-    margin: 0;
-    padding-right: 50px;
+    margin-bottom: 30px;
 }
 
 nav div {
     margin-right: 10px;
 }
 
-.main{
+.project {
     display: flex;
-    width: 95vw;
-    height: 90vh;
-    margin: 20px 50px;
-    align-items: center;
+    width: 95%;
+    height: calc(95% - 50px);
 }
 
-
-.teammate-container{
-    height: 95%;
+.teammate-container {
+    height: 98%;
     margin-right: 20px;
-    width:250px;
+    width: 250px;
     margin-left: 20px;
+    padding: 5px;
 }
 
-.right-side{
-    height: 95%;
+.teammate {
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.right-side {
+    height: 98%;
     padding: 30px;
-    width: calc(97% - 250px);
+    width: calc(98% - 250px);
 }
 
 
-.chart-container{
+.chart-container {
     height: 60%;
 }
 
-.task-container{
+.task-list-container {
     height: 37%;
     margin-top: 30px;
 
 }
+
 .jira {
     height: 90%;
     display: flex;
@@ -87,9 +99,13 @@ nav div {
     font-size: 25px;
     display: flex;
     padding-left: 10px;
-    width: 190px;
+    width: calc(95% - 80px);
     display: flex;
     position: relative;
+}
+
+.finished .task{
+    width: 90%;
 }
 
 h4 {
@@ -99,12 +115,23 @@ h4 {
 .task-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.btn-container{
+    display: flex;
+    justify-content: end;
 }
 
 .finish-btn,
 .assign-btn {
-    margin: 10px 10px 0 0;
     height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    box-shadow: none;
+    border: none;
+    padding-right: 5px;
+    margin-right: 5px;
 }
 
 .profile-pic {
@@ -556,7 +583,7 @@ h4 {
     z-index: 10;
     border-radius: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    
+
 }
 
 .user-card>.image-cropper {
@@ -566,7 +593,7 @@ h4 {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
-    
+
 }
 
 .user-card>.image-cropper>img {

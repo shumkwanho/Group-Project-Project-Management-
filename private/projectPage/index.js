@@ -15,6 +15,7 @@ async function getProjectData(id) {
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
+		displayMember(data)
 		await drawPage(projectId)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
@@ -191,15 +192,17 @@ function createGanttChart(data) {
 	const taskRelation = chartRelation(data)
 	gantt.config.date_format = "%Y-%m-%d";
 	gantt.init("gantt_here");
+
 	gantt.parse({
 		data: projectData,
 		links: taskRelation
 	});
+	gantt.getTask(1).readonly = true;
 }
 
 async function displayTaskList(data) {
 	const tasks = data.tasks
-
+	console.log(data);
 
 	for (let task of tasks) {
 		let imageElm = "";
@@ -237,17 +240,22 @@ async function displayTaskList(data) {
                     <div class="task-name">${task.name}</div>
                     <div>${task.userRelation[0] ? imageElm : ""}</div>
                 </div>
-                <button class="finish-btn">+</button>
+				<div class="btn-container">
+					<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
+                	<button class="finish-btn"><i class="fa-solid fa-check"></i></button>
+				</div>
 			</div>`
 		} else {
 			document.querySelector(".to-do-list").innerHTML += `
 			<div class="task-container" id="task_${task.id}">
-			<div class="task border">
-				<div class="task-name">${task.name}</div>
-				<div>${task.userRelation[0] ? imageElm : ""}</div>
+				<div class="task border">
+					<div class="task-name">${task.name}</div>
+					<div>${task.userRelation[0] ? imageElm : ""}</div>
 				</div>
-			<button class="assign-btn">+</button>
-		</div>`
+				<div class="btn-container">
+					<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
+				</div>
+			</div>`
 		}
 	}
 }
@@ -731,3 +739,16 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".user-card").style.display = "none";
 	document.querySelector(".user-card").innerHTML = ""
 })
+
+async function displayMember (data){
+
+	const memberArea = document.querySelector(".teammate-list")
+	const users = data.users
+	
+	for (let user of users){
+		memberArea.innerHTML+=`
+								<div class="teammate border" id="user_${user}">
+								${user.username}
+								</div>`
+								}
+}
