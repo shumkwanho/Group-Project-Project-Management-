@@ -618,19 +618,83 @@ h4 {
 
 
 
-
+.search-user-card {
+    position: fixed;
+    background-color: #ffffff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 600px;
+    width: 400px;
+    display: flex;
+    /* display: none; */
+    flex-direction: column;
+    padding: 15px;
+    z-index: 8;
+    border-radius: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
 
 .search-wrapper {
     display: flex;
     flex-direction: column;
-    gap: .25rem;
+    /* margin-bottom: 10px; */
 }
 
-.user-cards {
+.search-wrapper label {
+    padding-left: 15px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.search-wrapper input {
+    margin-bottom: 10px;
+    background: #e6e6e6;
+    border: none;
+    border-radius: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.user-info-list {
     display: grid;
-    grid-template-columns: repeat(autofill, minmax(150px, 1fr));
+    gap: 5px;
+    /* grid-template-columns: repeat(autofill, minmax(150px, 1fr)); */
 }
 
-.card {
-    border: 1px solid #404040;
+.user-info-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    border: 0.5px solid #b9b9b9;
+    border-radius: 15px;
+    height: 45px;
+}
+
+.user-info-card-word .body {
+    font-size: 13px;
+}
+
+.user-info-card>.image-cropper {
+    margin-left: 10px;
+    height: 35px;
+    width: 35px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.user-info-card>.image-cropper>img {
+    min-height: 35px;
+    min-width: 35px;
+    object-fit: cover;
+    display: inline;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    cursor: none;
+    /* height: 100%;
+    width: auto; */
 }
