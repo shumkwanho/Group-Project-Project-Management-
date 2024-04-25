@@ -20,7 +20,8 @@ window.addEventListener("load", async (e) => {
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-				let taskId = (e.currentTarget.parentElement.id).slice(5)
+				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+				
 				await fetch('/task/finish', {
 					method: "PUT",
 					headers: {
@@ -38,7 +39,8 @@ window.addEventListener("load", async (e) => {
 		const assignBtns = document.querySelectorAll(".assign-btn")
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-				let taskId = (e.currentTarget.parentElement.parentElement.id).slice(5)
+				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+				console.log('gggggg',e.currentTarget.parentElement.parentElement.parentElement)
 				console.log(taskId);
 				await assignTask(taskId)
 			})
@@ -231,8 +233,11 @@ async function displayTaskList(data) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
 				<div class="inside-jira-task white-word" id="task_${task.id}">
-					<div class="task-name" id="${task.id}">${task.name}</div>
-					<div class="task-any-fucking-icon">${task.userRelation[0] ? imageElm : ""}</div>
+					<div class="task-name" id="${task.id}">
+						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
+						${task.name}
+					</div>
+					<div class="task-any-fucking-icon"></div>
 				</div>
 			
 			`
@@ -241,9 +246,11 @@ async function displayTaskList(data) {
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
-					<div class="task-name">${task.name}</div>
+					<div class="task-name">
+						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
+						${task.name}
+					</div>
 					<div class="task-any-fucking-icon">
-						<div>${task.userRelation[0] ? imageElm : ""}</div>
 						<div class="btn-container">
 							<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
                 			${task.userRelation[0] ? (userId == task.userRelation[0].userid ? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : "") : ''}
@@ -256,9 +263,11 @@ async function displayTaskList(data) {
 			document.querySelector(".inside-jira-task-box-to-do-list").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
-					<div class="task-name">${task.name}</div>
+					<div class="task-name">
+						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
+						${task.name}
+					</div>
 					<div class="task-any-fucking-icon">
-						<div>${task.userRelation[0] ? imageElm : ""}</div>
 						<div class="btn-container">
 							<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
 						</div>
