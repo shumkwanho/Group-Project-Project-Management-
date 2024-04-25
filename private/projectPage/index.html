@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="http://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css" type="text/css">
     <script src="http://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
-
+    <script src="https://kit.fontawesome.com/19ebb34589.js" crossorigin="anonymous"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,101 +19,106 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-
 </head>
 
 <body>
 
     <main class="darken-area" style="display: none;"></main>
-    
 
 
-    <nav class="border">
-        <div class="add-teammate">Add Teammate</div>
-        <div class="remove-teammate">Remove Teammate</div>
-        <div class="quit-team">Quit Team</div>
-        <div class="main-page">Main Page</div>
-        <div class="logout">Logout</div>
-    </nav>
+    <main id="project-page-area">
 
-    <div class="container border">
-        <div id="gantt_here" style='width:100%; height:100%;'></div>
-    </div>
 
-    <div class="jira border">
-        <div class="to-do-list border">
-            <h4>To Do List</h4>
+        <nav class="top-bar">
+            <div class="add-teammate white-word">Add Teammate</div>
+            <div class="remove-teammate white-word">Remove Teammate</div>
+            <div class="quit-team white-word">Quit Team</div>
+            <div class="main-page white-word">Main Page</div>
+            <div class="logout white-word">Logout</div>
+        </nav>
+
+        <article class="member-and-chart">
+
+            <div class="team-member-list">
+                <div class="list-title">
+                    Member List
+                </div>
+                <div class="all-team-member">
+                    <div class="team-member">
+                        <div class="team-member-username"></div>
+                        <div class="image-cropper">
+                            <img src="/profile-image/01.jpg" class="profilePic" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main border">
+
+                <div class="right-side border">
+                    <section class="chart-container border">
+                        <div id="gantt_here" style='width:100%; height:100%;'></div>
+                    </section>
+                    <section class="task-container border">
+                        <div class="jira border">
+                            <div class="to-do-list border">
+                                <h4>To Do List</h4>
+                            </div>
+                            <div class="ongoing border">
+                                <h4>Ongoing</h4>
+                            </div>
+                            <div class="finished border">
+                                <h4>Finished</h4>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </article>
+
+    </main>
+
+    <section class="search-user-card hide" >
+        <div class="search-wrapper">
+            <label for="search">Add User Search</label>
+            <input type="search" id="search" placeholder="search user with username or email">
         </div>
-        <div class="ongoing border">
-            <h4>Ongoing</h4>
+        <div class="user-info-list">
+            <div class="user-info-card">
+            </div>
         </div>
-        <div class="finished border">
-            <h4>Finished</h4>
-        </div>
-    </div>
-
-
-
-
-<div class="search-wrapper">
-    <label for="search">Search Users</label>
-    <input type="search" id="search">
-</div>
-<div class="user-cards">
-    <div class="card">
-        <div class="header">My Name</div>
-        <div class="body">email@gmail.com</div>
-    </div>
-    <div class="card">
-        <div class="header">My Name</div>
-        <div class="body">email@gmail.com</div>
-    </div>
-    <div class="card">
-        <div class="header">My Name</div>
-        <div class="body">email@gmail.com</div>
-    </div>
-</div>
+    </section>
 
 
 
     <main class="chatroom-box" style="display: none;">
-        
         <article id="memberAndMessages" class="row">
-
             <section id="member-area" class="col-2">
-
                 <div class="list-title white-word">
                     <div>Teammates</div>
                 </div>
-
                 <div id="member-list" class="white-word">
-
                 </div>
-
             </section>
 
-
             <section id="message-list" class="col">
-
                 <div id="message-box">
-
                 </div>
-
                 <div class="texting-box">
                     <form id="sendMessage">
                         <input type="text" id="text-content" class="text-content white-word">
                         <button id="text-send" type="submit">Send</button>
                     </form>
                 </div>
-
             </section>
-
         </article>
-
         <button type="button" class="quit-chat">Quit Chat</button>
     </main>
-    
-    <div class="outer-user-card"></div> 
+
+
+
+    <div class="outer-user-card"></div>
     <div class="user-card"></div>
 
     <button class="open-chatroom" type="button">Chatroom</button>
@@ -127,6 +132,7 @@
 
     <script type="module" src="index.js"></script>
     <script src="search.js"></script>
+    <script src="../../utils/profileImage/src/profile-image.js"></script>
 </body>
 
 </html>

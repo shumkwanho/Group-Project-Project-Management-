@@ -192,7 +192,7 @@ async function initProject(req: Request, res: Response) {
         let rootId
         for (let i = 0; i <= Object.keys(tasks).length; i++) {
             if (i == 0) {
-                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration, actual_finish_date) values ($1,'root task',$2, 0,NOW()) returning *`, [newProject.id, req.body.start_date])).rows[0].id
+                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration, actual_finish_date, pre_req_fulfilled) values ($1,'root task', $2, 0, NOW(), true) returning *`, [newProject.id, req.body.start_date])).rows[0].id
                 continue
             }
             const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`, [newProject.id, tasks[i].name, tasks[i].start_date, tasks[i].duration])).rows[0].id
@@ -257,8 +257,8 @@ async function inspectProjectUser(req: Request, res: Response) {
 //request: user id
 async function addProjectUser(req: Request, res: Response) {
     try {
-        const project_id = req.query.id;
-        const user_id = req.body.userName;
+        const project_id = req.body.projectId;
+        const user_id = req.body.userId;
 
         //check if relation already exist
         let checkQuery = (await pgClient.query(
