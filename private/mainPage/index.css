@@ -207,6 +207,7 @@ body {
     padding: 15px;
     margin-bottom: 10px;
     cursor: pointer;
+    z-index: 0;
 }
 
 .project:hover {
@@ -231,6 +232,7 @@ body {
     top: 20px;
     right: 20px;
     opacity: 0.75;
+    z-index: 99;
 }
 
 

@@ -235,15 +235,17 @@ async function displayTaskList(data) {
 		}
 		
 		if (task.actual_finish_date) {
-			document.querySelector(".finished").innerHTML += `
-			<div class="task-container" id="task_${task.id}">
-                <div class="task border">
-                    <div class="task-name" id="${task.id}">${task.name}</div>
-                    <div>${task.userRelation[0] ? imageElm : ""}</div>
+			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
+            
+				<div class="inside-jira-task white-word" id="task_${task.id}">
+					<div class="task-name" id="${task.id}">${task.name}</div>
+					<div class="task-any-fucking-icon">${task.userRelation[0] ? imageElm : ""}</div>
 				</div>
-			</div>`
+			
+			`
 
 		} else if (task.pre_req_fulfilled) {
+<<<<<<< HEAD
 			document.querySelector(".ongoing").innerHTML += `
 			<div class="task-container" id="task_${task.id}">
                 <div class="task border">
@@ -259,13 +261,36 @@ async function displayTaskList(data) {
 			document.querySelector(".to-do-list").innerHTML += `
 			<div class="task-container" id="task_${task.id}">
 				<div class="task border">
+=======
+			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
+			
+				<div class="inside-jira-task white-word" id="task_${task.id}">
+>>>>>>> 7c60c8208aec024c3316ff292745a709922f5682
 					<div class="task-name">${task.name}</div>
-					<div>${task.userRelation[0] ? imageElm : ""}</div>
+					<div class="task-any-fucking-icon">
+						<div>${task.userRelation[0] ? imageElm : ""}</div>
+						<div class="btn-container">
+							<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
+                			${task.userRelation[0] ? (userId == task.userRelation[0].userid ? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : "") : ''}
+						</div>
+					</div>
 				</div>
-				<div class="btn-container">
-					<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
+			`
+
+		} else {
+			document.querySelector(".inside-jira-task-box-to-do-list").innerHTML += `
+			
+				<div class="inside-jira-task white-word" id="task_${task.id}">
+					<div class="task-name">${task.name}</div>
+					<div class="task-any-fucking-icon">
+						<div>${task.userRelation[0] ? imageElm : ""}</div>
+						<div class="btn-container">
+							<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
+						</div>
+					</div>
 				</div>
-			</div>`
+			
+			`
 		}
 	}
 }
@@ -750,15 +775,38 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".user-card").innerHTML = ""
 })
 
+<<<<<<< HEAD
+async function displayMember(data) {
+=======
+>>>>>>> 7c60c8208aec024c3316ff292745a709922f5682
+
+
+
+
+//===================== Display User Info On Project Page ===================
+
 async function displayMember(data) {
 
-	const memberArea = document.querySelector(".teammate-list")
+	console.log(data)
+	const memberArea = document.querySelector(".all-team-member")
 	const users = data.users
 
 	for (let user of users) {
+<<<<<<< HEAD
 		memberArea.innerHTML += `
 								<div class="teammate border" id="user_${user}">
 								${user.username}
 								</div>`
+=======
+		memberArea.innerHTML += 
+			`
+	<div class="team-member">
+        <div class="team-member-username white-word" id="user_${user}">${user.username}</div>
+        <div class="image-cropper">
+        	<img ${user.profile_image ? `src="/profile-image/${user.profile_image}"` : `src=""`} class="profilePic" alt="">
+        </div>
+    </div>
+	`
+>>>>>>> 7c60c8208aec024c3316ff292745a709922f5682
 	}
 }
