@@ -8,6 +8,7 @@ const projectId = searchParams.get("id");
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
 	const data = (await res.json()).data
+	console.log(data);
 	return data
 }
 
@@ -20,7 +21,7 @@ window.addEventListener("load", async (e) => {
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-				let taskId = (e.currentTarget.parentElement.id).slice(5)
+				let taskId = (e.currentTarget.parentElement.parentElement.id).slice(5)
 				await fetch('/task/finish', {
 					method: "PUT",
 					headers: {
@@ -28,6 +29,9 @@ window.addEventListener("load", async (e) => {
 					},
 					body: JSON.stringify({ id: taskId })
 				})
+				if (res.ok) {
+					await drawPage()
+				}
 			})
 		})
 
@@ -116,6 +120,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 	const preTask = tasksData[item.source - 1];
 	const task = tasksData[item.target - 1];
 	const req = {
+		projectId:projectId,
 		preTask: preTask.id,
 		taskId: task.id
 	}
@@ -126,14 +131,16 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
+	
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 	const tasksData = (await getProjectData(projectId)).tasks
-	const preTask = parseInt(item.source)
+	const preTask = tasksData[item.source - 1]
 	const task = tasksData[item.target - 1];
 	const req = {
-		preTask: preTask,
+		projectId: projectId,
+		preTask: preTask.id,
 		taskId: task.id
 	}
 
@@ -205,7 +212,6 @@ async function displayTaskList(data) {
 	const tasks = data.tasks
 	const res = await fetch("/auth/user")
 	const userId = (await res.json()).data.id
-	console.log(tasks);
 
 	for (let task of tasks) {
 		let imageElm = "";
@@ -227,6 +233,7 @@ async function displayTaskList(data) {
 		if ((task.name).includes("root")) {
 			continue
 		}
+		
 		if (task.actual_finish_date) {
 			document.querySelector(".finished").innerHTML += `
 			<div class="task-container" id="task_${task.id}">
@@ -245,7 +252,7 @@ async function displayTaskList(data) {
                 </div>
 				<div class="btn-container">
 					<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
-                	${userId == task.userRelation[0].userid? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : ""}
+                	${task.userRelation[0]? (userId == task.userRelation[0].userid ? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : ""):""}
 				</div>
 			</div>`
 		} else {
@@ -323,12 +330,12 @@ document.querySelector(".remove-teammate").addEventListener("click", (e) => {
 })
 document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
-			method: "DELETE",
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ projectId :projectId}),
-		});
+		method: "DELETE",
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ projectId: projectId }),
+	});
 	const data = await res.json()
 	console.log(data.id);
 	if (res.ok) {
@@ -459,7 +466,7 @@ async function getAllMessages(projectId) {
 }
 
 //===================== Send Message and Pick Last Message Below ====================
-function  sendMessageSubmit() {
+function sendMessageSubmit() {
 	document.querySelector("#sendMessage").addEventListener("submit", async (event) => {
 		event.preventDefault()
 		sendMessage(projectId)
@@ -743,15 +750,15 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".user-card").innerHTML = ""
 })
 
-async function displayMember (data){
+async function displayMember(data) {
 
 	const memberArea = document.querySelector(".teammate-list")
 	const users = data.users
-	
-	for (let user of users){
-		memberArea.innerHTML+=`
+
+	for (let user of users) {
+		memberArea.innerHTML += `
 								<div class="teammate border" id="user_${user}">
 								${user.username}
 								</div>`
-								}
+	}
 }

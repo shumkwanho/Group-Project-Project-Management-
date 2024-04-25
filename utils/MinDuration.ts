@@ -3,8 +3,9 @@ import { pgClient } from "./pgClient";
 
 export async function getMinDuration(taskId: string) {
     let treeResult = await getChildTree(taskId)
-    let routeResult = getRoutes(treeResult, taskId)
+    let routeResult = getRoutes(treeResult, taskId)    
     let result = await shortestRoute(routeResult)
+    
     return result
 }
 
@@ -13,19 +14,25 @@ export async function getMinDuration(taskId: string) {
 let childTree: any = {}
 async function getChildTree(taskId: string) {
 
-    const postTasks = (await pgClient.query(`select task_id from task_relation where pre_req_task_id = $1`, [taskId])).rows
+    const postTasks = (await pgClient.query(`select task_id from task_relation where pre_req_task_id = $1 group by task_id`, [taskId])).rows
     if (postTasks.length == 0) {
         return
     }
 
-    if (!childTree[taskId]) {
-        childTree[taskId] = []
-    }
     for (let task of postTasks) {
-        childTree[taskId].push(task.task_id)
-        await getChildTree(task.task_id)
-
+        if (!childTree[taskId]) {
+            childTree[taskId] = []
+        }
+        if (!childTree[task.task_id]) {
+            childTree[task.task_id] = []
+        }
+        if (!childTree[taskId].includes(task.task_id)) {
+            childTree[taskId].push(task.task_id)
+            await getChildTree(task.task_id)
+        }
     }
+
+
     return childTree;
 }
 
@@ -39,6 +46,7 @@ function findRoutes(childTree: any, taskId: string, path: string[], routes: stri
         path.pop()
         return routes
     }
+    routes.push(path.slice())
     for (let child of childTree[taskId]) {
         findRoutes(childTree, child, path, routes)
     }
@@ -53,12 +61,12 @@ function getRoutes(childTree: any, rootTask: string): string[][] {
 }
 
 async function shortestRoute(routes: string[][]) {
-    let routeDuration:any = await switchTaskIntoDuration(routes)
+    let routeDuration: any = await switchTaskIntoDuration(routes)
     routeDuration = toNumberArray(routeDuration)
     routeDuration = sumArrays(routeDuration)
     let result = Math.max(...routeDuration)
     return result
-    
+
 }
 
 
@@ -83,5 +91,14 @@ function toNumberArray(stringArray: string[][]): number[][] {
 
 function sumArrays(numberArray: number[][]): number[] {
     return numberArray.map((array: number[]) => array.reduce((sum: number, current: number) => sum + current, 0))
-  }
-  
+}
+
+
+getRoutes({
+    '13': [ '14', '17' ],
+    '14': [ '15', '16' ],
+    '15': [ '17' ],
+    '16': [],
+    '17': [ '18' ],
+    '18': []
+  }, "13")
