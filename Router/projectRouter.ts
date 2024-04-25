@@ -68,7 +68,6 @@ async function createProject(req: Request, res: Response) {
             filter: part => part.mimetype?.startsWith('image/') || false
         })
 
-
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 console.log(err);
@@ -112,36 +111,49 @@ async function updateProject(req: Request, res: Response) {
     try {
 
         const form = formidable({
-            uploadDir: __dirname + "/../uploads/Project Photo",
+            uploadDir: __dirname + "/../uploads/project-image",
             keepExtensions: true,
             minFileSize: 0,
             maxFiles: 1,
             allowEmptyFiles: true,
-            filter: part => part.mimetype?.startsWith('image/') || false
+            filter: part => part.mimetype?.startsWith('image/') || false,
+            filename: (originalName, originalExt, part, form) => {
+                let fieldName = part.name
+                let timestamp = Date.now()
+                let ext = part.mimetype?.split('/').pop()
+                return `${fieldName}-${timestamp}.${ext}`;
+            },
         })
 
         form.parse(req, async (err, fields, files) => {
+
             const id = fields.id![0]
-            const projectName = fields.projectName![0]
+            
             const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
+            
             if (targetProject == undefined) {
                 res.status(400).json({ message: "Cannot find target project" })
                 return
             }
 
-            if (files.image) {
-                const image = files.image[0].newFilename
-
+            if (fields.name) {
+                const name = fields.name![0]
                 await pgClient.query(
-                    `UPDATE projects SET name = $1, image = $2 WHERE id = $3;`, [projectName, image, id])
-            } else {
-                await pgClient.query(
-                    `UPDATE projects SET name = $1 WHERE id = $2;`, [projectName, id])
+                    `UPDATE projects SET name = $1 WHERE id = $2;`, [name, id]
+                )
             }
 
-            const updatedProjectInfo = (await pgClient.query(`SELECT * FROM projects where id = $1`, [id])).rows[0]
+            if (files["project-image"]) {
+                const image = files["project-image"][0].newFilename
+
+                await pgClient.query(
+                    `UPDATE projects SET image = $1 WHERE id = $2;`, [image, id])
+            }
+
+            const updatedProjectInfo = (await pgClient.query(`SELECT * FROM projects where id = $1`, [id])).rows[0];
             res.json({ message: "project info updated", data: updatedProjectInfo });
         })
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" })

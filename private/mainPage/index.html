@@ -169,6 +169,30 @@
         </div>
     </div>
 
+    <!-- upload project image modal -->
+    <div class="modal fade" id="uploadProjectImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="uploadProjectImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2" id="uploadProjectImageLabel">Upload Project Cover Image</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+    
+                <div class="modal-body p-5 pt-0">
+                    <form enctype="multipart/form-data" method="put" id="upload-project-image">
+                        
+                        <label for="project-image-upload" class="form-label">Upload Image</label>
+                        <input class="form-control" type="file" name="project-image" id="project-image-upload">
+    
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
+                            id="submit-project-image">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- edit button modal -->
     <div class="modal fade" id="editProfileModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="editProfileLabel" aria-hidden="true">
