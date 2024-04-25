@@ -27,7 +27,7 @@ async function inspectProject(req: Request, res: Response) {
             return
         }
         const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name,pre_req_fulfilled, tasks.start_date,duration,tasks.actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY tasks.id`, [id])).rows
-        const usersOfTargetProject = (await pgClient.query(`select username, users.id from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
+        const usersOfTargetProject = (await pgClient.query(`select * from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
 
 
         for (let task of tasksOfTargetProject) {
@@ -128,9 +128,9 @@ async function updateProject(req: Request, res: Response) {
         form.parse(req, async (err, fields, files) => {
 
             const id = fields.id![0]
-            
+
             const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
-            
+
             if (targetProject == undefined) {
                 res.status(400).json({ message: "Cannot find target project" })
                 return
@@ -203,7 +203,7 @@ async function initProject(req: Request, res: Response) {
                 }
             } else {
                 await pgClient.query(`insert into task_relation (pre_req_task_id,task_id) values ($1,$2)`, [rootId, taskId])
-                await pgClient.query(`update tasks set pre_req_fulfilled = true where id = $1`,[taskId])
+                await pgClient.query(`update tasks set pre_req_fulfilled = true where id = $1`, [taskId])
             }
         }
         await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`, [rootId + 1, rootId])
@@ -300,27 +300,20 @@ async function addProjectUser(req: Request, res: Response) {
 //request: user id
 async function removeProjectUser(req: Request, res: Response) {
     try {
-        
-        const project_id = req.body.projectId;
-        let userName
-        let userId
-        if (req.body.username) {
-            userName = req.body.username 
-            userId = 0
-        }else{
-            userName = "."
-            userId = req.session.userId
-        }
-        console.log("userName",userName);
-        console.log("userId",userId)
-        
+
+        let project_id = req.body.projectId;
+        let userId = req.body.userId;
 
 
-        
+        console.log("userId", userId)
+
+
+
+
         //check if relation exists
         let checkQuery = (await pgClient.query(
-            "SELECT user_project_relation.id FROM user_project_relation join users on users.id = user_id WHERE (username = $1 or users.id = $2) AND project_id = $3",
-            [userName,userId, project_id]
+            "SELECT user_project_relation.id FROM user_project_relation join users on users.id = user_id WHERE (users.id = $1) AND project_id = $2",
+            [userId, project_id]
         )).rows[0];
 
         if (checkQuery == undefined) {
@@ -333,15 +326,15 @@ async function removeProjectUser(req: Request, res: Response) {
         } else {
 
             let id = checkQuery.id;
-            let userTaskRelations = (await pgClient.query(`select user_task_relation.id from users join user_project_relation on users.id = user_id join user_task_relation on user_project_relation.id = user_project_relation_id where users.id = $1 or username = $2`,[userId,userName])).rows
+            let userTaskRelations = (await pgClient.query(`select user_task_relation.id from users join user_project_relation on users.id = user_id join user_task_relation on user_project_relation.id = user_project_relation_id where users.id = $1`, [userId])).rows
             if (userTaskRelations.length > 0) {
-                for (let userTaskRelation of userTaskRelations){
-                    await pgClient.query(`DELETE FROM user_task_relation where id = $1`,[userTaskRelation.id])
+                for (let userTaskRelation of userTaskRelations) {
+                    await pgClient.query(`DELETE FROM user_task_relation where id = $1`, [userTaskRelation.id])
                 }
             }
             await pgClient.query("DELETE FROM user_project_relation WHERE id = $1", [id])
 
-            res.json({ message: "remove user from project successful" ,id:userId,userName:userName});
+            res.json({ message: "remove user from project successful", id: userId });
         }
 
     } catch (error) {
