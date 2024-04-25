@@ -338,7 +338,7 @@ document.querySelector(".open-chatroom").addEventListener("click", async (e) => 
 window["editMessage"] = editMessage;
 window["confirmEdit"] = confirmEdit;
 window["getOtherUserInfo"] = getOtherUserInfo;
-
+window["sendMessage"] = sendMessage;
 async function getAllMessages(projectId) {
 
 	let res = await fetch(`/chatroom?projectId=${projectId}`)
@@ -428,11 +428,14 @@ async function getAllMessages(projectId) {
 }
 
 //===================== Send Message and Pick Last Message Below ====================
+function  sendMessageSubmit() {
+	document.querySelector("#sendMessage").addEventListener("submit", async (event) => {
+		event.preventDefault()
+		sendMessage(projectId)
+	})
+}
 
-document.querySelector("#sendMessage").addEventListener("submit", async (event) => {
-	event.preventDefault()
-	sendMessage(projectId)
-})
+sendMessageSubmit()
 
 async function sendMessage(projectId) {
 	let content = await document.querySelector(".text-content").value;
@@ -553,6 +556,7 @@ async function confirmEdit(event, messageId) {
 
 		console.log(document.querySelector(".texting-box").innerHTML)
 		console.log("33333: ", projectId)
+		sendMessageSubmit()
 	}
 }
 

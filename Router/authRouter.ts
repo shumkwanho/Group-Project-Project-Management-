@@ -19,6 +19,7 @@ authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
+authRouter.get("/search-user", isLoggedIn, searchUser);
 
 async function userRegistration(req: Request, res: Response) {
     try {
@@ -346,7 +347,7 @@ async function getOtherUserInfo(req: Request, res: Response) {
         //check if user is logged in
         if (req.session.username) {
 
-            let {userId} = req.query;
+            let { userId } = req.query;
             let myUserId = req.session.userId;
 
             const userQueryResult = (
@@ -631,4 +632,20 @@ async function checkEmail(email: string) {
     )).rows[0];
 
     return checkUniqueQuery;
+}
+
+async function searchUser(req: Request, res: Response) {
+    let { value } = req.query
+    console.log(value);
+    try {
+        let userlist = (await pgClient.query("SELECT * FROM users WHERE LOWER(username) || LOWER(email) LIKE LOWER('%' || $1 || '%') ORDER BY id ASC LIMIT 5;", [value])).rows
+        if (userlist.length > 0) {
+            res.status(200).json({ userlist: userlist })
+        } else if (userlist.length == 0) {
+            res.json({ message: "no user found" })
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
 }
