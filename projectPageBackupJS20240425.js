@@ -242,7 +242,7 @@ async function displayTaskList(data) {
             
 				<div class="inside-jira-task white-word" id="task_${task.id}">
 					<div class="task-name" id="${task.id}">
-						${task.userRelation[0] ? `<span class="image-cropper">${imageElm}</span>` : ""}
+						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
 						${task.name}
 					</div>
 					<div class="task-any-fucking-icon"></div>
@@ -257,9 +257,12 @@ async function displayTaskList(data) {
 				<div class="inside-jira-task white-word" id="task_${task.id}">
 
 					<div class="task-name">
-						${task.userRelation[0] ? `<span class="image-cropper">${imageElm}</span>` : ""}
+						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
 						${task.name}
 					</div>
+
+
+					<div class="task-name">${task.name}</div>
 
 					<div class="task-any-fucking-icon">
 						<div class="btn-container">
@@ -275,7 +278,7 @@ async function displayTaskList(data) {
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
 					<div class="task-name">
-						${task.userRelation[0] ? `<span class="image-cropper">${imageElm}</span>` : ""}
+						<span class="image-cropper">${task.userRelation[0] ? imageElm : ""}</span>
 						${task.name}
 					</div>
 					<div class="task-any-fucking-icon">
@@ -397,7 +400,6 @@ window["editMessage"] = editMessage;
 window["confirmEdit"] = confirmEdit;
 window["getOtherUserInfo"] = getOtherUserInfo;
 window["sendMessage"] = sendMessage;
-window["getOtherUserInfoFromChat"] = getOtherUserInfoFromChat;
 async function getAllMessages(projectId) {
 
 	let res = await fetch(`/chatroom?projectId=${projectId}`)
@@ -417,8 +419,8 @@ async function getAllMessages(projectId) {
 			memberList.innerHTML +=
 				`
             <div class="member">
-            <div class="username" onclick="getOtherUserInfoFromChat(${eachMember.user_id})">${eachMember.username}</div>
-            <div class="image-cropper" onclick="getOtherUserInfoFromChat(${eachMember.user_id})">
+            <div class="username" onclick="getOtherUserInfo(${eachMember.user_id})">${eachMember.username}</div>
+            <div class="image-cropper" onclick="getOtherUserInfo(${eachMember.user_id})">
             ${eachMember.profile_image ? `<img src="/profile-image/${eachMember.profile_image}" class="profilePic" />` :
 					`<img src="01.jpg" class="profilePic" />`}
             </div>
@@ -701,7 +703,7 @@ document.querySelector(".quit-chat").addEventListener("click", async (event) => 
 
 //===================== Get Other User Info ===================
 
-async function getOtherUserInfoFromChat(userId) {
+async function getOtherUserInfo(userId) {
 	let res = await fetch(`/auth/other-user?userId=${userId}`);
 	let response = await res.json();
 	let myUserId = response.myUserId;
@@ -719,35 +721,7 @@ async function getOtherUserInfoFromChat(userId) {
     <div class="image-cropper">
         ${profileImage ? `<img src="/profile-image/${profileImage}" class="profilePic" />`
 			:
-			`<img src="" class="profilePic" />`}
-    </div>
-
-    <div class="username">${username}</div>
-
-    <div class="e-mail">${email}</div>
-
-    `
-}
-
-async function getOtherUserInfo(userId) {
-	let res = await fetch(`/auth/other-user?userId=${userId}`);
-	let response = await res.json();
-	let myUserId = response.myUserId;
-	let user_id = response.data.id;
-	let username = response.data.username;
-	let email = response.data.email;
-	let profileImage = response.data.profile_image
-
-	console.log(response);
-	document.querySelector(".darken-area").style.display = "block";
-	// document.querySelector(".outer-user-card").style.display = "block";
-	document.querySelector(".user-card").style.display = "flex";
-
-	document.querySelector(".user-card").innerHTML = `
-    <div class="image-cropper">
-        ${profileImage ? `<img src="/profile-image/${profileImage}" class="profilePic" />`
-			:
-			`<img src="" class="profilePic" />`}
+			`<img src="01.jpg" class="profilePic" />`}
     </div>
 
     <div class="username">${username}</div>
@@ -761,8 +735,6 @@ document.querySelector(".darken-area").addEventListener("click", async (event) =
 	event.preventDefault()
 	document.querySelector(".darken-area").style.display = "none";
 	document.querySelector(".chatroom-box").style.display = "none";
-	document.querySelector(".search-user-card").style.display = "none";
-	document.querySelector("#search").value = "";
 
 	let memberAndMessages = document.querySelector("#memberAndMessages")
 
@@ -785,7 +757,7 @@ document.querySelector(".darken-area").addEventListener("click", async (event) =
                 </div>
             </section>
 	`
-	allDarkenAreaDisapper()
+
 	// document.querySelector(".outer-user-card").style.display = "none";
 	// document.querySelector(".user-card").style.display = "none";
 	// document.querySelector(".user-card").innerHTML = ""
@@ -798,19 +770,9 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".darken-area").style.display = "block";
 	document.querySelector(".outer-user-card").style.display = "none";
 	document.querySelector(".user-card").style.display = "none";
+	document.querySelector(".user-card").innerHTML = ""
 })
 
-
-
-
-
-//===================== Search And Add User Into Project ===================
-
-document.querySelector(".add-member").addEventListener("click", async (event) => {
-	event.preventDefault()
-	document.querySelector(".darken-area").style.display = "block";
-	document.querySelector(".search-user-card").style.display = "flex";
-})
 
 
 
@@ -828,47 +790,11 @@ async function displayMember(data) {
 		memberArea.innerHTML += 
 			`
 	<div class="team-member">
-        <div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
-        <div class="image-cropper" onclick="getOtherUserInfo(${user.id})">
+        <div class="team-member-username white-word" id="user_${user}">${user.username}</div>
+        <div class="image-cropper">
         	<img ${user.profile_image ? `src="/profile-image/${user.profile_image}"` : `src=""`} class="profilePic" alt="">
         </div>
     </div>
 	`
 	}
-}
-
-
-
-
-
-//===================== All Darken Area Disapper ===================
-
-function allDarkenAreaDisapper() {
-	document.querySelector(".darken-area").style.display = "none";
-	document.querySelector(".outer-user-card").style.display = "none";
-	document.querySelector(".user-card").style.display = "none";
-	document.querySelector(".user-card").innerHTML = ""
-	document.querySelector(".search-user-card").style.display = "none";
-	document.querySelector("#search").value = "";
-	let memberAndMessages = document.querySelector("#memberAndMessages")
-
-	memberAndMessages.innerHTML = `
-			<section id="member-area" class="col-2">
-                <div class="list-title white-word">
-                    <div>Teammates</div>
-                </div>
-                <div id="member-list" class="white-word">
-                </div>
-            </section>
-            <section id="message-list" class="col">
-                <div id="message-box">
-                </div>
-                <div class="texting-box">
-                    <form id="sendMessage">
-                        <input type="text" id="text-content" class="text-content white-word">
-                        <button id="text-send" type="submit">Send</button>
-                    </form>
-                </div>
-            </section>
-	`
 }
