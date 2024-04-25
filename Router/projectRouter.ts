@@ -180,7 +180,7 @@ async function initProject(req: Request, res: Response) {
         let rootId
         for (let i = 0; i <= Object.keys(tasks).length; i++) {
             if (i == 0) {
-                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration, actual_finish_date, pre_req_task_fulfilled) values ($1,'root task', $2, 0, NOW(), true) returning *`, [newProject.id, req.body.start_date])).rows[0].id
+                rootId = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration, actual_finish_date, pre_req_fulfilled) values ($1,'root task', $2, 0, NOW(), true) returning *`, [newProject.id, req.body.start_date])).rows[0].id
                 continue
             }
             const taskId = (await pgClient.query(`insert into tasks (project_id,name,start_date,duration) values ($1,$2,$3,$4) returning id`, [newProject.id, tasks[i].name, tasks[i].start_date, tasks[i].duration])).rows[0].id

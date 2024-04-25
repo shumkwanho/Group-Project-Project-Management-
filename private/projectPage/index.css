@@ -1,45 +1,58 @@
+.main {
+    display: flex;
+    width: 95vw;
+    height: 90vh;
+    margin: 20px 50px;
+    flex-direction: column;
+    align-items: center;
+}
+
 nav {
     display: flex;
     justify-content: end;
-    width: 100%;
+    width: 95%;
     height: 50px;
     align-items: center;
-    margin: 0;
-    padding-right: 50px;
+    margin-bottom: 30px;
 }
 
 nav div {
     margin-right: 10px;
 }
 
-.main{
+.project {
     display: flex;
-    width: 95vw;
-    height: 90vh;
-    margin: 20px 50px;
-    align-items: center;
+    width: 95%;
+    height: calc(95% - 50px);
 }
 
-
 .teammate-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     height: 95%;
     margin-right: 20px;
-    width:250px;
+    width: 250px;
     margin-left: 20px;
+    padding: 5px;
+}
+
+.teammate {
+    margin-top: 5px;
+    padding: 5px;
 }
 
 .team-member-list {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 100%;
+    min-width: 200px;
+    max-width: 200px;
     height: 100%;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    background-color: rgb(255, 255, 255, 0.85);
+    border: .5px solid rgb(215, 215, 215);
+    border-radius: 30px;
+    padding: 15px 0;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+
 }
 
 .all-team-member {
@@ -52,22 +65,23 @@ nav div {
 
 
 
-.right-side{
-    height: 95%;
+.right-side {
+    height: 98%;
     padding: 30px;
-    width: calc(97% - 250px);
+    width: calc(98% - 250px);
 }
 
 
-.chart-container{
+.chart-container {
     height: 60%;
 }
 
-.task-container{
+.task-list-container {
     height: 37%;
     margin-top: 30px;
 
 }
+
 .jira {
     height: 90%;
     display: flex;
@@ -111,9 +125,13 @@ nav div {
     font-size: 25px;
     display: flex;
     padding-left: 10px;
-    width: 190px;
+    width: calc(95% - 80px);
     display: flex;
     position: relative;
+}
+
+.finished .task{
+    width: 90%;
 }
 
 h4 {
@@ -123,12 +141,23 @@ h4 {
 .task-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.btn-container{
+    display: flex;
+    justify-content: end;
 }
 
 .finish-btn,
 .assign-btn {
-    margin: 10px 10px 0 0;
     height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    box-shadow: none;
+    border: none;
+    padding-right: 5px;
+    margin-right: 5px;
 }
 
 .profile-pic {
@@ -580,7 +609,7 @@ h4 {
     z-index: 10;
     border-radius: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    
+
 }
 
 .user-card>.image-cropper {
@@ -590,7 +619,7 @@ h4 {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
-    
+
 }
 
 .user-card>.image-cropper>img {
@@ -694,4 +723,67 @@ h4 {
     cursor: none;
     /* height: 100%;
     width: auto; */
+}
+
+.team-member>.image-cropper {
+    margin-left: 10px;
+    height: 40px;
+    width: 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.image-cropper>img {
+    min-height: 40px;
+    min-width: 40px;
+    object-fit: cover;
+    display: inline;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    cursor: pointer;
+    /* height: 100%;
+    width: auto; */
+}
+
+.member-and-chart {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(255, 255, 255, 0.85);
+    border: .5px solid rgb(215, 215, 215);
+    border-radius: 30px;
+    padding: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.top-bar {
+    min-height: 50px;
+    max-height: 50px;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2d2d2d;
+    /* border: .5px solid rgb(215, 215, 215); */
+    border-radius: 30px;
+    padding: 0 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+#project-page-area {
+    display: flex;
+    flex-direction: column;
+    height: 85%;
+    width: 90%;
+    min-width: 800px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
