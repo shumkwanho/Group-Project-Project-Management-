@@ -1,0 +1,54 @@
+body {
+    font-family: "DM Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+}
+
+#main-page-background {
+    height: 100vh;
+    width: 100vw;
+    background-color: rgb(200, 215, 214);
+    /* background: linear-gradient(to top left, #f3f3f3 15%, rgba(255, 153, 150, 0) 60%, #80D0C7), linear-gradient(to top right, #92d4ff, rgba(255, 153, 150, 0), #76bfb8) #85bffa; */
+    overflow: hidden;
+}
+
+#main-page-area {
+    display: flex;
+    flex-direction: column;
+    height: 85%;
+    width: 90%;
+    min-width: 800px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+}
+
+.login-button, .registraion-button{
+    background-color: #779b9a;
+    border: none;
+    height: 40px;
+    border-radius: 5px;
+    margin: 5px;
+    width: 100%;
+}
+
+.lead h4 {
+    color: gray;
+}
+
+.lead h1 {
+    font-size: 100px;
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 30%;
+    /* Adjust the gap value as needed */
+}
