@@ -251,7 +251,8 @@ function handleProjectClick(event, id) {
         //will only fire modal toggle
         projectIdForImage = id;
     } else {
-        const projectURL = `http://localhost:8080/project/?id=${id}`;
+        // const projectURL = `http://localhost:8080/project/?id=${id}`;
+        const projectURL = `/project/?id=${id}`;
         window.location.href = projectURL;
     }
 }
