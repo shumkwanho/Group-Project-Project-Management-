@@ -207,7 +207,7 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 
 
 function chartData(data) {
-	let projectData = [{ id: 1, text: data.name, start_date: data.start_date, duration: data.min_duration, parent: 0, open: true }]
+	let projectData = [{ id: 1, text: `Project Name : ${data.name} (Possible Min Duration)`, start_date: data.start_date, duration: data.min_duration, parent: 0, open: true }]
 
 	for (let i = 1; i < data.tasks.length; i++) {
 		let taskData = data.tasks
