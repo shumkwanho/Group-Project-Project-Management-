@@ -695,6 +695,10 @@ document.querySelector(".quit-chat").addEventListener("click", async (event) => 
 
 //===================== Get Other User Info ===================
 
+window['removeSelfFromProject'] = removeSelfFromProject;
+window['removeMemberFromProject'] = removeMemberFromProject;
+
+
 async function getOtherUserInfoFromChat(userId) {
 	let res = await fetch(`/auth/other-user?userId=${userId}`);
 	let response = await res.json();
@@ -883,4 +887,14 @@ function allDarkenAreaDisapper() {
                 </div>
             </section>
 	`
+}
+
+//user self quit group
+function removeSelfFromProject() {
+	console.log("hello remove self")
+}
+
+//remove member
+function removeMemberFromProject() {
+	console.log("hello remove member")
 }
