@@ -986,7 +986,6 @@ function allDarkenAreaDisapper() {
 }
 
 //user self quit group
-//projectId from global const
 async function removeSelfFromProject(id) {
 
 	Swal.fire({
@@ -1002,7 +1001,6 @@ async function removeSelfFromProject(id) {
 }
 
 //remove member
-//projectId from global const
 function removeMemberFromProject(id, username) {
 
 	Swal.fire({
@@ -1017,28 +1015,27 @@ function removeMemberFromProject(id, username) {
 
 }
 
+//projectId from global const
 async function runRemoveMember(id, username = "self") {
-
-	console.log(username)
 
 	let res = await fetch("/projectRou/remove-user", {
 		method: "delete",
 		headers: {
 			"Content-Type": "application/json"
 		},
-		body: JSON.stringify({ projectId: projectId, userId: id })
+		body: JSON.stringify({ projectId: projectId, userId: id }) //projectId from global const
 	})
 
 	let result = await res.json();
 
-	let titleMessage;
-	let runPage
-	if (username !== "self") {
-		titleMessage = `Removed ${username} from this project!`;
-		runPage = function() { window.location.reload() }
-	} else {
+	let titleMessage, runPage;
+
+	if (username === "self") {
 		titleMessage = `Removed yourself from this project!`
 		runPage = function() { window.location.href = `../main?id=${id}` }
+	} else {
+		titleMessage = `Removed ${username} from this project!`;
+		runPage = function() { window.location.reload() }
 	}
 
 	if (res.ok) {
@@ -1053,6 +1050,7 @@ async function runRemoveMember(id, username = "self") {
 		});
 
 	} else {
+		console.log("unknown error to be handled...")
 		console.log(result);
 	}
 }
