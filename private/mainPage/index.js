@@ -321,7 +321,7 @@ updatePassword.addEventListener("submit", async (e) => {
 
             if (res.ok) {
 
-                console.log(result);
+                (result);
                 
             } else {
                 if (result.error == "sameAsCurrentPassword") {
@@ -369,7 +369,7 @@ uploadProfileImage.addEventListener("submit", async (e) => {
     } else {
         //not able to catch error from backend??
         //status 400 conditions to be handled
-        console.log(response);
+        (response);
     }
 })
 
@@ -391,7 +391,7 @@ uploadProjectImage.addEventListener("submit", async (e) => {
 
     if (res.ok) {
 
-        console.log(response);
+        (response);
 
         Swal.fire({
             title: 'Project Image Uploaded',
@@ -405,7 +405,7 @@ uploadProjectImage.addEventListener("submit", async (e) => {
     } else {
         //not able to catch error from backend??
         //status 400 conditions to be handled
-        console.log(response);
+        (response);
     }
 
 

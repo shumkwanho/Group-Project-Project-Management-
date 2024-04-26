@@ -8,7 +8,7 @@ const socket = io.connect();
 
 var searchParams = new URLSearchParams(window.location.search);
 const projectId = searchParams.get("project");
-console.log("current project id: ", projectId);
+("current project id: ", projectId);
 
 
 
@@ -22,8 +22,8 @@ document.querySelector("#login").addEventListener("submit", async (event) => {
 
     const username = await document.querySelector("#username").value;
     const password = await document.querySelector("#password").value;
-    console.log(username);
-    console.log(password);
+    (username);
+    (password);
 
     let res = await fetch(`/testLogin`, {
         method: "POST",
@@ -37,7 +37,7 @@ document.querySelector("#login").addEventListener("submit", async (event) => {
     })
 
     let response = await res.json();
-    console.log(response);
+    (response);
 
     if (res.ok) {
         console.log("login success");
@@ -55,8 +55,8 @@ document.querySelector("#login1").addEventListener("submit", async (event) => {
 
     const username = await document.querySelector("#username1").value;
     const password = await document.querySelector("#password1").value;
-    console.log(username);
-    console.log(password);
+    (username);
+    (password);
 
     let res = await fetch(`/testLogin`, {
         method: "POST",
@@ -70,7 +70,7 @@ document.querySelector("#login1").addEventListener("submit", async (event) => {
     })
 
     let response = await res.json();
-    console.log(response);
+    (response);
 
     if (res.ok) {
         console.log("login success");
@@ -265,11 +265,11 @@ async function sendMessage(projectId) {
 }
 
 socket.on('receive-newMessage', async lastMessageInfo => {
-    console.log(lastMessageInfo);
+    (lastMessageInfo);
 
     let res = await fetch('/auth/user')
     let response = await res.json();
-    console.log(response.data);
+    (response.data);
     let myUserId = await response.data.id;
     console.log("my user id: ", myUserId);
 
@@ -339,7 +339,7 @@ async function confirmEdit(event, messageId) {
         let response = await res.json();
         let userId = response.userId;
         let content = response.date.content;
-        console.log(response);
+        (response);
 
         socket.emit('editMessage', { messageId: messageId, userId: userId, content: content });
         console.log("Edit message success");
@@ -405,7 +405,7 @@ async function getOtherUserInfo(userId) {
     let email = response.data.email;
     let profileImage = response.data.profile_image
 
-    console.log(response);
+    (response);
     
     document.querySelector(".outer-user-card").style.display = "block";
     document.querySelector(".user-card").style.display = "flex";

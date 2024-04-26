@@ -8,22 +8,24 @@ const projectId = searchParams.get("id");
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
 	const data = (await res.json()).data
-	console.log(data);
+	// console.log(data);
 	return data
 }
-
 
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
 		displayMember(data)
-		await drawPage(projectId)
+		socket.emit('join', projectId)
+		await drawPage(data)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
 				await finishTask(taskId)
-				window.location.reload()
+				// socket.emit('redrawProjectPage', { projectId: projectId });
+				// window.location.reload()
 
 			})
 		})
@@ -31,8 +33,12 @@ window.addEventListener("load", async (e) => {
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+				console.log(taskId);
+
 				await assignTask(taskId)
-				window.location.reload()
+				// socket.emit('redrawProjectPage', { projectId: projectId });
+				// window.location.reload()
 			})
 		})
 	} catch (error) {
@@ -40,32 +46,56 @@ window.addEventListener("load", async (e) => {
 	}
 })
 
-document.querySelector(".logout").addEventListener("click", (e) => {
-    e.preventDefault();
+socket.on('receive-redrawProjectPage', async notImportant => {
+	console.log(notImportant);
 
-    Swal.fire({
-        title: "Do you want to logout",
-        showCancelButton: true,
-        confirmButtonText: "Yes",
-        cancelButtonText: "No",
-        allowOutsideClick: false
-    }).then((result) => {
-        if (result.isConfirmed) {
-            runLogout();
-        }
-    });
+	const res = await fetch(`/projectRou/?id=${projectId}`)
+	const data = (await res.json()).data
+
+	const projectData = chartData(data)
+	const taskRelation = chartRelation(data)
+
+	gantt.config.date_format = "%Y-%m-%d";
+	gantt.init("gantt_here");
+
+	gantt.parse({
+		data: [],
+		links: []
+	});
+	gantt.getTask(1).readonly = true;
+
+	document.querySelector(".inside-jira-task-box-finished").innerHTML = ""
+	document.querySelector(".inside-jira-task-box-ongoing").innerHTML = ""
+	document.querySelector(".inside-jira-task-box-to-do-list").innerHTML = ""
+
+
+	await drawPage(data);
+
+	const finishbtns = document.querySelectorAll(".finish-btn")
+	finishbtns.forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+			await finishTask(taskId)
+			socket.emit('redrawProjectPage', { projectId: projectId });
+			// window.location.reload()
+
+		})
+	})
+	const assignBtns = document.querySelectorAll(".assign-btn")
+	assignBtns.forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+			console.log(taskId);
+
+			await assignTask(taskId)
+			socket.emit('redrawProjectPage', { projectId: projectId });
+			// window.location.reload()
+		})
+	})
 
 })
-
-async function runLogout() {
-    let res = await fetch ("/auth/logout", {
-        method: "POST"
-    })
-
-    if (res.ok) {
-        window.location.href = '/';
-    }
-}
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
@@ -82,6 +112,7 @@ gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 					projectId: projectId
 				})
 			})
+			socket.emit('redrawProjectPage', { projectId: projectId });
 			let message = (await res.json()).message
 			console.log(message);
 		}
@@ -98,7 +129,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		startDate: getFinishDate(item.start_date, 1),
 		duration: item.duration
 	}
-	console.log(req);
+	// console.log(req);
 	const res = await fetch("/task", {
 		method: "POST",
 		headers: {
@@ -106,13 +137,14 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req),
 	});
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 	const taskdata = (await getProjectData(projectId)).tasks
 	const taskid = taskdata[id - 1].id
 
-	console.log(taskid);
+	// console.log(taskid);
 	const req = {
 		projectId: projectId,
 		taskId: taskid,
@@ -128,6 +160,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
@@ -146,7 +179,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -165,6 +198,7 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 
@@ -245,6 +279,7 @@ async function displayTaskList(data) {
 		if ((task.name).includes("root")) {
 			continue
 		}
+
 		if (task.actual_finish_date) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
@@ -255,9 +290,10 @@ async function displayTaskList(data) {
 					</div>
 					<div class="task-any-fucking-icon"></div>
 				</div>
-			
 			`
+
 		} else if (task.pre_req_fulfilled) {
+
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
@@ -296,8 +332,8 @@ async function displayTaskList(data) {
 	}
 }
 
-async function drawPage(projectId) {
-	const data = await getProjectData(projectId)
+async function drawPage(data) {
+	// const data = await getProjectData(projectId)
 	createGanttChart(data)
 	await displayTaskList(data)
 }
@@ -336,7 +372,9 @@ async function assignTask(taskId) {
 				},
 				body: JSON.stringify({ taskId: taskId, userId: userId, projectId: projectId }),
 			});
-
+			if (res.ok) {
+				console.log("HAHA");
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -366,6 +404,9 @@ async function finishTask(taskId) {
 				},
 				body: JSON.stringify({ id: taskId })
 			})
+
+			socket.emit('redrawProjectPage', { projectId: projectId });
+
 		}
 	});
 }
@@ -379,7 +420,7 @@ document.querySelector(".quit-team").addEventListener("click", async (e) => {
 		body: JSON.stringify({ projectId: projectId }),
 	});
 	const data = await res.json()
-	console.log(data.id);
+	// console.log(data.id);
 	if (res.ok) {
 		console.log("yeah");
 		window.location.href = `../main/?id=${data.id}`
@@ -502,7 +543,7 @@ async function getAllMessages(projectId) {
 		// console.log(messagesBox.scrollTop)
 		// messagesBox.scrollTop =0
 
-		socket.emit('join', projectId);
+		// socket.emit('join', projectId);
 	}
 
 
@@ -520,7 +561,7 @@ sendMessageSubmit()
 
 async function sendMessage(projectId) {
 	let content = await document.querySelector(".text-content").value;
-	console.log("content: ", content);
+	// console.log("content: ", content);
 
 	if (content.trim() != "") {
 		let res = await fetch('/chatroom', {
@@ -538,24 +579,24 @@ async function sendMessage(projectId) {
 			let userId = response.userId;
 			console.log("send message success");
 			document.querySelector(".text-content").value = "";
-			console.log(document.querySelector(".texting-box").innerHTML)
-			console.log("11111: ", projectId)
+			// console.log(document.querySelector(".texting-box").innerHTML)
+			// console.log("11111: ", projectId)
 			socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
 		}
 	}
 }
 
 socket.on('receive-newMessage', async lastMessageInfo => {
-	console.log(lastMessageInfo);
+	// console.log(lastMessageInfo);
 
 	let res = await fetch('/auth/user')
 	let response = await res.json();
 	let myUserId = await response.data.id;
-	console.log("my user id: ", myUserId);
+	// console.log("my user id: ", myUserId);
 
 	let msg = await lastMessageInfo.justSentMessage;
 	let messagesBox = document.querySelector("#message-box")
-	console.log("message user id: ", msg.users_id);
+	// console.log("message user id: ", msg.users_id);
 
 	messagesBox.innerHTML +=
 		`
@@ -589,7 +630,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
 
 //===================== Edit My Message ====================
 async function editMessage(messageId, content) {
-	console.log("editMessage")
+	// console.log("editMessage")
 	document.querySelector(".texting-box").innerHTML =
 		`
 		<form id="sendEditMessage" onsubmit="confirmEdit(event,${messageId})">
@@ -598,8 +639,8 @@ async function editMessage(messageId, content) {
 		</form>
 	`
 
-	console.log(document.querySelector(".texting-box").innerHTML)
-	console.log("22222: ", projectId)
+	// console.log(document.querySelector(".texting-box").innerHTML)
+	// console.log("22222: ", projectId)
 }
 
 async function confirmEdit(event, messageId) {
@@ -635,23 +676,23 @@ async function confirmEdit(event, messageId) {
 			</form>
 		`
 
-		console.log(document.querySelector(".texting-box").innerHTML)
-		console.log("33333: ", projectId)
+		// console.log(document.querySelector(".texting-box").innerHTML)
+		// console.log("33333: ", projectId)
 		sendMessageSubmit()
 	}
 }
 
 socket.on('receive-editMessage', async info => {
-	console.log(info);
+	// console.log(info);
 
 	let res = await fetch('/auth/user')
 	let response = await res.json();
 	let myUserId = await response.data.id;
-	console.log("my user id: ", myUserId);
+	// console.log("my user id: ", myUserId);
 
 	let msg = await info.lastEditMessageInfo;
 	let justEditMessage = document.querySelector(`#msgId-${msg.messages_id}`)
-	console.log("message user id: ", msg.users_id);
+	// console.log("message user id: ", msg.users_id);
 
 	justEditMessage.innerHTML =
 		`
@@ -736,7 +777,7 @@ async function getOtherUserInfoFromChat(userId) {
 	let email = response.data.email;
 	let profileImage = response.data.profile_image
 
-	console.log(response);
+	// console.log(response);
 	document.querySelector(".darken-area").style.display = "none";
 	document.querySelector(".outer-user-card").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
@@ -753,12 +794,12 @@ async function getOtherUserInfoFromChat(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-			`
-   <button class="deleteMember">Quit Group</button>
+		`
+   <button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
    `
-			:
-			`
-   <button class="deleteMember">Delete Group Member</button>
+   :
+   `
+   <button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
    `}
 
     `
@@ -773,7 +814,7 @@ async function getOtherUserInfo(userId) {
 	let email = response.data.email;
 	let profileImage = response.data.profile_image
 
-	console.log(response);
+	// console.log(response);
 	document.querySelector(".darken-area").style.display = "block";
 	// document.querySelector(".outer-user-card").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
@@ -790,12 +831,12 @@ async function getOtherUserInfo(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-			`
-	<button class="deleteMember">Quit Group</button>
+		 `
+	<button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
 	`
-			:
-			`
-	<button class="deleteMember">Delete Group Member</button>
+	:
+	`
+	<button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
 	`}
 
     `
@@ -864,7 +905,7 @@ document.querySelector(".add-member").addEventListener("click", async (event) =>
 
 async function displayMember(data) {
 
-	console.log(data)
+	// console.log(data)
 	const memberArea = document.querySelector(".all-team-member")
 	const users = data.users
 
@@ -880,6 +921,31 @@ async function displayMember(data) {
 	`
 	}
 }
+
+socket.on('receive-addMember', async notImportant => {
+	console.log(notImportant);
+	const data = await getProjectData(projectId)
+	console.log(data);
+	const memberArea = document.querySelector(".all-team-member")
+	memberArea.innerHTML = "";
+	await displayMember(data)
+
+	let memberList = document.querySelector("#member-list")
+	memberList.innerHTML = "";
+
+	for await (let user of data.users) {
+		memberList.innerHTML +=
+			`
+            <div class="member">
+            <div class="username" onclick="getOtherUserInfoFromChat(${user.user_id})">${user.username}</div>
+            <div class="image-cropper" onclick="getOtherUserInfoFromChat(${user.user_id})">
+            ${user.profile_image ? `<img src="/profile-image/${user.profile_image}" class="profilePic" />` :
+				`<img src="01.jpg" class="profilePic" />`}
+            </div>
+            </div>
+            `
+	}
+})
 
 
 
@@ -918,11 +984,69 @@ function allDarkenAreaDisapper() {
 }
 
 //user self quit group
-function removeSelfFromProject() {
-	console.log("hello remove self")
+//projectId from global const
+async function removeSelfFromProject(id) {
+
+	Swal.fire({
+		title: `Are you sure you want to remove yourself from this project?`,
+		confirmButtonText: "Yes",
+		showCancelButton: true,
+	}).then((result) => {
+		if (result.isConfirmed) {
+			runRemoveMember(id);
+			window.location.href = `../main?id=${id}`
+		}
+	});
+	
 }
 
 //remove member
-function removeMemberFromProject() {
-	console.log("hello remove member")
+//projectId from global const
+function removeMemberFromProject(id, username) {
+
+	Swal.fire({
+		title: `Are you sure you want to remove ${username} from this project?`,
+		confirmButtonText: "Yes",
+		showCancelButton: true,
+	}).then((result) => {
+		if (result.isConfirmed) {
+			runRemoveMember(id, username);
+		}
+	});
+
+}
+
+async function runRemoveMember(id, username = "self") {
+
+	let res = await fetch("/projectRou/remove-user", {
+		method: "delete",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({ projectId: projectId, userId: id })
+	})
+
+	let result = await res.json();
+
+	let titleMessage;
+	if (username === "self") {
+		titleMessage = `Removed ${username} from this project!`;
+	} else {
+		titleMessage = `Removed yourself from this project!`
+	}
+
+	if (res.ok) {
+
+		Swal.fire({
+			title: titleMessage,
+			confirmButtonText: "Continue"
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.reload();
+			}
+		});
+
+	} else {
+		console.log(result);
+	}
 }

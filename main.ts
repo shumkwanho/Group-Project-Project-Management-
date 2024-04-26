@@ -43,7 +43,6 @@ io.on('connection', function (socket: any) {
 
     console.log("user id: ", userId);
     console.log("last message: ", justSentMessage);
-
   })
 
   socket.on('editMessage', async (data: any) => {
@@ -56,13 +55,26 @@ io.on('connection', function (socket: any) {
     console.log("user id: ", userId);
     console.log("project id: ", projectId);
     console.log("last message info: ", lastEditMessageInfo);
-
   })
 
   socket.on('join', (projectId: any) => {
     socket.join(`room-${projectId}`);
     socket.to(`room-${projectId}`).emit('joined');
   })
+
+  socket.on('addMember', async (input: any) => {
+    // var res = await fetch(`/projectRou/?id=${input.projectId}`)
+    var projectId = input.projectId
+    // var response = await res.json()
+    io.to(`room-${projectId}`).emit('receive-addMember', { data: "A new user added in project" });
+  })
+
+  socket.on('redrawProjectPage', async (input: any) => {
+    var projectId = input.projectId
+    console.log("HIHIHIHIHIHIHIHIHIHIHIHIHIHIHI")
+    io.to(`room-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
+  })
+
 })
 
 dotenv.config();
