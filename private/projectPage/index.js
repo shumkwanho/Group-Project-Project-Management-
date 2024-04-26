@@ -140,6 +140,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		body: JSON.stringify(req),
 	});
 	// socket.emit('redrawProjectPage', { projectId: projectId });
+	window.location.reload();
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
@@ -162,7 +163,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	// socket.emit('redrawProjectPage', { projectId: projectId });
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
@@ -181,7 +182,8 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	// socket.emit('redrawProjectPage', { projectId: projectId });
+	socket.emit('redrawProjectPage', { projectId: projectId });
+	window.location.reload();
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -200,7 +202,7 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	// socket.emit('redrawProjectPage', { projectId: projectId });
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 
@@ -405,7 +407,7 @@ async function finishTask(taskId) {
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({ id: taskId })
+				body: JSON.stringify({ id: taskId, projectId: projectId })
 			})
 
 			socket.emit('redrawProjectPage', { projectId: projectId });
