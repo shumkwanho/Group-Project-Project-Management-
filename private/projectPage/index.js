@@ -18,7 +18,7 @@ window.addEventListener("load", async (e) => {
 		displayMember(data)
 		socket.emit('join', projectId)
 		await drawPage(data)
-
+		document.querySelector(".project-big-name").innerHTML = `${data.name}`
 
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
@@ -114,7 +114,7 @@ gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 					projectId: projectId
 				})
 			})
-			socket.emit('redrawProjectPage', { projectId: projectId });
+			// socket.emit('redrawProjectPage', { projectId: projectId });
 			let message = (await res.json()).message
 			console.log(message);
 		}
@@ -139,7 +139,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req),
 	});
-	socket.emit('redrawProjectPage', { projectId: projectId });
+	// socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
@@ -162,7 +162,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	socket.emit('redrawProjectPage', { projectId: projectId });
+	// socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
@@ -181,7 +181,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	socket.emit('redrawProjectPage', { projectId: projectId });
+	// socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -200,7 +200,7 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	socket.emit('redrawProjectPage', { projectId: projectId });
+	// socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 
@@ -376,6 +376,7 @@ async function assignTask(taskId) {
 			});
 			if (res.ok) {
 				console.log("HAHA");
+				socket.emit('redrawProjectPage', { projectId: projectId });
 			}
 		} catch (error) {
 			console.log(error);
@@ -413,21 +414,6 @@ async function finishTask(taskId) {
 	});
 }
 
-document.querySelector(".quit-team").addEventListener("click", async (e) => {
-	const res = await fetch("/projectRou/remove-user", {
-		method: "DELETE",
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ projectId: projectId }),
-	});
-	const data = await res.json()
-	// console.log(data.id);
-	if (res.ok) {
-		console.log("yeah");
-		window.location.href = `../main/?id=${data.id}`
-	}
-})
 
 const mainPage = document.querySelector(".main-page").addEventListener("click", async (e) => {
 	const res = await fetch("/auth/user")
@@ -479,18 +465,24 @@ async function getAllMessages(projectId) {
 		let memberList = document.querySelector("#member-list")
 
 		for (let eachMember of allMembers) {
+			let imageElm = "";
+			let defaultProfileImage = new ProfileImage(
+				eachMember.username, {
+				backgroundColor: "black",
+			})
+			imageElm = defaultProfileImage.svg();
+
 			memberList.innerHTML +=
 				`
             <div class="member">
             <div class="username" onclick="getOtherUserInfoFromChat(${eachMember.user_id})">${eachMember.username}</div>
             <div class="image-cropper" onclick="getOtherUserInfoFromChat(${eachMember.user_id})">
             ${eachMember.profile_image ? `<img src="/profile-image/${eachMember.profile_image}" class="profilePic" />` :
-					`<img src="01.jpg" class="profilePic" />`}
+					`${imageElm}`}
             </div>
             </div>
             `
 		}
-
 
 		// onclick="async() => {await editMessage(${eachMessage.messages_id},'${eachMessage.content}') } "
 
@@ -797,11 +789,11 @@ async function getOtherUserInfoFromChat(userId) {
 
 	${myUserId == user_id ?
 		`
-   <button class="deleteMember" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
+   <button class="deleteMember quit-team" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
    `
    :
    `
-   <button class="deleteMember" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
+   <button class="deleteMember quit-team" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
    `}
 
     `
@@ -912,12 +904,20 @@ async function displayMember(data) {
 	const users = data.users
 
 	for (let user of users) {
+		let imageElm = "";
+		let defaultProfileImage = new ProfileImage(
+			user.username, {
+			backgroundColor: "black",
+		})
+		imageElm = defaultProfileImage.svg();
+
+
 		memberArea.innerHTML +=
 			`
 	<div class="team-member">
         <div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
         <div class="image-cropper" onclick="getOtherUserInfo(${user.id})">
-        	<img ${user.profile_image ? `src="/profile-image/${user.profile_image}"` : `src=""`} class="profilePic" alt="">
+        	${user.profile_image ? `<img src="/profile-image/${user.profile_image}" class="profilePic" alt="">` : `${imageElm}`}
         </div>
     </div>
 	`

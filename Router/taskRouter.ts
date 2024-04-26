@@ -45,8 +45,9 @@ async function createTask(req: Request, res: Response) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const newTask = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration) VALUES ($1,$2,$3,$4) returning *`, [projectId, taskName, startDate, duration])).rows[0]
-
+        const rootTask = await getRootTask(projectId)
+        const newTask = (await pgClient.query(`insert into tasks (project_id, name, start_date, duration,pre_req_fulfilled) VALUES ($1,$2,$3,$4,true) returning *`, [projectId, taskName, startDate, duration])).rows[0]
+        await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2)`,[newTask.id,rootTask])
 
         res.json({ message: "create new task successfully", data: newTask })
     } catch (error) {
@@ -58,12 +59,17 @@ async function createTask(req: Request, res: Response) {
 
 async function createTaskRelation(req: Request, res: Response) {
     try {
+        console.log(req.body);
+        
         const { projectId, preTask, taskId } = req.body
+        const rootTaskId = await getRootTask(projectId)
+        await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`,[taskId,rootTaskId])  
         const ifExist = (await pgClient.query(`select * from task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])).rows[0]
         if (!ifExist) {
             await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
-            await changeProjectDuration(projectId)
         }
+        await changeProjectDuration(projectId)
+        await checkpreReqTask(preTask)
         res.json({ message: "update sucessfully" })
     } catch (error) {
         console.log(error)
@@ -110,7 +116,7 @@ async function updateTask(req: Request, res: Response) {
         }
 
         const updatedTask = (await pgClient.query(`UPDATE tasks SET name = $1,duration = $2,start_date = $3 WHERE id = $4 returning *`, [taskName, duration, startDate, taskId])).rows[0]
-        checkpreReqTask(taskId)
+        await checkpreReqTask(projectId)
         const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`, [projectId])).rows
 
         if (checkAllTask.length == 0) {
@@ -137,9 +143,13 @@ async function finishTask(req: Request, res: Response) {
 async function deleteTaskRelation(req: Request, res: Response) {
     try {
         const { projectId, preTask, taskId } = req.body
+        console.log(req.body);
+        
         const rootTaskId = await getRootTask(projectId)
         await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])
-        const result = (await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2) returning *`, [taskId, rootTaskId])).rows
+        await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2) returning *`, [taskId, rootTaskId])
+        await pgClient.query(`update tasks set pre_req_fulfilled = true where id = $1`,[taskId])
+        await checkpreReqTask(taskId)
 
         await changeProjectDuration(projectId)
         res.json({ message: "Delete Successfully" })
