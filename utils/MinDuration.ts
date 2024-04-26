@@ -2,8 +2,7 @@
 import { pgClient } from "./pgClient";
 
 export async function getMinDuration(taskId: string) {
-    let treeResult = await getChildTree(taskId)
-    console.log(treeResult)
+    let treeResult = await getChildTree({}, taskId)
     let routeResult = getRoutes(treeResult, taskId) 
 
     let result = await shortestRoute(routeResult)
@@ -14,24 +13,24 @@ export async function getMinDuration(taskId: string) {
 
 
 
-let childTree: any = {}
-async function getChildTree(taskId: string) {
-
+async function getChildTree(childTree: any = {}, taskId: string) {
     const postTasks = (await pgClient.query(`select task_id from task_relation where pre_req_task_id = $1 group by task_id`, [taskId])).rows
+
+
     if (postTasks.length == 0) {
         return
     }
 
     for (let task of postTasks) {
-        if (!childTree[taskId]) {
+        if (!childTree.hasOwnProperty(taskId)) {
             childTree[taskId] = []
         }
-        if (!childTree[task.task_id]) {
+        if (!childTree.hasOwnProperty(task.task_id)) {
             childTree[task.task_id] = []
         }
         if (!childTree[taskId].includes(task.task_id)) {
             childTree[taskId].push(task.task_id)
-            await getChildTree(task.task_id)
+            await getChildTree(childTree, task.task_id)
         }
     }
 
