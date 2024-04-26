@@ -21,33 +21,18 @@ window.addEventListener("load", async (e) => {
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-				
-				await fetch('/task/finish', {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify({ id: taskId })
-				})
-				if (res.ok) {
-					await drawPage()
-				}
+				await finishTask(taskId)
+				window.location.reload()
+							
 			})
 		})
-
-
-
-
-
 		const assignBtns = document.querySelectorAll(".assign-btn")
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-				console.log('gggggg',e.currentTarget.parentElement.parentElement.parentElement)
-				console.log(taskId);
 				await assignTask(taskId)
+				window.location.reload()
 			})
 		})
 	} catch (error) {
@@ -123,7 +108,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 	const preTask = tasksData[item.source - 1];
 	const task = tasksData[item.target - 1];
 	const req = {
-		projectId:projectId,
+		projectId: projectId,
 		preTask: preTask.id,
 		taskId: task.id
 	}
@@ -134,7 +119,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	
+
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -146,7 +131,6 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		preTask: preTask.id,
 		taskId: task.id
 	}
-
 	let res = await fetch('/task/relation', {
 		method: "POST",
 		headers: {
@@ -211,14 +195,12 @@ function createGanttChart(data) {
 	gantt.getTask(1).readonly = true;
 }
 
-async function displayTaskList(data) 
-{
+async function displayTaskList(data) {
 	const tasks = data.tasks
 	const res = await fetch("/auth/user")
 	const userId = (await res.json()).data.id
 
-	for (let task of tasks) 
-	{
+	for (let task of tasks) {
 		let imageElm = "";
 
 		if (task.userRelation[0]) {
@@ -247,9 +229,7 @@ async function displayTaskList(data)
 				</div>
 			
 			`
-
-		} else if (task.pre_req_fulfilled) { 
-
+		} else if (task.pre_req_fulfilled) {
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
@@ -328,9 +308,7 @@ async function assignTask(taskId) {
 				},
 				body: JSON.stringify({ taskId: taskId, userId: userId, projectId: projectId }),
 			});
-			if (res.ok) {
-				console.log("HAHA");
-			}
+
 		} catch (error) {
 			console.log(error);
 		}
@@ -338,7 +316,31 @@ async function assignTask(taskId) {
 	});
 }
 
-
+async function finishTask(taskId) {
+	Swal.fire({
+		title: "Is the task finished?",
+		icon: "question",
+		showCancelButton: true,
+		confirmButtonColor: "#3085d6",
+		cancelButtonColor: "#d33",
+		confirmButtonText: "Yes, I am finished!"
+	}).then((result) => {
+		if (result.isConfirmed) {
+			Swal.fire({
+				title: "finished!!",
+				text: "Your task has been finished.",
+				icon: "success"
+			});
+			const res = fetch('/task/finish', {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ id: taskId })
+			})
+		}
+	});
+}
 
 document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
@@ -719,11 +721,11 @@ async function getOtherUserInfoFromChat(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-		`
+			`
    <button class="deleteMember">Quit Group</button>
    `
-   :
-   `
+			:
+			`
    <button class="deleteMember">Delete Group Member</button>
    `}
 
@@ -756,11 +758,11 @@ async function getOtherUserInfo(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-		 `
+			`
 	<button class="deleteMember">Quit Group</button>
 	`
-	:
-	`
+			:
+			`
 	<button class="deleteMember">Delete Group Member</button>
 	`}
 
@@ -835,7 +837,7 @@ async function displayMember(data) {
 	const users = data.users
 
 	for (let user of users) {
-		memberArea.innerHTML += 
+		memberArea.innerHTML +=
 			`
 	<div class="team-member">
         <div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
