@@ -42,11 +42,14 @@ insert into projects (name, start_date,min_duration) values ('Beta', '2024-04-01
 insert into user_project_relation (user_id, project_id) values (1, 1);
 insert into user_project_relation (user_id, project_id) values (1, 2);
 insert into user_project_relation (user_id, project_id) values (1, 3);
+insert into user_project_relation (user_id, project_id) values (2, 1);
+insert into user_project_relation (user_id, project_id) values (2, 2);
+insert into user_project_relation (user_id, project_id) values (2, 3);
 
 
 --project 10 taskname ,startdate , duration, dependencies
 insert into tasks (project_id, name, duration, start_date) values (1, 'root task', 0,'2024-04-01');
-insert into tasks (project_id, name, duration, start_date) values (1, 'Sonair', 4,'2024-04-01');
+insert into tasks (project_id, name, duration, start_date,pre_req_fulfilled) values (1, 'Sonair', 4,'2024-04-01',true);
 insert into tasks (project_id, name, duration, start_date) values (1, 'Tres-Zap', 3,'2024-04-05');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Tin', 6,'2024-04-05');
 insert into tasks (project_id, name, duration, start_date) values (1, 'Alpha', 4,'2024-04-11');

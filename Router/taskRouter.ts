@@ -64,6 +64,8 @@ async function createTaskRelation(req: Request, res: Response) {
             await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
             await changeProjectDuration(projectId)
         }
+        const rootTask = await getRootTask(projectId)
+        await changeProjectDuration(rootTask)
         res.json({ message: "update sucessfully" })
     } catch (error) {
         console.log(error)

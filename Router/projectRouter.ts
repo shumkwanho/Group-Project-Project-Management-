@@ -305,7 +305,6 @@ async function removeProjectUser(req: Request, res: Response) {
         let userId = req.body.userId;
 
 
-        console.log("userId", userId)
 
 
 

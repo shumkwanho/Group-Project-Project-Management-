@@ -22,8 +22,8 @@ window.addEventListener("load", async (e) => {
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+<<<<<<< HEAD
 
 				await fetch('/task/finish', {
 					method: "PUT",
@@ -35,20 +35,24 @@ window.addEventListener("load", async (e) => {
 				if (res.ok) {
 					await drawPage()
 				}
+=======
+				await finishTask(taskId)
+				window.location.reload()
+							
+>>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
 			})
 		})
-
-
-
-
-
 		const assignBtns = document.querySelectorAll(".assign-btn")
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+<<<<<<< HEAD
 				console.log('gggggg', e.currentTarget.parentElement.parentElement.parentElement)
 				console.log(taskId);
+=======
+>>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
 				await assignTask(taskId)
+				window.location.reload()
 			})
 		})
 	} catch (error) {
@@ -146,7 +150,6 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		preTask: preTask.id,
 		taskId: task.id
 	}
-
 	let res = await fetch('/task/relation', {
 		method: "POST",
 		headers: {
@@ -230,13 +233,13 @@ async function displayTaskList(data) {
 				imageElm = `<img src="/profile-image/${task.userRelation[0].profile_image}" alt="" id="user-profile">`
 			}
 		}
-
-
-
 		if ((task.name).includes("root")) {
 			continue
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
 		if (task.actual_finish_date) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
@@ -249,9 +252,13 @@ async function displayTaskList(data) {
 				</div>
 			
 			`
+<<<<<<< HEAD
 
 		} else if (task.pre_req_fulfilled) {
 
+=======
+		} else if (task.pre_req_fulfilled) {
+>>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
@@ -330,9 +337,7 @@ async function assignTask(taskId) {
 				},
 				body: JSON.stringify({ taskId: taskId, userId: userId, projectId: projectId }),
 			});
-			if (res.ok) {
-				console.log("HAHA");
-			}
+
 		} catch (error) {
 			console.log(error);
 		}
@@ -340,14 +345,32 @@ async function assignTask(taskId) {
 	});
 }
 
+async function finishTask(taskId) {
+	Swal.fire({
+		title: "Is the task finished?",
+		icon: "question",
+		showCancelButton: true,
+		confirmButtonColor: "#3085d6",
+		cancelButtonColor: "#d33",
+		confirmButtonText: "Yes, I am finished!"
+	}).then((result) => {
+		if (result.isConfirmed) {
+			Swal.fire({
+				title: "finished!!",
+				text: "Your task has been finished.",
+				icon: "success"
+			});
+			const res = fetch('/task/finish', {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ id: taskId })
+			})
+		}
+	});
+}
 
-
-document.querySelector(".add-teammate").addEventListener("click", (e) => {
-
-})
-document.querySelector(".remove-teammate").addEventListener("click", (e) => {
-
-})
 document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
 		method: "DELETE",
@@ -701,6 +724,10 @@ document.querySelector(".quit-chat").addEventListener("click", async (event) => 
 
 //===================== Get Other User Info ===================
 
+window['removeSelfFromProject'] = removeSelfFromProject;
+window['removeMemberFromProject'] = removeMemberFromProject;
+
+
 async function getOtherUserInfoFromChat(userId) {
 	let res = await fetch(`/auth/other-user?userId=${userId}`);
 	let response = await res.json();
@@ -942,4 +969,14 @@ function allDarkenAreaDisapper() {
                 </div>
             </section>
 	`
+}
+
+//user self quit group
+function removeSelfFromProject() {
+	console.log("hello remove self")
+}
+
+//remove member
+function removeMemberFromProject() {
+	console.log("hello remove member")
 }
