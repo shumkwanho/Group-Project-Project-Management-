@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <title>Main Page</title>
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="index.css">
@@ -26,119 +26,93 @@
         <main id="main-page-area">
 
             <nav id="top-bar" class="row white-word">
-                <div id="and-then-logo" class="col-2">LOGO</div>
-                <div id="notification" class="col-8">Notification / Hello user, welcome back ;]</div>
+                <div id="and-then-logo" class="col-2">and then...?</div>
+                <div id="notification" class="col-8"></div>
                 <button type="button" id="logout-button" class="col-2">logout</button>
             </nav>
 
-            <!-- <nav>
-            <div class="main-page">Main Page</div>
-            <div class="noti">Notification</div>
-            <div class="logout">Logout</div>
-            </nav> -->
-
             <article class="user-project-area">
 
-                <section class="personal-area">
+                <section class="personal-area white-word">
 
                     <div class="user-content">
-                        <div class="image-cropper">
-                            <img src="/profile-image/mydog.jpg" alt="" id="user-profile">
+
+                        <!-- html script sample -->
+                    
+                        <!-- <div class="image-cropper">
+                            <img src="" alt="" id="user-profile">
                         </div>
-                        <div class="username">Username</div>
-                        <div class="project-count">You are now handling xx projects</div>
-                        <div class="completed-project-count">You have completed xx projects</div>
+                        
+                        <div class="username">Username</div> -->
                     </div>
 
-                    <div class="user-edit-btn">
-                        <button type="button" class="edit-profile" data-bs-toggle="modal"
-                            data-bs-target="#editProfileModal">Edit profile</button>
+                    <div class="project-content">
+
+                        <!-- html script sample -->
+
+                        <!-- <div class="project-count">Current projects : 0</div>
+                        <div class="completed-project-count">Completed projects : 0</div> -->
+
                     </div>
 
-                    <div class="update-password-btn">
+                    <div class="task-content">
+
+                        <!-- html script sample -->
+                        
+                        <!-- <div class="text-center">Tasks Status</div>
+                        <div class="task-status normal">
+                            <span>Normal:</span> ${normalTaskCount}
+                        </div>
+                        <div class="task-status priority">
+                            <span>Priority:</span> ${priorityTaskCount}
+                        </div>
+                        <div class="task-status overrun">
+                            <span>Overrun:</span> ${overrunTaskCount}
+                        </div> -->
+
+                    </div>
+
+                    <div class="user-content-button-container">
+                        <button type="button" class="edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit
+                            profile</button>
+                    
                         <button type="button" class="update-password" data-bs-toggle="modal"
                             data-bs-target="#updatePasswordModal">Update Password</button>
                     </div>
 
                 </section>
 
-
                 <section class="project-area">
 
-                    <div class="create-project" data-bs-toggle="modal" data-bs-target="#projectCreationModal">
+                    <!-- html script sample -->
+
+                    <!-- <div class="create-project" data-bs-toggle="modal" data-bs-target="#projectCreationModal">
                         <div class="project-name white-word">Create project</div>
                         <div class="center-image">
                             <img src="./create_project.png" alt="" class="create-project-image">
                         </div>
-                    </div>
+                    </div> -->
 
-
-                    <div class="project-box">
-                        <div class="project">
-                            <img src="/profile-image/mydog.jpg" alt="" class="project-image">
-                            <button class="edit-project-image">btn</button>
-                            <div class="project-name">Project 1</div>
-                            <div class="current-task">Task 1</div>
-                            <div class="current-task">Task 2</div>
-                            <div class="current-task">Task 3</div>
-                            <div class="current-task">Task 4</div>
-                        </div>
-                    </div>
-
-                    <div class="project">
-                        <img src="/profile-image/mydog.jpg" alt="" class="project-image">
-                        <button class="edit-project-image">btn</button>
-                        <div class="project-name">Project 1</div>
-                        <div class="current-task">Task 1</div>
-                        <div class="current-task">Task 2</div>
-                        <div class="current-task">Task 3</div>
-                    </div>
-
-                    <div class="project">
-                        <img src="/profile-image/mydog.jpg" alt="" class="project-image">
-                        <button class="edit-project-image">btn</button>
-                        <div class="project-name">Project 1</div>
-                        <div class="current-task">Task 1</div>
-                        <div class="current-task">Task 2</div>
-                    </div>
-
-                    <div class="project">
-                        <img src="/profile-image/mydog.jpg" alt="" class="project-image">
-                        <button class="edit-project-image">btn</button>
-                        <div class="project-name">Project 1</div>
-                        <div class="current-task">Task 1</div>
-                        <div class="current-task">Task 2</div>
-                    </div>
-
-                    <div class="project">
-                        <img src="/profile-image/mydog.jpg" alt="" class="project-image">
+                    <!-- <div class="project">
+                        <img src="" alt="" class="project-image">
                         <button class="edit-project-image">btn</button>
                         <div class="project-name">Project 1</div>
                         <div class="current-task">Task 1</div>
                         <div class="current-task">Task 2</div>
                         <div class="current-task">Task 3</div>
                         <div class="current-task">Task 4</div>
-                    </div>
-
-
-                    <!-- </div> -->
+                    </div> -->
 
                 </section>
 
-
                 <section class="completed-project-area">
+                    <!-- html script sample -->
                     <!-- <div class="completed-project">
                         <div class="completed-project-name">Completed Project 1</div>
                         <div class="completed-project-date">2024-01-01</div>
-                    </div>
-                    <div class="completed-project">
-                        <div class="completed-project-name">Completed Project 2</div>
-                        <div class="completed-project-date">2024-01-01</div>
-                    </div>
-                    <div class="completed-project">
-                        <div class="completed-project-name">Completed Project 3</div>
-                        <div class="completed-project-date">2024-01-01</div> -->
+                    </div> -->
                 </section>
+
             </article>
 
         </main>
@@ -146,21 +120,21 @@
     </div>
 
     <!-- upload profile image modal -->
-    <div class="modal fade" id="uploadProfileImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="uploadProfileImageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="uploadProfileImageModal" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="uploadProfileImageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
                     <h1 class="fw-bold mb-0 fs-2" id="uploadProfileImageLabel">Upload Profile Image</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-    
+
                 <div class="modal-body p-5 pt-0">
                     <form enctype="multipart/form-data" method="post" id="upload-profile-image">
-    
+
                         <label for="profile-image-upload" class="form-label">Upload Image</label>
                         <input class="form-control" type="file" name="profile-image" id="profile-image-upload">
-    
+
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
                             id="submit-profile-image">Submit</button>
                     </form>
@@ -170,21 +144,21 @@
     </div>
 
     <!-- upload project image modal -->
-    <div class="modal fade" id="uploadProjectImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="uploadProjectImageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="uploadProjectImageModal" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="uploadProjectImageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
                     <h1 class="fw-bold mb-0 fs-2" id="uploadProjectImageLabel">Upload Project Cover Image</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-    
+
                 <div class="modal-body p-5 pt-0">
                     <form enctype="multipart/form-data" method="put" id="upload-project-image">
-                        
+
                         <label for="project-image-upload" class="form-label">Upload Image</label>
                         <input class="form-control" type="file" name="project-image" id="project-image-upload">
-    
+
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
                             id="submit-project-image">Submit</button>
                     </form>
@@ -228,20 +202,22 @@
                     <h1 class="fw-bold mb-0 fs-2" id="updatePasswordLabel">Update Password</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-    
+
                 <div class="modal-body p-5 pt-0">
                     <form id="update-password">
-    
+
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-3 " id="password1" placeholder="password">
+                            <input type="password" class="form-control rounded-3 " id="password1"
+                                placeholder="password">
                             <label for="password1">New Password</label>
                         </div>
-    
+
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-3 " id="password2" placeholder="password">
+                            <input type="password" class="form-control rounded-3 " id="password2"
+                                placeholder="password">
                             <label for="password2">Confirm New Password</label>
                         </div>
-    
+
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
                             id="update-password-button">Submit</button>
                     </form>
