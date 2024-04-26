@@ -405,7 +405,7 @@ async function finishTask(taskId) {
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({ id: taskId })
+				body: JSON.stringify({ id: taskId, projectId: projectId })
 			})
 
 			socket.emit('redrawProjectPage', { projectId: projectId });

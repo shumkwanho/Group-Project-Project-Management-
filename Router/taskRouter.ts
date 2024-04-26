@@ -135,7 +135,14 @@ async function finishTask(req: Request, res: Response) {
     console.log(req.body);
 
     const taskId = req.body.id
+    const projectId = req.body.projectId
     await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`, [taskId])
+
+    const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`, [projectId])).rows
+
+        if (checkAllTask.length == 0) {
+            await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`, [projectId])
+        }
 }
 
 
