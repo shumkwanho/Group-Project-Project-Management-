@@ -97,26 +97,6 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
 		const taskdata = (await getProjectData(projectId)).tasks
