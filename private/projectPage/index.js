@@ -24,7 +24,7 @@ window.addEventListener("load", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
 				await finishTask(taskId)
 				window.location.reload()
-							
+
 			})
 		})
 		const assignBtns = document.querySelectorAll(".assign-btn")
@@ -40,6 +40,32 @@ window.addEventListener("load", async (e) => {
 	}
 })
 
+document.querySelector(".logout").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+        title: "Do you want to logout",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            runLogout();
+        }
+    });
+
+})
+
+async function runLogout() {
+    let res = await fetch ("/auth/logout", {
+        method: "POST"
+    })
+
+    if (res.ok) {
+        window.location.href = '/';
+    }
+}
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
@@ -52,7 +78,8 @@ gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
-					taskId: taskid
+					taskId: taskid,
+					projectId: projectId
 				})
 			})
 			let message = (await res.json()).message
@@ -186,6 +213,7 @@ function createGanttChart(data) {
 	const projectData = chartData(data)
 	const taskRelation = chartRelation(data)
 	gantt.config.date_format = "%Y-%m-%d";
+	
 	gantt.init("gantt_here");
 
 	gantt.parse({

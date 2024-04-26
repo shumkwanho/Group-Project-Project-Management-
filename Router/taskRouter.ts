@@ -64,8 +64,6 @@ async function createTaskRelation(req: Request, res: Response) {
             await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
             await changeProjectDuration(projectId)
         }
-        const rootTask = await getRootTask(projectId)
-        await changeProjectDuration(rootTask)
         res.json({ message: "update sucessfully" })
     } catch (error) {
         console.log(error)
@@ -118,6 +116,8 @@ async function updateTask(req: Request, res: Response) {
         if (checkAllTask.length == 0) {
             await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`, [projectId])
         }
+
+        await changeProjectDuration(projectId)
         res.json({ message: "updated successfully", data: updatedTask })
     } catch (error) {
         console.log(error)
@@ -155,7 +155,7 @@ async function deleteTask(req: Request, res: Response) {
     try {
         await pgClient.query(`DELETE FROM task_relation where task_id = $1 or pre_req_task_id = $1`, [req.body.taskId])
         await pgClient.query(`DELETE FROM tasks where id = $1`, [req.body.taskId])
-        // check duration affected
+        await changeProjectDuration(req.body.projectId)
         res.json({ message: "Delete Successfully" })
     } catch (error) {
         console.log(error)
