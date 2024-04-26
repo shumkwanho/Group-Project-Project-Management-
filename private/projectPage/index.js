@@ -12,48 +12,109 @@ async function getProjectData(id) {
 	return data
 }
 
-
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
 		displayMember(data)
-		await drawPage(projectId)
+		socket.emit('join', projectId)
+		await drawPage(data)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
-
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-				
-				await fetch('/task/finish', {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify({ id: taskId })
-				})
-				if (res.ok) {
-					await drawPage()
-				}
+
+				await finishTask(taskId)
+				// socket.emit('redrawProjectPage', { projectId: projectId });
+				// window.location.reload()
+
 			})
 		})
-
-
-
-
-
 		const assignBtns = document.querySelectorAll(".assign-btn")
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-				// console.log('gggggg',e.currentTarget.parentElement.parentElement.parentElement)
-				// console.log(taskId);
+
+				console.log(taskId);
+
 				await assignTask(taskId)
+				// socket.emit('redrawProjectPage', { projectId: projectId });
+				// window.location.reload()
 			})
 		})
 	} catch (error) {
 		console.log(error);
 	}
 })
+
+socket.on('receive-redrawProjectPage', async notImportant => {
+	console.log(notImportant);
+
+	const res = await fetch(`/projectRou/?id=${projectId}`)
+	const data = (await res.json()).data
+
+	const projectData = chartData(data)
+	const taskRelation = chartRelation(data)
+
+	gantt.config.date_format = "%Y-%m-%d";
+	gantt.init("gantt_here");
+
+	gantt.parse({
+		data: [],
+		links: []
+	});
+	gantt.getTask(1).readonly = true;
+
+	document.querySelector(".inside-jira-task-box-finished").innerHTML = ""
+	document.querySelector(".inside-jira-task-box-ongoing").innerHTML = ""
+	document.querySelector(".inside-jira-task-box-to-do-list").innerHTML = ""
+
+
+	await drawPage(data);
+
+	const finishbtns = document.querySelectorAll(".finish-btn")
+	finishbtns.forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+			await finishTask(taskId)
+			socket.emit('redrawProjectPage', { projectId: projectId });
+			// window.location.reload()
+
+		})
+	})
+	const assignBtns = document.querySelectorAll(".assign-btn")
+	assignBtns.forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+			console.log(taskId);
+
+			await assignTask(taskId)
+			socket.emit('redrawProjectPage', { projectId: projectId });
+			// window.location.reload()
+		})
+	})
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
@@ -123,7 +184,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 	const preTask = tasksData[item.source - 1];
 	const task = tasksData[item.target - 1];
 	const req = {
-		projectId:projectId,
+		projectId: projectId,
 		preTask: preTask.id,
 		taskId: task.id
 	}
@@ -134,7 +195,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	
+
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -146,7 +207,6 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		preTask: preTask.id,
 		taskId: task.id
 	}
-
 	let res = await fetch('/task/relation', {
 		method: "POST",
 		headers: {
@@ -211,14 +271,12 @@ function createGanttChart(data) {
 	gantt.getTask(1).readonly = true;
 }
 
-async function displayTaskList(data) 
-{
+async function displayTaskList(data) {
 	const tasks = data.tasks
 	const res = await fetch("/auth/user")
 	const userId = (await res.json()).data.id
 
-	for (let task of tasks) 
-	{
+	for (let task of tasks) {
 		let imageElm = "";
 
 		if (task.userRelation[0]) {
@@ -235,6 +293,7 @@ async function displayTaskList(data)
 		if ((task.name).includes("root")) {
 			continue
 		}
+
 		if (task.actual_finish_date) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
@@ -245,10 +304,9 @@ async function displayTaskList(data)
 					</div>
 					<div class="task-any-fucking-icon"></div>
 				</div>
-			
 			`
 
-		} else if (task.pre_req_fulfilled) { 
+		} else if (task.pre_req_fulfilled) {
 
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
@@ -288,8 +346,8 @@ async function displayTaskList(data)
 	}
 }
 
-async function drawPage(projectId) {
-	const data = await getProjectData(projectId)
+async function drawPage(data) {
+	// const data = await getProjectData(projectId)
 	createGanttChart(data)
 	await displayTaskList(data)
 }
@@ -329,7 +387,7 @@ async function assignTask(taskId) {
 				body: JSON.stringify({ taskId: taskId, userId: userId, projectId: projectId }),
 			});
 			if (res.ok) {
-				// console.log("HAHA");
+				console.log("HAHA");
 			}
 		} catch (error) {
 			console.log(error);
@@ -338,7 +396,34 @@ async function assignTask(taskId) {
 	});
 }
 
-
+async function finishTask(taskId) {
+	Swal.fire({
+		title: "Is the task finished?",
+		icon: "question",
+		showCancelButton: true,
+		confirmButtonColor: "#3085d6",
+		cancelButtonColor: "#d33",
+		confirmButtonText: "Yes, I am finished!"
+	}).then((result) => {
+		if (result.isConfirmed) {
+			Swal.fire({
+				title: "finished!!",
+				text: "Your task has been finished.",
+				icon: "success"
+			});
+			const res = fetch('/task/finish', {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ id: taskId })
+			})
+			if (res.ok) {
+				socket.emit('redrawProjectPage', { projectId: projectId });
+			}
+		}
+	});
+}
 
 document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
@@ -472,7 +557,7 @@ async function getAllMessages(projectId) {
 		// console.log(messagesBox.scrollTop)
 		// messagesBox.scrollTop =0
 
-		socket.emit('join', projectId);
+		// socket.emit('join', projectId);
 	}
 
 
@@ -724,11 +809,11 @@ async function getOtherUserInfoFromChat(userId) {
 
 	${myUserId == user_id ?
 		`
-   <button class="deleteMember" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
+   <button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
    `
    :
    `
-   <button class="deleteMember" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
+   <button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
    `}
 
     `
@@ -761,11 +846,11 @@ async function getOtherUserInfo(userId) {
 
 	${myUserId == user_id ?
 		 `
-	<button class="deleteMember" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
+	<button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
 	`
 	:
 	`
-	<button class="deleteMember" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
+	<button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
 	`}
 
     `
@@ -839,7 +924,7 @@ async function displayMember(data) {
 	const users = data.users
 
 	for (let user of users) {
-		memberArea.innerHTML += 
+		memberArea.innerHTML +=
 			`
 	<div class="team-member">
         <div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
@@ -850,6 +935,31 @@ async function displayMember(data) {
 	`
 	}
 }
+
+socket.on('receive-addMember', async notImportant => {
+	console.log(notImportant);
+	const data = await getProjectData(projectId)
+	console.log(data);
+	const memberArea = document.querySelector(".all-team-member")
+	memberArea.innerHTML = "";
+	await displayMember(data)
+
+	let memberList = document.querySelector("#member-list")
+	memberList.innerHTML = "";
+
+	for await (let user of data.users) {
+		memberList.innerHTML +=
+			`
+            <div class="member">
+            <div class="username" onclick="getOtherUserInfoFromChat(${user.user_id})">${user.username}</div>
+            <div class="image-cropper" onclick="getOtherUserInfoFromChat(${user.user_id})">
+            ${user.profile_image ? `<img src="/profile-image/${user.profile_image}" class="profilePic" />` :
+				`<img src="01.jpg" class="profilePic" />`}
+            </div>
+            </div>
+            `
+	}
+})
 
 
 
