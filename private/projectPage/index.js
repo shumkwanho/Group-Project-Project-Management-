@@ -809,11 +809,11 @@ async function getOtherUserInfoFromChat(userId) {
 
 	${myUserId == user_id ?
 		`
-   <button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
+   <button class="deleteMember" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
    `
    :
    `
-   <button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
+   <button class="deleteMember" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
    `}
 
     `
@@ -846,11 +846,11 @@ async function getOtherUserInfo(userId) {
 
 	${myUserId == user_id ?
 		 `
-	<button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
+	<button class="deleteMember" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
 	`
 	:
 	`
-	<button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
+	<button class="deleteMember" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
 	`}
 
     `
@@ -1008,7 +1008,6 @@ async function removeSelfFromProject(id) {
 	}).then((result) => {
 		if (result.isConfirmed) {
 			runRemoveMember(id);
-			window.location.href = `../main?id=${id}`
 		}
 	});
 	
@@ -1032,6 +1031,8 @@ function removeMemberFromProject(id, username) {
 
 async function runRemoveMember(id, username = "self") {
 
+	console.log(username)
+
 	let res = await fetch("/projectRou/remove-user", {
 		method: "delete",
 		headers: {
@@ -1043,10 +1044,13 @@ async function runRemoveMember(id, username = "self") {
 	let result = await res.json();
 
 	let titleMessage;
-	if (username === "self") {
+	let runPage
+	if (username !== "self") {
 		titleMessage = `Removed ${username} from this project!`;
+		runPage = function() { window.location.reload() }
 	} else {
 		titleMessage = `Removed yourself from this project!`
+		runPage = function() { window.location.href = `../main?id=${id}` }
 	}
 
 	if (res.ok) {
@@ -1056,7 +1060,7 @@ async function runRemoveMember(id, username = "self") {
 			confirmButtonText: "Continue"
 		}).then((result) => {
 			if (result.isConfirmed) {
-				window.location.reload();
+				runPage();
 			}
 		});
 
