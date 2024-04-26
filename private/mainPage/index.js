@@ -2,6 +2,7 @@ import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
 import { getCurrentDate } from "../utils/getCurrentDate.js"
 import { checkAndPush, checkAndRemove } from "../../utils/arrayCheck.js";
+import { blurBackgroundImage } from "../../utils/blurBackgroundImage.js";
 
 //****************************//
 // Project Creation related global variables
@@ -106,12 +107,16 @@ async function getAllUserInfo(userId) {
                     `<img src="/project-image/${eachProject.image}" alt="" class="project-image">` : ""
 
                 projectArea.innerHTML += `
+                <div id="projectId-background-${eachProject.project_id}">
                     <section class="project" id="projectId-${eachProject.project_id}" 
                         onclick="handleProjectClick(event, ${eachProject.project_id})">
                     ${projectImageElm}
-                    <button class="edit-project-image" data-bs-toggle="modal" data-bs-target="#uploadProjectImageModal">btn</button>
+                    <button type="button" class="btn btn-outline-secondary edit-project-image" data-bs-toggle="modal" data-bs-target="#uploadProjectImageModal">
+                        <i class="bi bi-camera-fill"></i>
+                    </button>
                     <div class="project-name white-word">${eachProject.name}</div>
-                    </section>`
+                    </section>
+                <div>`
 
                 if (Number(eachProject.min_duration) <= 10) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
@@ -176,6 +181,14 @@ async function getAllUserInfo(userId) {
             }
         }
 
+        // if (projectInfo) {
+        //     for await (let eachProject of projectInfo) {
+        //         document.getElementById(`projectId-background-${eachProject.project_id}`).style["background-image"] = `url("/project-image/${eachProject.image}")`
+        //         blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
+        //     }
+        // }
+
+
         if (finishedProjects) {
             for await (let eachFinishedProject of finishedProjects) {
                 completedProjectArea.innerHTML += `
@@ -234,7 +247,8 @@ async function getAllUserInfo(userId) {
 
 //only fire button when click (not fire the section onclick)
 function handleProjectClick(event, id) {
-    if (event.target.classList.contains('edit-project-image')) {
+    if (event.target.classList.contains('edit-project-image') || event.target.classList.contains('bi')) {
+        //will only fire modal toggle
         projectIdForImage = id;
     } else {
         const projectURL = `http://localhost:8080/project/?id=${id}`;

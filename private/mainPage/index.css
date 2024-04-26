@@ -97,7 +97,7 @@ body {
 }
 
 .normal {
-    background-color: greenyellow;
+    background-color: #91b6b5;
 }
 
 .priority {
@@ -292,4 +292,38 @@ body {
     border-radius: 5px;
     margin-top: 5px;
     width: 100%;
+}
+
+.logout {
+    height: 30px;
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+}
+
+.logout:hover {
+    /* background-color: #8fd1cf; */
+    border: .5px solid #b8d3d2 !important;
+    color: #b8d3d2;
+}
+
+.main-page {
+    height: 30px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+}
+
+.main-page:hover {
+    /* background-color: #8fd1cf; */
+    border: .5px solid #b8d3d2 !important;
+    color: #b8d3d2;
 }
