@@ -1,9 +1,10 @@
 import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
 import { getCurrentDate } from "../utils/getCurrentDate.js"
+import { checkAndPush, checkAndRemove } from "../../utils/arrayCheck.js";
 
 //****************************//
-// Project Creation related
+// Project Creation related global variables
 //****************************//
 
 let promptCount = 1; //tracking the current prompt 
@@ -28,6 +29,10 @@ const projectCreationClose = document.querySelector("#project-creation-close");
 
 printPromptContent(promptCount)
 
+//****************************//
+
+//****************************//
+// Project Creation related global variables
 //****************************//
 
 var searchParams = new URLSearchParams(window.location.search);
@@ -58,6 +63,8 @@ async function getAllUserInfo(userId) {
 
     let notification = document.querySelector("#notification")
     let userContent = document.querySelector(".user-content")
+    let projectContent = document.querySelector(".project-content")
+    let taskContent = document.querySelector(".task-content")
     let projectArea = document.querySelector(".project-area")
     let completedProjectArea = document.querySelector(".completed-project-area")
 
@@ -66,16 +73,18 @@ async function getAllUserInfo(userId) {
     let projectCount = 0
     let finishProjectCount = 0
 
+    //for showing project status
+    let normalTaskCount = 0;
+    let priorityTaskCount = 0;
+    let overrunTaskCount = 0;
+
     if (res.ok) {
 
         notification.innerHTML = `
-        ${userInfo.last_login ? `
-        Hello ${userInfo.username}, welcome back ! ;] &nbsp;&nbsp;&nbsp; Wish you a nice day
-        `
+            ${userInfo.last_login ?
+                `Hello ${userInfo.username}, welcome back ! ;] &nbsp;&nbsp;&nbsp; Wish you a nice day`
                 :
-                `
-        Hello ${userInfo.username}, welcome to join us ! ;]
-        `
+                `Hello ${userInfo.username}, welcome to join us ! ;]`
             }`
 
         projectArea.innerHTML = `
@@ -105,13 +114,20 @@ async function getAllUserInfo(userId) {
                     </section>`
 
                 if (Number(eachProject.min_duration) <= 10) {
-                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "200px" ; 
+                    document.querySelector(`#projectId-${eachProject.project_id}`)
+                        .style.minHeight = "200px"; 
+
                 } else if (Number(eachProject.min_duration) > 10 && Number(eachProject.min_duration) <= 30) {
-                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "300px" ; 
+                    document.querySelector(`#projectId-${eachProject.project_id}`)
+                        .style.minHeight = "300px";
+
                 } else if (Number(eachProject.min_duration) > 30 && Number(eachProject.min_duration) <= 60) {
-                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "400px" ; 
+                    document.querySelector(`#projectId-${eachProject.project_id}`)
+                        .style.minHeight = "400px";
+
                 } else {
-                    document.querySelector(`#projectId-${eachProject.project_id}`).style.minHeight = "500px" ;
+                    document.querySelector(`#projectId-${eachProject.project_id}`)
+                        .style.minHeight = "500px";
                 }
                 projectCount++
             }
@@ -119,49 +135,63 @@ async function getAllUserInfo(userId) {
 
         if (currentTaskInfo) {
             for await (let eachCurrentTask of currentTaskInfo) {
-                document.querySelector(`#projectId-${eachCurrentTask.project_id}`).innerHTML += `
-                <div class="current-task white-word">Current task: ${eachCurrentTask.name}</div>
-                `
+                document.querySelector(`#projectId-${eachCurrentTask.project_id}`)
+                    .innerHTML += `
+                        <div class="current-task white-word">Current task: ${eachCurrentTask.name}</div>
+                        `
 
-                document.querySelector(`#projectId-${eachCurrentTask.project_id}`).style.background = "#b8d3d2"
+                document.querySelector(`#projectId-${eachCurrentTask.project_id}`)
+                    .style.background = "#b8d3d2"
+
+                normalTaskCount++;
+
             }
         }
 
         if (meetDeadlineTaskInfo) {
             for await (let eachDeadlineTask of meetDeadlineTaskInfo) {
-                document.querySelector(`#projectId-${eachDeadlineTask.project_id}`).innerHTML += `
-                <div class="current-task deadline-task white-word">Current task: ${eachDeadlineTask.name}</div>
-                `
+                document.querySelector(`#projectId-${eachDeadlineTask.project_id}`)
+                    .innerHTML += `
+                        <div class="current-task deadline-task white-word">Current task: ${eachDeadlineTask.name}</div>
+                        `
 
-                document.querySelector(`#projectId-${eachDeadlineTask.project_id}`).style.background = "#e7cd77";
+                document.querySelector(`#projectId-${eachDeadlineTask.project_id}`)
+                    .style.background = "#e7cd77";
+
+                priorityTaskCount++;
             }
         }
 
         if (overrunTaskInfo) {
             for await (let eachOverrunTask of overrunTaskInfo) {
-                document.querySelector(`#projectId-${eachOverrunTask.project_id}`).innerHTML += `
-                <div class="current-task overrun-task white-word">Current task: ${eachOverrunTask.name}</div>
-                `
+                document.querySelector(`#projectId-${eachOverrunTask.project_id}`)
+                    .innerHTML += `
+                        <div class="current-task overrun-task white-word">Current task: ${eachOverrunTask.name}</div>
+                        `
 
-                document.querySelector(`#projectId-${eachOverrunTask.project_id}`).style.background = "#b4454c";
+                document.querySelector(`#projectId-${eachOverrunTask.project_id}`)
+                    .style.background = "#b4454c";
+
+                overrunTaskCount++;
             }
         }
 
         if (finishedProjects) {
-            for await (let eachfinishedProject of finishedProjects) {
+            for await (let eachFinishedProject of finishedProjects) {
                 completedProjectArea.innerHTML += `
-                <div class="completed-project" onclick="location='http://localhost:8080/project/?id=${eachfinishedProject.project_id}'">
-                    <div class="completed-project-name white-word">${eachfinishedProject.name}</div>
-                    <div class="completed-project-date white-word">${eachfinishedProject.actual_finish_date}</div>
-                </div>
-                `
+                    <div class="completed-project" onclick="location='http://localhost:8080/project/?id=${eachFinishedProject.project_id}'">
+                    <div class="completed-project-name white-word">${eachFinishedProject.name}</div>
+                    <div class="completed-project-date white-word">${eachFinishedProject.actual_finish_date}</div>
+                    </div>
+                    `
 
                 finishProjectCount++
             }
         }
 
-        //if no profile image was uploaded, use default
         let imageElm = "";
+
+        //if no profile image was uploaded, use default
         if (userInfo.profile_image == null) {
             let defaultProfileImage = new ProfileImage(
                 userInfo.username, {
@@ -178,11 +208,26 @@ async function getAllUserInfo(userId) {
             ${imageElm}
             </div>
             <div class="username">${userInfo.username}</div>
-            <div class="project-count">Current projects : ${projectCount}</div>
-            <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>
         </div>
         `
         newUsernameInput.setAttribute("value", userInfo.username);
+
+        projectContent.innerHTML = `
+        <div class="project-count">Current projects : ${projectCount}</div>
+        <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>`
+
+        taskContent.innerHTML =`
+        <div class="text-center">Tasks Status</div>
+        <div class="task-status normal">
+            <span>Normal:</span> ${normalTaskCount}
+        </div>
+        <div class="task-status priority">
+            <span>Priority:</span> ${priorityTaskCount}
+        </div>
+        <div class="task-status overrun">
+            <span>Overrun:</span> ${overrunTaskCount}
+        </div>
+        `
     }
 
 }
@@ -321,7 +366,7 @@ updatePassword.addEventListener("submit", async (e) => {
 
             if (res.ok) {
 
-                (result);
+                console.log(result);
                 
             } else {
                 if (result.error == "sameAsCurrentPassword") {
@@ -369,7 +414,7 @@ uploadProfileImage.addEventListener("submit", async (e) => {
     } else {
         //not able to catch error from backend??
         //status 400 conditions to be handled
-        (response);
+        console.log(response);
     }
 })
 
@@ -391,8 +436,6 @@ uploadProjectImage.addEventListener("submit", async (e) => {
 
     if (res.ok) {
 
-        (response);
-
         Swal.fire({
             title: 'Project Image Uploaded',
             confirmButtonText: "Continue"
@@ -405,7 +448,7 @@ uploadProjectImage.addEventListener("submit", async (e) => {
     } else {
         //not able to catch error from backend??
         //status 400 conditions to be handled
-        (response);
+        console.log(response);
     }
 
 
@@ -742,7 +785,6 @@ async function projectInit(projJSON) {
 }
 
 function addPreReq(projJSON) {
-
     //add pre_req key to tasks.task
     for (let taskId in projJSON.tasks) {
         projJSON.tasks[taskId]["pre_req"] = [];
