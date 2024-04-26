@@ -208,12 +208,14 @@ function createGanttChart(data) {
 	gantt.getTask(1).readonly = true;
 }
 
-async function displayTaskList(data) {
+async function displayTaskList(data) 
+{
 	const tasks = data.tasks
 	const res = await fetch("/auth/user")
 	const userId = (await res.json()).data.id
 
-	for (let task of tasks) {
+	for (let task of tasks) 
+	{
 		let imageElm = "";
 
 		if (task.userRelation[0]) {
@@ -245,27 +247,9 @@ async function displayTaskList(data) {
 			`
 
 		} else if (task.pre_req_fulfilled) {
-<<<<<<< HEAD
-			document.querySelector(".ongoing").innerHTML += `
-			<div class="task-container" id="task_${task.id}">
-                <div class="task border">
-                    <div class="task-name">${task.name}</div>
-                    <div>${task.userRelation[0] ? imageElm : ""}</div>
-                </div>
-				<div class="btn-container">
-					<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
-                	${task.userRelation[0]? (userId == task.userRelation[0].userid ? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : ""):""}
-				</div>
-			</div>`
-		} else {
-			document.querySelector(".to-do-list").innerHTML += `
-			<div class="task-container" id="task_${task.id}">
-				<div class="task border">
-=======
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
->>>>>>> 7c60c8208aec024c3316ff292745a709922f5682
 					<div class="task-name">${task.name}</div>
 					<div class="task-any-fucking-icon">
 						<div>${task.userRelation[0] ? imageElm : ""}</div>
@@ -347,12 +331,6 @@ async function assignTask(taskId) {
 
 
 
-document.querySelector(".add-teammate").addEventListener("click", (e) => {
-
-})
-document.querySelector(".remove-teammate").addEventListener("click", (e) => {
-
-})
 document.querySelector(".quit-team").addEventListener("click", async (e) => {
 	const res = await fetch("/projectRou/remove-user", {
 		method: "DELETE",
@@ -775,10 +753,6 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".user-card").innerHTML = ""
 })
 
-<<<<<<< HEAD
-async function displayMember(data) {
-=======
->>>>>>> 7c60c8208aec024c3316ff292745a709922f5682
 
 
 
@@ -792,12 +766,13 @@ async function displayMember(data) {
 	const users = data.users
 
 	for (let user of users) {
-<<<<<<< HEAD
 		memberArea.innerHTML += `
 								<div class="teammate border" id="user_${user}">
 								${user.username}
 								</div>`
-=======
+	}
+
+	for (let user of users) {
 		memberArea.innerHTML += 
 			`
 	<div class="team-member">
@@ -807,6 +782,5 @@ async function displayMember(data) {
         </div>
     </div>
 	`
->>>>>>> 7c60c8208aec024c3316ff292745a709922f5682
 	}
 }
