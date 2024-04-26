@@ -132,10 +132,10 @@ async function updateTask(req: Request, res: Response) {
 }
 
 async function finishTask(req: Request, res: Response) {
-    console.log(req.body);
-
     const taskId = req.body.id
     await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`, [taskId])
+    await checkpreReqTask(taskId)
+    res.json({message: "finish task!"})
     
 }
 
