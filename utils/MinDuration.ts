@@ -3,8 +3,11 @@ import { pgClient } from "./pgClient";
 
 export async function getMinDuration(taskId: string) {
     let treeResult = await getChildTree(taskId)
-    let routeResult = getRoutes(treeResult, taskId)    
+    console.log(treeResult)
+    let routeResult = getRoutes(treeResult, taskId) 
+
     let result = await shortestRoute(routeResult)
+
     
     return result
 }
@@ -31,7 +34,6 @@ async function getChildTree(taskId: string) {
             await getChildTree(task.task_id)
         }
     }
-
 
     return childTree;
 }
@@ -94,11 +96,3 @@ function sumArrays(numberArray: number[][]): number[] {
 }
 
 
-getRoutes({
-    '13': [ '14', '17' ],
-    '14': [ '15', '16' ],
-    '15': [ '17' ],
-    '16': [],
-    '17': [ '18' ],
-    '18': []
-  }, "13")
