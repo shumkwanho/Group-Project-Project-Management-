@@ -97,26 +97,6 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
 		const taskdata = (await getProjectData(projectId)).tasks
@@ -128,9 +108,11 @@ gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
-					taskId: taskid
+					taskId: taskid,
+					projectId: projectId
 				})
 			})
+			socket.emit('redrawProjectPage', { projectId: projectId });
 			let message = (await res.json()).message
 			console.log(message);
 		}
@@ -155,6 +137,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req),
 	});
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
@@ -177,6 +160,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
@@ -195,7 +179,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -214,6 +198,7 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
+	socket.emit('redrawProjectPage', { projectId: projectId });
 });
 
 
@@ -262,6 +247,7 @@ function createGanttChart(data) {
 	const projectData = chartData(data)
 	const taskRelation = chartRelation(data)
 	gantt.config.date_format = "%Y-%m-%d";
+	
 	gantt.init("gantt_here");
 
 	gantt.parse({
@@ -418,9 +404,9 @@ async function finishTask(taskId) {
 				},
 				body: JSON.stringify({ id: taskId })
 			})
-			if (res.ok) {
-				socket.emit('redrawProjectPage', { projectId: projectId });
-			}
+
+			socket.emit('redrawProjectPage', { projectId: projectId });
+
 		}
 	});
 }
