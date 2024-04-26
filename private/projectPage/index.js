@@ -726,6 +726,15 @@ async function getOtherUserInfoFromChat(userId) {
 
     <div class="e-mail">${email}</div>
 
+	${myUserId == user_id ?
+		`
+   <button class="deleteMember">Quit Group</button>
+   `
+   :
+   `
+   <button class="deleteMember">Delete Group Member</button>
+   `}
+
     `
 }
 
@@ -753,6 +762,15 @@ async function getOtherUserInfo(userId) {
     <div class="username">${username}</div>
 
     <div class="e-mail">${email}</div>
+
+	${myUserId == user_id ?
+		 `
+	<button class="deleteMember">Quit Group</button>
+	`
+	:
+	`
+	<button class="deleteMember">Delete Group Member</button>
+	`}
 
     `
 }

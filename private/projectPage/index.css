@@ -654,8 +654,8 @@ h4 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 400px;
-    width: 400px;
+    height: 500px;
+    width: 350px;
     z-index: 10;
     border-radius: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -691,7 +691,11 @@ h4 {
     font-weight: 600;
 }
 
-
+.user-card .e-mail {
+    margin-bottom: 50px;
+    /* font-size: 25px; */
+    /* font-weight: 600; */
+}
 
 
 .search-user-card {
