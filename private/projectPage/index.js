@@ -12,53 +12,110 @@ async function getProjectData(id) {
 	return data
 }
 
-
 window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
 		displayMember(data)
 		socket.emit('join', projectId)
-		await drawPage(projectId)
+		await drawPage(data)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-<<<<<<< HEAD
 
-				await fetch('/task/finish', {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify({ id: taskId })
-				})
-				if (res.ok) {
-					await drawPage()
-				}
-=======
 				await finishTask(taskId)
-				window.location.reload()
-							
->>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
+				// socket.emit('redrawProjectPage', { projectId: projectId });
+				// window.location.reload()
+
 			})
 		})
 		const assignBtns = document.querySelectorAll(".assign-btn")
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-<<<<<<< HEAD
-				console.log('gggggg', e.currentTarget.parentElement.parentElement.parentElement)
+
 				console.log(taskId);
-=======
->>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
+
 				await assignTask(taskId)
-				window.location.reload()
+				// socket.emit('redrawProjectPage', { projectId: projectId });
+				// window.location.reload()
 			})
 		})
 	} catch (error) {
 		console.log(error);
 	}
 })
+
+socket.on('receive-redrawProjectPage', async notImportant => {
+	console.log(notImportant);
+
+	const res = await fetch(`/projectRou/?id=${projectId}`)
+	const data = (await res.json()).data
+
+	const projectData = chartData(data)
+	const taskRelation = chartRelation(data)
+
+	gantt.config.date_format = "%Y-%m-%d";
+	gantt.init("gantt_here");
+
+	gantt.parse({
+		data: [],
+		links: []
+	});
+	gantt.getTask(1).readonly = true;
+
+	document.querySelector(".inside-jira-task-box-finished").innerHTML = ""
+	document.querySelector(".inside-jira-task-box-ongoing").innerHTML = ""
+	document.querySelector(".inside-jira-task-box-to-do-list").innerHTML = ""
+
+
+	await drawPage(data);
+
+	const finishbtns = document.querySelectorAll(".finish-btn")
+	finishbtns.forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+			await finishTask(taskId)
+			socket.emit('redrawProjectPage', { projectId: projectId });
+			// window.location.reload()
+
+		})
+	})
+	const assignBtns = document.querySelectorAll(".assign-btn")
+	assignBtns.forEach((btn) => {
+		btn.addEventListener("click", async (e) => {
+			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
+
+			console.log(taskId);
+
+			await assignTask(taskId)
+			socket.emit('redrawProjectPage', { projectId: projectId });
+			// window.location.reload()
+		})
+	})
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
@@ -236,10 +293,7 @@ async function displayTaskList(data) {
 		if ((task.name).includes("root")) {
 			continue
 		}
-<<<<<<< HEAD
 
-=======
->>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
 		if (task.actual_finish_date) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
@@ -250,15 +304,10 @@ async function displayTaskList(data) {
 					</div>
 					<div class="task-any-fucking-icon"></div>
 				</div>
-			
 			`
-<<<<<<< HEAD
 
 		} else if (task.pre_req_fulfilled) {
 
-=======
-		} else if (task.pre_req_fulfilled) {
->>>>>>> 8c1502a7d14cf69b7cb899a0593576e3228961fb
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
@@ -297,8 +346,8 @@ async function displayTaskList(data) {
 	}
 }
 
-async function drawPage(projectId) {
-	const data = await getProjectData(projectId)
+async function drawPage(data) {
+	// const data = await getProjectData(projectId)
 	createGanttChart(data)
 	await displayTaskList(data)
 }
@@ -337,7 +386,9 @@ async function assignTask(taskId) {
 				},
 				body: JSON.stringify({ taskId: taskId, userId: userId, projectId: projectId }),
 			});
-
+			if (res.ok) {
+				socket.emit('redrawProjectPage', { projectId: projectId });
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -367,6 +418,9 @@ async function finishTask(taskId) {
 				},
 				body: JSON.stringify({ id: taskId })
 			})
+			if (res.ok) {
+				socket.emit('redrawProjectPage', { projectId: projectId });
+			}
 		}
 	});
 }
@@ -905,35 +959,7 @@ socket.on('receive-addMember', async notImportant => {
             </div>
             `
 	}
-
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

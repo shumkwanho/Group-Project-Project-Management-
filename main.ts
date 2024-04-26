@@ -66,11 +66,15 @@ io.on('connection', function (socket: any) {
     // var res = await fetch(`/projectRou/?id=${input.projectId}`)
     var projectId = input.projectId
     // var response = await res.json()
-    
     io.to(`room-${projectId}`).emit('receive-addMember', { data: "A new user added in project" });
-
   })
-  
+
+  socket.on('redrawProjectPage', async (input: any) => {
+    var projectId = input.projectId
+    console.log("HIHIHIHIHIHIHIHIHIHIHIHIHIHIHI")
+    io.to(`room-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
+  })
+
 })
 
 dotenv.config();
