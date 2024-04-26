@@ -720,11 +720,11 @@ async function getOtherUserInfoFromChat(userId) {
 
 	${myUserId == user_id ?
 		`
-   <button class="deleteMember">Quit Group</button>
+   <button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
    `
    :
    `
-   <button class="deleteMember">Delete Group Member</button>
+   <button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
    `}
 
     `
@@ -757,11 +757,11 @@ async function getOtherUserInfo(userId) {
 
 	${myUserId == user_id ?
 		 `
-	<button class="deleteMember">Quit Group</button>
+	<button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
 	`
 	:
 	`
-	<button class="deleteMember">Delete Group Member</button>
+	<button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
 	`}
 
     `
@@ -881,4 +881,14 @@ function allDarkenAreaDisapper() {
                 </div>
             </section>
 	`
+}
+
+//user self quit group
+function removeSelfFromProject() {
+	console.log("hello remove self")
+}
+
+//remove member
+function removeMemberFromProject() {
+	console.log("hello remove member")
 }

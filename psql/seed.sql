@@ -42,6 +42,9 @@ insert into projects (name, start_date,min_duration) values ('Beta', '2024-04-01
 insert into user_project_relation (user_id, project_id) values (1, 1);
 insert into user_project_relation (user_id, project_id) values (1, 2);
 insert into user_project_relation (user_id, project_id) values (1, 3);
+insert into user_project_relation (user_id, project_id) values (2, 1);
+insert into user_project_relation (user_id, project_id) values (2, 2);
+insert into user_project_relation (user_id, project_id) values (2, 3);
 
 
 --project 10 taskname ,startdate , duration, dependencies
