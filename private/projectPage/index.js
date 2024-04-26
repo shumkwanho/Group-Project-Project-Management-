@@ -18,6 +18,11 @@ window.addEventListener("load", async (e) => {
 		displayMember(data)
 		socket.emit('join', projectId)
 		await drawPage(data)
+
+		document.querySelector(".project-big-name").innerHTML = `
+		${projectId}
+`
+
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
