@@ -8,7 +8,7 @@ const projectId = searchParams.get("id");
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
 	const data = (await res.json()).data
-	console.log(data);
+	// console.log(data);
 	return data
 }
 
@@ -128,7 +128,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		startDate: getFinishDate(item.start_date, 1),
 		duration: item.duration
 	}
-	console.log(req);
+	// console.log(req);
 	const res = await fetch("/task", {
 		method: "POST",
 		headers: {
@@ -143,7 +143,7 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 	const taskdata = (await getProjectData(projectId)).tasks
 	const taskid = taskdata[id - 1].id
 
-	console.log(taskid);
+	// console.log(taskid);
 	const req = {
 		projectId: projectId,
 		taskId: taskid,
@@ -371,7 +371,7 @@ async function assignTask(taskId) {
 				body: JSON.stringify({ taskId: taskId, userId: userId, projectId: projectId }),
 			});
 			if (res.ok) {
-				socket.emit('redrawProjectPage', { projectId: projectId });
+				console.log("HAHA");
 			}
 		} catch (error) {
 			console.log(error);
@@ -418,7 +418,7 @@ document.querySelector(".quit-team").addEventListener("click", async (e) => {
 		body: JSON.stringify({ projectId: projectId }),
 	});
 	const data = await res.json()
-	console.log(data.id);
+	// console.log(data.id);
 	if (res.ok) {
 		console.log("yeah");
 		window.location.href = `../main/?id=${data.id}`
@@ -559,7 +559,7 @@ sendMessageSubmit()
 
 async function sendMessage(projectId) {
 	let content = await document.querySelector(".text-content").value;
-	console.log("content: ", content);
+	// console.log("content: ", content);
 
 	if (content.trim() != "") {
 		let res = await fetch('/chatroom', {
@@ -577,24 +577,24 @@ async function sendMessage(projectId) {
 			let userId = response.userId;
 			console.log("send message success");
 			document.querySelector(".text-content").value = "";
-			console.log(document.querySelector(".texting-box").innerHTML)
-			console.log("11111: ", projectId)
+			// console.log(document.querySelector(".texting-box").innerHTML)
+			// console.log("11111: ", projectId)
 			socket.emit('newMessage', { userId: userId, projectId: projectId, content: content });
 		}
 	}
 }
 
 socket.on('receive-newMessage', async lastMessageInfo => {
-	console.log(lastMessageInfo);
+	// console.log(lastMessageInfo);
 
 	let res = await fetch('/auth/user')
 	let response = await res.json();
 	let myUserId = await response.data.id;
-	console.log("my user id: ", myUserId);
+	// console.log("my user id: ", myUserId);
 
 	let msg = await lastMessageInfo.justSentMessage;
 	let messagesBox = document.querySelector("#message-box")
-	console.log("message user id: ", msg.users_id);
+	// console.log("message user id: ", msg.users_id);
 
 	messagesBox.innerHTML +=
 		`
@@ -628,7 +628,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
 
 //===================== Edit My Message ====================
 async function editMessage(messageId, content) {
-	console.log("editMessage")
+	// console.log("editMessage")
 	document.querySelector(".texting-box").innerHTML =
 		`
 		<form id="sendEditMessage" onsubmit="confirmEdit(event,${messageId})">
@@ -637,8 +637,8 @@ async function editMessage(messageId, content) {
 		</form>
 	`
 
-	console.log(document.querySelector(".texting-box").innerHTML)
-	console.log("22222: ", projectId)
+	// console.log(document.querySelector(".texting-box").innerHTML)
+	// console.log("22222: ", projectId)
 }
 
 async function confirmEdit(event, messageId) {
@@ -674,23 +674,23 @@ async function confirmEdit(event, messageId) {
 			</form>
 		`
 
-		console.log(document.querySelector(".texting-box").innerHTML)
-		console.log("33333: ", projectId)
+		// console.log(document.querySelector(".texting-box").innerHTML)
+		// console.log("33333: ", projectId)
 		sendMessageSubmit()
 	}
 }
 
 socket.on('receive-editMessage', async info => {
-	console.log(info);
+	// console.log(info);
 
 	let res = await fetch('/auth/user')
 	let response = await res.json();
 	let myUserId = await response.data.id;
-	console.log("my user id: ", myUserId);
+	// console.log("my user id: ", myUserId);
 
 	let msg = await info.lastEditMessageInfo;
 	let justEditMessage = document.querySelector(`#msgId-${msg.messages_id}`)
-	console.log("message user id: ", msg.users_id);
+	// console.log("message user id: ", msg.users_id);
 
 	justEditMessage.innerHTML =
 		`
@@ -775,7 +775,7 @@ async function getOtherUserInfoFromChat(userId) {
 	let email = response.data.email;
 	let profileImage = response.data.profile_image
 
-	console.log(response);
+	// console.log(response);
 	document.querySelector(".darken-area").style.display = "none";
 	document.querySelector(".outer-user-card").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
@@ -792,12 +792,12 @@ async function getOtherUserInfoFromChat(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-			`
-   <button class="deleteMember">Quit Group</button>
+		`
+   <button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
    `
-			:
-			`
-   <button class="deleteMember">Delete Group Member</button>
+   :
+   `
+   <button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
    `}
 
     `
@@ -812,7 +812,7 @@ async function getOtherUserInfo(userId) {
 	let email = response.data.email;
 	let profileImage = response.data.profile_image
 
-	console.log(response);
+	// console.log(response);
 	document.querySelector(".darken-area").style.display = "block";
 	// document.querySelector(".outer-user-card").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
@@ -829,12 +829,12 @@ async function getOtherUserInfo(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-			`
-	<button class="deleteMember">Quit Group</button>
+		 `
+	<button class="deleteMember" onclick="removeSelfFromProject()">Quit Group</button>
 	`
-			:
-			`
-	<button class="deleteMember">Delete Group Member</button>
+	:
+	`
+	<button class="deleteMember" onclick="removeMemberFromProject()">Delete Group Member</button>
 	`}
 
     `
@@ -903,7 +903,7 @@ document.querySelector(".add-member").addEventListener("click", async (event) =>
 
 async function displayMember(data) {
 
-	console.log(data)
+	// console.log(data)
 	const memberArea = document.querySelector(".all-team-member")
 	const users = data.users
 
@@ -982,11 +982,69 @@ function allDarkenAreaDisapper() {
 }
 
 //user self quit group
-function removeSelfFromProject() {
-	console.log("hello remove self")
+//projectId from global const
+async function removeSelfFromProject(id) {
+
+	Swal.fire({
+		title: `Are you sure you want to remove yourself from this project?`,
+		confirmButtonText: "Yes",
+		showCancelButton: true,
+	}).then((result) => {
+		if (result.isConfirmed) {
+			runRemoveMember(id);
+			window.location.href = `../main?id=${id}`
+		}
+	});
+	
 }
 
 //remove member
-function removeMemberFromProject() {
-	console.log("hello remove member")
+//projectId from global const
+function removeMemberFromProject(id, username) {
+
+	Swal.fire({
+		title: `Are you sure you want to remove ${username} from this project?`,
+		confirmButtonText: "Yes",
+		showCancelButton: true,
+	}).then((result) => {
+		if (result.isConfirmed) {
+			runRemoveMember(id, username);
+		}
+	});
+
+}
+
+async function runRemoveMember(id, username = "self") {
+
+	let res = await fetch("/projectRou/remove-user", {
+		method: "delete",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({ projectId: projectId, userId: id })
+	})
+
+	let result = await res.json();
+
+	let titleMessage;
+	if (username === "self") {
+		titleMessage = `Removed ${username} from this project!`;
+	} else {
+		titleMessage = `Removed yourself from this project!`
+	}
+
+	if (res.ok) {
+
+		Swal.fire({
+			title: titleMessage,
+			confirmButtonText: "Continue"
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.reload();
+			}
+		});
+
+	} else {
+		console.log(result);
+	}
 }

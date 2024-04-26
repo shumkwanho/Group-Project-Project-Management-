@@ -260,7 +260,7 @@ async function googleLogin(req: Request, res: Response) {
             )).rows[0];
 
             //login with new user info
-            console.log(userQueryResult.username);
+            (userQueryResult.username);
 
             req.session.userId = userQueryResult.id;
             req.session.username = userQueryResult.username;
@@ -556,7 +556,7 @@ async function updateProfileImage(req: Request, res: Response) {
 
                     }
                 } else {
-                    console.log("not and object")
+                    ("not and object")
                 }
             })
         }

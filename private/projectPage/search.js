@@ -51,7 +51,7 @@ async function addUserToProject(projectId, userId) {
     })
 
     let response = await res.json();
-    console.log(response);
+    (response);
     if (res.ok) {
         socket.emit('addMember', { projectId: projectId, userId: userId });
         // location.reload();
