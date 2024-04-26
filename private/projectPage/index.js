@@ -17,13 +17,14 @@ window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
 		displayMember(data)
+		socket.emit('join', projectId)
 		await drawPage(projectId)
 		const finishbtns = document.querySelectorAll(".finish-btn")
 		finishbtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-				
+
 				await fetch('/task/finish', {
 					method: "PUT",
 					headers: {
@@ -45,7 +46,7 @@ window.addEventListener("load", async (e) => {
 		assignBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
-				console.log('gggggg',e.currentTarget.parentElement.parentElement.parentElement)
+				console.log('gggggg', e.currentTarget.parentElement.parentElement.parentElement)
 				console.log(taskId);
 				await assignTask(taskId)
 			})
@@ -54,7 +55,6 @@ window.addEventListener("load", async (e) => {
 		console.log(error);
 	}
 })
-
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
@@ -123,7 +123,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 	const preTask = tasksData[item.source - 1];
 	const task = tasksData[item.target - 1];
 	const req = {
-		projectId:projectId,
+		projectId: projectId,
 		preTask: preTask.id,
 		taskId: task.id
 	}
@@ -134,7 +134,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		},
 		body: JSON.stringify(req)
 	})
-	
+
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
@@ -236,7 +236,7 @@ async function displayTaskList(data) {
 		if ((task.name).includes("root")) {
 			continue
 		}
-		
+
 		if (task.actual_finish_date) {
 			document.querySelector(".inside-jira-task-box-finished").innerHTML += `
             
@@ -250,7 +250,7 @@ async function displayTaskList(data) {
 			
 			`
 
-		} else if (task.pre_req_fulfilled) { 
+		} else if (task.pre_req_fulfilled) {
 
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
@@ -480,7 +480,7 @@ async function getAllMessages(projectId) {
 		// console.log(messagesBox.scrollTop)
 		// messagesBox.scrollTop =0
 
-		socket.emit('join', projectId);
+		// socket.emit('join', projectId);
 	}
 
 
@@ -727,11 +727,11 @@ async function getOtherUserInfoFromChat(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-		`
+			`
    <button class="deleteMember">Quit Group</button>
    `
-   :
-   `
+			:
+			`
    <button class="deleteMember">Delete Group Member</button>
    `}
 
@@ -764,11 +764,11 @@ async function getOtherUserInfo(userId) {
     <div class="e-mail">${email}</div>
 
 	${myUserId == user_id ?
-		 `
+			`
 	<button class="deleteMember">Quit Group</button>
 	`
-	:
-	`
+			:
+			`
 	<button class="deleteMember">Delete Group Member</button>
 	`}
 
@@ -843,7 +843,7 @@ async function displayMember(data) {
 	const users = data.users
 
 	for (let user of users) {
-		memberArea.innerHTML += 
+		memberArea.innerHTML +=
 			`
 	<div class="team-member">
         <div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
@@ -854,6 +854,59 @@ async function displayMember(data) {
 	`
 	}
 }
+
+socket.on('receive-addMember', async notImportant => {
+	console.log(notImportant);
+	const data = await getProjectData(projectId)
+	console.log(data);
+	const memberArea = document.querySelector(".all-team-member")
+	memberArea.innerHTML = "";
+	await displayMember(data)
+
+	let memberList = document.querySelector("#member-list")
+	memberList.innerHTML = "";
+
+	for await (let user of data.users) {
+		memberList.innerHTML +=
+			`
+            <div class="member">
+            <div class="username" onclick="getOtherUserInfoFromChat(${user.user_id})">${user.username}</div>
+            <div class="image-cropper" onclick="getOtherUserInfoFromChat(${user.user_id})">
+            ${user.profile_image ? `<img src="/profile-image/${user.profile_image}" class="profilePic" />` :
+				`<img src="01.jpg" class="profilePic" />`}
+            </div>
+            </div>
+            `
+	}
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
