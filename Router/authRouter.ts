@@ -494,7 +494,7 @@ async function updateProfileImage(req: Request, res: Response) {
             let username = req.session.username;
 
             //max file size = 5mb, need to remind users in front end
-            const MAX_FILE_SIZE = 5 * 1024 ** 2;
+            const MAX_FILE_SIZE = 20 * 1024 ** 2;
 
             const imageForm = formidable({
                 uploadDir: __dirname + "/../uploads/profile-image",
