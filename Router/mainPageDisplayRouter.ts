@@ -83,7 +83,7 @@ async function getMainPageInfo(req: Request, res: Response) {
 
     try {
 
-        console.log("userId: ", userId);
+        // console.log("userId: ", userId);
 
         let currentTaskInfo = [];
         let allOverrunTasks = [];
@@ -158,12 +158,12 @@ async function getMainPageInfo(req: Request, res: Response) {
         })
 
 
-        console.log("userInfo: ", userInfo);
-        console.log("allCurrentProjects: ", allCurrentProjects);
-        console.log("allOverrunTasks: ", allOverrunTasks);
-        console.log("meetDeadlineTasks: ", meetDeadlineTasks);
-        console.log("currentTaskInfo: ", currentTaskInfo);
-        console.log("allFinishedProjects:", allFinishedProjects);
+        // console.log("userInfo: ", userInfo);
+        // console.log("allCurrentProjects: ", allCurrentProjects);
+        // console.log("allOverrunTasks: ", allOverrunTasks);
+        // console.log("meetDeadlineTasks: ", meetDeadlineTasks);
+        // console.log("currentTaskInfo: ", currentTaskInfo);
+        // console.log("allFinishedProjects:", allFinishedProjects);
 
 
 

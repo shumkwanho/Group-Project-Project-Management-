@@ -301,19 +301,13 @@ async function addProjectUser(req: Request, res: Response) {
 async function removeProjectUser(req: Request, res: Response) {
     try {
 
-        let project_id = req.body.projectId;
+        let projectId = req.body.projectId;
         let userId = req.body.userId;
-
-
-        console.log("userId", userId)
-
-
-
 
         //check if relation exists
         let checkQuery = (await pgClient.query(
             "SELECT user_project_relation.id FROM user_project_relation join users on users.id = user_id WHERE (users.id = $1) AND project_id = $2",
-            [userId, project_id]
+            [userId, projectId]
         )).rows[0];
 
         if (checkQuery == undefined) {

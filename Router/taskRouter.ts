@@ -77,7 +77,7 @@ async function userTaskRelation(req: Request, res: Response) {
 
 
         const userProjectRelationId = (await pgClient.query(`select * from user_project_relation where user_id = $1 and project_id = $2`, [userId, projectId])).rows[0].id
-        console.log(userProjectRelationId);
+        // console.log(userProjectRelationId);
         if (!userProjectRelationId) {
             res.status(400).json({ message: "The user is not involved in this project" })
         }
