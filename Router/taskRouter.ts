@@ -132,8 +132,6 @@ async function updateTask(req: Request, res: Response) {
 }
 
 async function finishTask(req: Request, res: Response) {
-    console.log(req.body);
-
     const taskId = req.body.id
     const projectId = req.body.projectId
     await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`, [taskId])
