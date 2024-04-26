@@ -1,3 +1,5 @@
+const socket = io.connect();
+
 var searchParams = new URLSearchParams(window.location.search);
 const projectId = searchParams.get("id");
 
@@ -51,6 +53,8 @@ async function addUserToProject(projectId, userId) {
     let response = await res.json();
     console.log(response);
     if (res.ok) {
+        socket.emit('addMember', { projectId: projectId });
         location.reload();
     }
 }
+
