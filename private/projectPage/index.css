@@ -6,6 +6,11 @@ body {
     --bs-gutter-x: 0 !important;
 }
 
+.project-big-name {
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
 
 .chart-and-status {
     display: flex;
@@ -28,7 +33,7 @@ nav {
 }
 
 nav div {
-    margin-right: 10px;
+    /* margin-right: 10px; */
 }
 
 .project {
@@ -351,7 +356,7 @@ h4 {
     border-radius: 50%;
 }
 
-.image-cropper>img {
+.member>.image-cropper>img {
     min-height: 40px;
     min-width: 40px;
     object-fit: cover;
@@ -364,9 +369,24 @@ h4 {
     width: auto; */
 }
 
+.member>.image-cropper>svg {
+    min-height: 40px;
+    min-width: 40px;
+    object-fit: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    cursor: pointer;
+    /* height: 100%;
+    width: auto; */
+}
+
 .member>.image-cropper:hover {
     /* transform: scale(1.1); */
-    filter: brightness(1.2) saturate(0.8);
+    filter: brightness(1.1) saturate(0.8);
 }
 
 @media screen and (max-width: 1350px) {
@@ -383,11 +403,25 @@ h4 {
         width: 30px;
     }
 
-    .image-cropper>img {
+    .member>.image-cropper>img {
         min-height: 30px;
         min-width: 30px;
     }
 
+    .member>.image-cropper>svg {
+        min-height: 30px;
+        min-width: 30px;
+        object-fit: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+        height: auto;
+        width: 100%;
+        cursor: pointer;
+        /* height: 100%;
+        width: auto; */
+    }
 }
 
 
@@ -750,6 +784,7 @@ h4 {
     border: 0.5px solid #b9b9b9;
     border-radius: 15px;
     height: 45px;
+    cursor: pointer;
 }
 
 .user-info-card-word .body {
@@ -763,6 +798,7 @@ h4 {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .user-info-card>.image-cropper>img {
@@ -773,7 +809,6 @@ h4 {
     margin: auto;
     height: auto;
     width: 100%;
-    cursor: none;
     /* height: 100%;
     width: auto; */
 }
@@ -796,7 +831,7 @@ h4 {
     border-radius: 50%;
 }
 
-.image-cropper>img {
+.team-member>.image-cropper>img {
     min-height: 40px;
     min-width: 40px;
     object-fit: cover;
@@ -807,6 +842,37 @@ h4 {
     cursor: pointer;
     /* height: 100%;
     width: auto; */
+}
+
+.team-member>.image-cropper>svg {
+    min-height: 40px;
+    min-width: 40px;
+    object-fit: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    cursor: pointer;
+    /* height: 100%;
+    width: auto; */
+}
+
+.team-member-username:hover {
+    filter: brightness(0) saturate(100%) invert(66%) sepia(32%) saturate(241%) hue-rotate(129deg) brightness(84%) contrast(87%);
+}
+
+.team-member>.image-cropper:hover {
+    filter: brightness(1.1) saturate(0.8);
+}
+
+.assign-btn:hover {
+    filter: brightness(1.2) saturate(0.8);
+}
+
+.finish-btn:hover {
+    filter: brightness(1.2) saturate(0.8);
 }
 
 .member-and-chart {
@@ -833,7 +899,7 @@ h4 {
     background-color: #2d2d2d;
     /* border: .5px solid rgb(215, 215, 215); */
     border-radius: 30px;
-    padding: 0 15px;
+    padding: 0 30px;
     margin-bottom: 20px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
@@ -852,7 +918,7 @@ h4 {
 
 .team-member-username {
     cursor: pointer;
-    
+
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -876,6 +942,7 @@ h4 {
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
+    /* user-select: none; */
 }
 
 .task-name .image-cropper {
@@ -895,7 +962,6 @@ h4 {
     margin: auto;
     height: auto;
     width: 100%;
-    cursor: pointer;
     /* height: 100%;
     width: auto; */
 }
@@ -911,7 +977,6 @@ h4 {
     margin: auto;
     height: auto;
     width: 100%;
-    cursor: pointer;
     /* height: 100%;
     width: auto; */
 }

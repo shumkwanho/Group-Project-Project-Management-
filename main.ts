@@ -71,7 +71,6 @@ io.on('connection', function (socket: any) {
 
   socket.on('redrawProjectPage', async (input: any) => {
     var projectId = input.projectId
-    console.log("HIHIHIHIHIHIHIHIHIHIHIHIHIHIHI")
     io.to(`room-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
   })
 
