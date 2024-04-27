@@ -257,10 +257,8 @@ async function inspectProjectUser(req: Request, res: Response) {
 //request: user id
 async function addProjectUser(req: Request, res: Response) {
     try {
-        console.log(req.body);
         
-        const project_id = req.body.projectId;
-        const user_id = req.body.userId;
+        const { project_id, user_id } = req.body;
 
         //check if relation already exist
         let checkQuery = (await pgClient.query(

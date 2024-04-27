@@ -1,6 +1,7 @@
-const socket = io.connect();
-
 import { getFinishDate } from "../../utils/getFinishDate.js";
+import { generateImageElement } from "../../utils/generateImageElement.js";
+
+const socket = io.connect();
 
 var searchParams = new URLSearchParams(window.location.search);
 const projectId = searchParams.get("id");
@@ -8,7 +9,6 @@ const projectId = searchParams.get("id");
 async function getProjectData(id) {
 	const res = await fetch(`/projectRou/?id=${id}`)
 	const data = (await res.json()).data
-	// console.log(data);
 	return data
 }
 
@@ -70,7 +70,6 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 	document.querySelector(".inside-jira-task-box-ongoing").innerHTML = ""
 	document.querySelector(".inside-jira-task-box-to-do-list").innerHTML = ""
 
-
 	await drawPage(data);
 
 	const finishbtns = document.querySelectorAll(".finish-btn")
@@ -79,9 +78,7 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
 
 			await finishTask(taskId)
-
 			// window.location.reload()
-
 		})
 	})
 	const assignBtns = document.querySelectorAll(".assign-btn")
@@ -92,7 +89,6 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 			console.log(taskId);
 
 			await assignTask(taskId)
-
 			// window.location.reload()
 		})
 	})
@@ -116,16 +112,16 @@ socket.on('you-have-a-new-message-this-project', async projectInfo => {
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
-		const taskdata = (await getProjectData(projectId)).tasks
-		const taskid = taskdata[id - 1].id
-		if (taskid) {
+		const taskData = (await getProjectData(projectId)).tasks
+		const taskId = taskData[id - 1].id
+		if (taskId) {
 			let res = await fetch('/task', {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
-					taskId: taskid,
+					taskId: taskId,
 					projectId: projectId
 				})
 			})
@@ -147,7 +143,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		startDate: getFinishDate(item.start_date, 1),
 		duration: item.duration
 	}
-	// console.log(req);
+
 	const res = await fetch("/task", {
 		method: "POST",
 		headers: {
@@ -160,13 +156,12 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
-	const taskdata = (await getProjectData(projectId)).tasks
-	const taskid = taskdata[id - 1].id
+	const taskData = (await getProjectData(projectId)).tasks
+	const taskId = taskData[id - 1].id
 
-	// console.log(taskid);
 	const req = {
 		projectId: projectId,
-		taskId: taskid,
+		taskId: taskId,
 		taskName: item.text,
 		duration: item.duration,
 		startDate: getFinishDate(item.start_date, 1),
@@ -283,19 +278,15 @@ async function displayTaskList(data) {
 	const userId = (await res.json()).data.id
 
 	for (let task of tasks) {
-		let imageElm = "";
+		let imageElm;
 
 		if (task.userRelation[0]) {
-			if (!(task.userRelation[0].profile_image)) {
-				let defaultProfileImage = new ProfileImage(
-					task.userRelation[0].username, {
-					backgroundColor: "black",
-				})
-				imageElm = defaultProfileImage.svg();
-			} else {
-				imageElm = `<img src="/profile-image/${task.userRelation[0].profile_image}" alt="" id="user-profile">`
-			}
+			imageElm = generateImageElement(
+				task.userRelation[0].profile_image, 
+				task.userRelation[0].username
+			);
 		}
+
 		if ((task.name).includes("root")) {
 			continue
 		}
@@ -309,11 +300,9 @@ async function displayTaskList(data) {
 						${task.name}
 					</div>
 					<div class="task-any-fucking-icon"></div>
-				</div>
-			`
+				</div>`
 
 		} else if (task.pre_req_fulfilled) {
-
 			document.querySelector(".inside-jira-task-box-ongoing").innerHTML += `
 			
 				<div class="inside-jira-task white-word" id="task_${task.id}">
@@ -329,8 +318,7 @@ async function displayTaskList(data) {
                 			${task.userRelation[0] ? (userId == task.userRelation[0].userid ? '<button class="finish-btn"><i class="fa-solid fa-check"></i></button>' : "") : ''}
 						</div>
 					</div>
-				</div>
-			`
+				</div>`
 
 		} else {
 			document.querySelector(".inside-jira-task-box-to-do-list").innerHTML += `
@@ -345,9 +333,7 @@ async function displayTaskList(data) {
 							<button class="assign-btn"><i class="fa-solid fa-plus"></i></button>
 						</div>
 					</div>
-				</div>
-			
-			`
+				</div>`
 		}
 	}
 }
@@ -399,7 +385,6 @@ async function assignTask(taskId) {
 		} catch (error) {
 			console.log(error);
 		}
-
 	});
 }
 
@@ -425,27 +410,16 @@ async function finishTask(taskId) {
 				},
 				body: JSON.stringify({ id: taskId, projectId: projectId })
 			})
-
 			socket.emit('redrawProjectPage', { projectId: projectId });
-
 		}
 	});
 }
-
 
 const mainPage = document.querySelector(".main-page").addEventListener("click", async (e) => {
 	const res = await fetch("/auth/user")
 	const data = (await res.json()).data
 	window.location.href = `../main/?id=${data.id}`
 })
-
-
-
-
-
-
-
-
 
 document.querySelector(".open-chatroom").addEventListener("click", async (e) => {
 	e.preventDefault()
@@ -457,7 +431,6 @@ document.querySelector(".open-chatroom").addEventListener("click", async (e) => 
 	chatroomBox.style.display = "block";
 
 	await getAllMessages(projectId);
-	// console.log("projectId: ", projectId)
 })
 
 //===================== Get All Members And Messages Below ====================
@@ -467,6 +440,7 @@ window["confirmEdit"] = confirmEdit;
 window["getOtherUserInfo"] = getOtherUserInfo;
 window["sendMessage"] = sendMessage;
 window["getOtherUserInfoFromChat"] = getOtherUserInfoFromChat;
+
 async function getAllMessages(projectId) {
 
 	let res = await fetch(`/chatroom?projectId=${projectId}`)
@@ -483,27 +457,19 @@ async function getAllMessages(projectId) {
 		let memberList = document.querySelector("#member-list")
 
 		for (let eachMember of allMembers) {
-			let imageElm = "";
-			let defaultProfileImage = new ProfileImage(
-				eachMember.username, {
-				backgroundColor: "black",
-			})
-			imageElm = defaultProfileImage.svg();
+
+			let imageElm = generateImageElement(eachMember.profile_image, eachMember.username)
 
 			memberList.innerHTML +=
 				`
             <div class="member">
             <div class="username" onclick="getOtherUserInfoFromChat(${eachMember.user_id})">${eachMember.username}</div>
             <div class="image-cropper" onclick="getOtherUserInfoFromChat(${eachMember.user_id})">
-            ${eachMember.profile_image ? `<img src="/profile-image/${eachMember.profile_image}" class="profilePic" />` :
-					`${imageElm}`}
-            </div>
-            </div>
-            `
+			${imageElm}
+            </div></div>`
 		}
 
 		// onclick="async() => {await editMessage(${eachMessage.messages_id},'${eachMessage.content}') } "
-
 
 		let messagesBox = document.querySelector("#message-box")
 		// console.log(allMessages);
@@ -557,7 +523,6 @@ async function getAllMessages(projectId) {
 
 		socket.emit('joinChatroom', projectId);
 	}
-
 
 }
 
@@ -636,10 +601,6 @@ socket.on('receive-newMessage', async lastMessageInfo => {
 	messagesBox.scrollTop = messagesBox.scrollHeight - messagesBox.clientHeight
 })
 
-
-
-
-
 //===================== Edit My Message ====================
 async function editMessage(messageId, content) {
 	// console.log("editMessage")
@@ -678,7 +639,6 @@ async function confirmEdit(event, messageId) {
 
 		socket.emit('editMessage', { messageId: messageId, userId: userId, content: content });
 		console.log("Edit message success");
-
 
 		document.querySelector(".texting-box").innerHTML =
 			`
@@ -728,10 +688,6 @@ socket.on('receive-editMessage', async info => {
 		`
 })
 
-
-
-
-
 //===================== Quit Chatroom ====================
 
 document.querySelector(".quit-chat").addEventListener("click", async (event) => {
@@ -771,52 +727,42 @@ document.querySelector(".quit-chat").addEventListener("click", async (event) => 
 // async function quitChat() {
 // event.preventDefault()
 
-
 // window.location.reload();
 // }
-
 
 //===================== Get Other User Info ===================
 
 window['removeSelfFromProject'] = removeSelfFromProject;
 window['removeMemberFromProject'] = removeMemberFromProject;
 
-
 async function getOtherUserInfoFromChat(userId) {
+
 	let res = await fetch(`/auth/other-user?userId=${userId}`);
+
 	let response = await res.json();
+
 	let myUserId = response.myUserId;
 	let user_id = response.data.id;
 	let username = response.data.username;
 	let email = response.data.email;
 	let profileImage = response.data.profile_image
 
-	// console.log(response);
+	let imageElm = generateImageElement(profileImage, username);
+
+	let buttonElm = (myUserId == user_id) ?
+		`<button class="quit-group" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>`
+		:
+		`<button class="remove-member" onclick="removeMemberFromProject(${user_id}, '${username}')">Remove Group Member</button>`
+
 	document.querySelector(".darken-area").style.display = "none";
 	document.querySelector(".outer-user-card").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
 
 	document.querySelector(".user-card").innerHTML = `
-    <div class="image-cropper">
-        ${profileImage ? `<img src="/profile-image/${profileImage}" class="profilePic" />`
-			:
-			`<img src="" class="profilePic" />`}
-    </div>
-
-    <div class="username">${username}</div>
-
-    <div class="e-mail">${email}</div>
-
-	${myUserId == user_id ?
-		`
-   <button class="deleteMember quit-team" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
-   `
-   :
-   `
-   <button class="deleteMember quit-team" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
-   `}
-
-    `
+    	<div class="image-cropper">${imageElm}</div>
+    	<div class="username">${username}</div>
+    	<div class="e-mail">${email}</div>
+		${buttonElm}`
 }
 
 async function getOtherUserInfo(userId) {
@@ -828,32 +774,21 @@ async function getOtherUserInfo(userId) {
 	let email = response.data.email;
 	let profileImage = response.data.profile_image
 
-	// console.log(response);
+	let imageElm = generateImageElement(profileImage, username);
+
+	let buttonElm = (myUserId == user_id) ?
+	`<button class="quit-group" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>`
+	:
+	`<button class="remove-member" onclick="removeMemberFromProject(${user_id}, '${username}')">Remove Group Member</button>`
+
 	document.querySelector(".darken-area").style.display = "block";
-	// document.querySelector(".outer-user-card").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
 
 	document.querySelector(".user-card").innerHTML = `
-    <div class="image-cropper">
-        ${profileImage ? `<img src="/profile-image/${profileImage}" class="profilePic" />`
-			:
-			`<img src="" class="profilePic" />`}
-    </div>
-
-    <div class="username">${username}</div>
-
-    <div class="e-mail">${email}</div>
-
-	${myUserId == user_id ?
-		 `
-	<button class="deleteMember" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>
-	`
-	:
-	`
-	<button class="deleteMember" onclick="removeMemberFromProject(${user_id}, '${username}')">Delete Group Member</button>
-	`}
-
-    `
+    	<div class="image-cropper">${imageElm}</div>
+    	<div class="username">${username}</div>
+    	<div class="e-mail">${email}</div>
+		${buttonElm}`
 }
 
 document.querySelector(".darken-area").addEventListener("click", async (event) => {
@@ -884,14 +819,12 @@ document.querySelector(".darken-area").addEventListener("click", async (event) =
                 </div>
             </section>
 	`
-	allDarkenAreaDisapper()
+	allDarkenAreaDisappear()
 	sendMessageSubmit()
 	// document.querySelector(".outer-user-card").style.display = "none";
 	// document.querySelector(".user-card").style.display = "none";
 	// document.querySelector(".user-card").innerHTML = ""
 })
-
-
 
 document.querySelector(".outer-user-card").addEventListener("click", async (event) => {
 	event.preventDefault()
@@ -901,48 +834,31 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	sendMessageSubmit()
 })
 
-
-
-
-
 //===================== Search And Add User Into Project ===================
 
 document.querySelector(".add-member").addEventListener("click", async (event) => {
 	event.preventDefault()
+	document.querySelector(".user-info-list").innerHTML = ""; //clear previous search result
 	document.querySelector(".darken-area").style.display = "block";
 	document.querySelector(".search-user-card").style.display = "flex";
 })
-
-
-
-
 
 //===================== Display User Info On Project Page ===================
 
 async function displayMember(data) {
 
-	// console.log(data)
 	const memberArea = document.querySelector(".all-team-member")
 	const users = data.users
 
 	for (let user of users) {
-		let imageElm = "";
-		let defaultProfileImage = new ProfileImage(
-			user.username, {
-			backgroundColor: "black",
-		})
-		imageElm = defaultProfileImage.svg();
+		let imageElm = generateImageElement(user.profile_image, user.username);
 
-
-		memberArea.innerHTML +=
-			`
-	<div class="team-member">
-        <div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
-        <div class="image-cropper" onclick="getOtherUserInfo(${user.id})">
-        	${user.profile_image ? `<img src="/profile-image/${user.profile_image}" class="profilePic" alt="">` : `${imageElm}`}
-        </div>
-    </div>
-	`
+		memberArea.innerHTML +=`
+			<div class="team-member">
+        	<div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
+        	<div class="image-cropper" onclick="getOtherUserInfo(${user.id})">
+			${imageElm}
+        	</div></div>`
 	}
 }
 
@@ -971,13 +887,9 @@ socket.on('receive-addMember', async notImportant => {
 	}
 })
 
-
-
-
-
 //===================== All Darken Area Disapper ===================
 
-function allDarkenAreaDisapper() {
+function allDarkenAreaDisappear() {
 	document.querySelector(".darken-area").style.display = "none";
 	document.querySelector(".outer-user-card").style.display = "none";
 	document.querySelector(".user-card").style.display = "none";
@@ -1007,19 +919,17 @@ function allDarkenAreaDisapper() {
 	`
 }
 
-
-
-
-
 //===================== Logout ===================
 
 document.querySelector(".logout").addEventListener("click", (e) => {
+
     e.preventDefault();
 
     Swal.fire({
         title: "Do you want to logout",
         showCancelButton: true,
         confirmButtonText: "Yes",
+		confirmButtonColor: "#779b9a",
         cancelButtonText: "No",
         allowOutsideClick: false
     }).then((result) => {
@@ -1039,16 +949,13 @@ async function runLogout() {
     }
 }
 
-
-
-
-
 //user self quit group
 async function removeSelfFromProject(id) {
 
 	Swal.fire({
 		title: `Are you sure you want to remove yourself from this project?`,
 		confirmButtonText: "Yes",
+		confirmButtonColor: "#779b9a",
 		showCancelButton: true,
 	}).then((result) => {
 		if (result.isConfirmed) {
@@ -1064,6 +971,7 @@ function removeMemberFromProject(id, username) {
 	Swal.fire({
 		title: `Are you sure you want to remove ${username} from this project?`,
 		confirmButtonText: "Yes",
+		confirmButtonColor: "#779b9a",
 		showCancelButton: true,
 	}).then((result) => {
 		if (result.isConfirmed) {
@@ -1100,7 +1008,8 @@ async function runRemoveMember(id, username = "self") {
 
 		Swal.fire({
 			title: titleMessage,
-			confirmButtonText: "Continue"
+			confirmButtonText: "Continue",
+			confirmButtonColor: "#779b9a"
 		}).then((result) => {
 			if (result.isConfirmed) {
 				runPage();

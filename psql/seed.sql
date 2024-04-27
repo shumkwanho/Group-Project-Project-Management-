@@ -68,6 +68,7 @@ insert into user_project_relation (user_id, project_id) values (2, 3);
 insert into user_project_relation (user_id, project_id) values (1, 4);
 insert into user_project_relation (user_id, project_id) values (1, 5);
 insert into user_project_relation (user_id, project_id) values (1, 6);
+insert into user_project_relation (user_id, project_id) values (1, 7);
 
 
 --project 10 taskname ,startdate , duration, dependencies

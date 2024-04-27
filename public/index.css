@@ -33,7 +33,7 @@ body {
 .registration-button, 
 #login-submit-button, 
 #create-new-account-button,
-#google-login{
+#google-login {
     background-color: #779b9a;
     border: none;
     height: 40px;
@@ -42,6 +42,14 @@ body {
     margin-bottom: 5px;
     width: 100%;
     color: white;
+}
+
+.login-button:hover, 
+.registration-button:hover, 
+#login-submit-button:hover, 
+#create-new-account-button:hover,
+#google-login:hover {
+    background-color: #3a3a3a;
 }
 
 .lead h4 {
@@ -58,5 +66,4 @@ body {
     justify-content: center;
     gap: 10px;
     width: 200px;
-    /* Adjust the gap value as needed */
 }

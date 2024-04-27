@@ -676,14 +676,15 @@ async function searchUser(req: Request, res: Response) {
     let { value } = req.query
     console.log(value);
     try {
-        let userlist = (await pgClient.query("SELECT * FROM users WHERE LOWER(username) || LOWER(email) LIKE LOWER('%' || $1 || '%') ORDER BY id ASC LIMIT 10;", [value])).rows
+        //cannot use *, will show password!!!!!
+        let userList = (await pgClient.query("SELECT * FROM users WHERE LOWER(username) || LOWER(email) LIKE LOWER('%' || $1 || '%') ORDER BY id ASC LIMIT 10;", [value])).rows
         let defaultUserList = (await pgClient.query("SELECT * FROM users ORDER BY id ASC LIMIT 10;")).rows
 
-        if (userlist.length > 0) {
-            res.status(200).json({ userlist: userlist })
+        if (userList.length > 0) {
+            res.status(200).json({ userList: userList })
         } else if (!value) {
-            res.json({ userlist: defaultUserList })
-        }  else if (userlist.length == 0) {
+            res.json({ userList: defaultUserList })
+        }  else if (userList.length == 0) {
             res.json({ message: "no user found" })
         }
     } catch (error) {

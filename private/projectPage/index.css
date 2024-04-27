@@ -280,11 +280,6 @@ h4 {
     display: none !important;
 }
 
-
-
-
-
-
 .darken-area {
     position: relative;
     background-color: rgb(0, 0, 0, 0.8);
@@ -467,10 +462,6 @@ h4 {
         width: auto; */
     }
 }
-
-
-
-
 
 #message-list {
     padding: 0 !important;
@@ -760,6 +751,19 @@ h4 {
     width: auto; */
 }
 
+.user-card>.image-cropper>svg {
+    min-height: 250px;
+    min-width: 250px;
+    object-fit: cover;
+    display: inline;
+    margin: auto;
+    height: auto;
+    width: 100%;
+    cursor: none;
+    /* height: 100%;
+    width: auto; */
+}
+
 .user-card .username {
     margin: 10px 0;
     font-size: 25px;
@@ -842,7 +846,8 @@ h4 {
     cursor: pointer;
 }
 
-.user-info-card>.image-cropper>img {
+.user-info-card>.image-cropper>img,
+.user-info-card>.image-cropper>svg {
     min-height: 35px;
     min-width: 35px;
     object-fit: cover;
@@ -852,6 +857,11 @@ h4 {
     width: 100%;
     /* height: 100%;
     width: auto; */
+}
+
+.user-info-card:hover {
+    background-color: #3a3a3a;
+    color: white;
 }
 
 .team-member {
@@ -872,26 +882,12 @@ h4 {
     border-radius: 50%;
 }
 
-.team-member>.image-cropper>img {
-    min-height: 40px;
-    min-width: 40px;
-    object-fit: cover;
-    display: inline;
-    margin: auto;
-    height: auto;
-    width: 100%;
-    cursor: pointer;
-    /* height: 100%;
-    width: auto; */
-}
-
+.team-member>.image-cropper>img,
 .team-member>.image-cropper>svg {
     min-height: 40px;
     min-width: 40px;
     object-fit: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: inline;
     margin: auto;
     height: auto;
     width: 100%;
@@ -1020,8 +1016,12 @@ h4 {
     width: 100%;
 }
 
-.member-list-button {
+.member-list-button,
+.quit-group,
+.remove-member,
+.add-new-member {
     
+    color: rgb(250, 250, 250);
     background-color: #91b6b5; 
     /* background-color: #b8d3d2;  */
     border: none !important;
@@ -1032,6 +1032,9 @@ h4 {
     width: 100%;
 }
 
-.member-list-button:hover {
+.member-list-button:hover,
+.quit-group:hover,
+.remove-member:hover,
+.add-new-member:hover {
     background-color: #3a3a3a;
 }

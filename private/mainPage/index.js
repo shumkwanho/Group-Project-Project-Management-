@@ -232,10 +232,9 @@ async function getAllUserInfo(userId) {
             }
         }
 
-        let imageElm = "";
-
         //if no profile image was uploaded, use default
-        if (userInfo.profile_image == null) {
+        let imageElm;
+        if (!userInfo.profile_image) {
             let defaultProfileImage = new ProfileImage(
                 userInfo.username, {
                 backgroundColor: "black",
