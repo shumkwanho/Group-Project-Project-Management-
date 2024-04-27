@@ -17,6 +17,7 @@ import { getJustSentMessage } from "./Router/chatRoomRouter";
 import { getLastEditMessage } from "./Router/chatRoomRouter";
 import { error } from "console";
 import { mainPageDisplayRouter } from "./Router/mainPageDisplayRouter";
+import { getProjectFromId } from "./Router/chatRoomRouter";
 
 const PORT = 8080
 const app = express()
@@ -38,8 +39,10 @@ io.on('connection', function (socket: any) {
     var justSentMessage = await getJustSentMessage(data.projectId);
     var userId = await data.userId;
     var projectId = await data.projectId;
+    var projectInfo = await getProjectFromId(projectId);
 
-    io.to(`room-${projectId}`).emit('receive-newMessage', { userId: userId, justSentMessage: justSentMessage });
+    io.to(`chatroom-${projectId}`).emit('receive-newMessage', { userId: userId, justSentMessage: justSentMessage });
+    socket.broadcast.to(`projectRoom-${projectId}`).emit('you-have-a-new-message',{projectId: projectId, projectName: projectInfo.name});
 
     console.log("user id: ", userId);
     console.log("last message: ", justSentMessage);
@@ -50,29 +53,41 @@ io.on('connection', function (socket: any) {
     var userId = await data.userId;
     var projectId = await lastEditMessageInfo.project_id;
 
-    io.to(`room-${projectId}`).emit('receive-editMessage', { userId: userId, lastEditMessageInfo: lastEditMessageInfo });
+    io.to(`chatroom-${projectId}`).emit('receive-editMessage', { userId: userId, lastEditMessageInfo: lastEditMessageInfo });
 
     console.log("user id: ", userId);
     console.log("project id: ", projectId);
     console.log("last message info: ", lastEditMessageInfo);
   })
 
-  socket.on('join', (projectId: any) => {
-    socket.join(`room-${projectId}`);
-    socket.to(`room-${projectId}`).emit('joined');
+  socket.on('joinProjectRoom', (projectId: any) => {
+    socket.join(`projectRoom-${projectId}`);
+    io.to(`projectRoom-${projectId}`).emit('project room joined');
+  })
+
+  socket.on('joinChatroom', (projectId: any) => {
+    socket.join(`chatroom-${projectId}`);
+    io.to(`chatroom-${projectId}`).emit('chatroom joined');
   })
 
   socket.on('addMember', async (input: any) => {
     // var res = await fetch(`/projectRou/?id=${input.projectId}`)
     var projectId = input.projectId
     // var response = await res.json()
-    io.to(`room-${projectId}`).emit('receive-addMember', { data: "A new user added in project" });
+    io.to(`projectRoom-${projectId}`).emit('receive-addMember', { data: "A new user added in project" });
   })
 
   socket.on('redrawProjectPage', async (input: any) => {
     var projectId = input.projectId
-    io.to(`room-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
+    io.to(`projecRroom-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
   })
+
+
+
+
+
+
+
 
 })
 

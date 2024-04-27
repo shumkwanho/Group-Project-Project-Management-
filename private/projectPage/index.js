@@ -16,7 +16,7 @@ window.addEventListener("load", async (e) => {
 	try {
 		const data = await getProjectData(projectId)
 		displayMember(data)
-		socket.emit('join', projectId)
+		socket.emit('joinProjectRoom', projectId)
 		await drawPage(data)
 		document.querySelector(".project-big-name").innerHTML = `${data.name}`
 
@@ -97,6 +97,11 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 		})
 	})
 
+})
+
+socket.on('you-have-a-new-message', async projectInfo => {
+	let projectId = projectInfo.projectId;
+	
 })
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
@@ -539,7 +544,7 @@ async function getAllMessages(projectId) {
 		// console.log(messagesBox.scrollTop)
 		// messagesBox.scrollTop =0
 
-		// socket.emit('join', projectId);
+		socket.emit('joinChatroom', projectId);
 	}
 
 
