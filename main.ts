@@ -39,8 +39,8 @@ io.on('connection', function (socket: any) {
     var projectInfo = await getProjectFromId(projectId);
 
     io.to(`chatroom-${projectId}`).emit('receive-newMessage', { userId: userId, justSentMessage: justSentMessage });
-    socket.to(`projectRoom-${projectId}`).emit('you-have-a-new-message-this-project',{projectId: projectId, projectName: projectInfo.name});
-    socket.to(`outerProjectRoom-${projectId}`).emit('you-have-a-new-message',{projectId: projectId, projectName: projectInfo.name});
+    socket.to(`projectRoom-${projectId}`).emit('you-have-a-new-message-this-project', { projectId: projectId, projectName: projectInfo.name });
+    socket.to(`outerProjectRoom-${projectId}`).emit('you-have-a-new-message', { projectId: projectId, projectName: projectInfo.name });
 
     console.log("user id: ", userId);
     console.log("last message: ", justSentMessage);
@@ -58,6 +58,11 @@ io.on('connection', function (socket: any) {
     console.log("last message info: ", lastEditMessageInfo);
   })
 
+  socket.on('joinUserRoom', (userId: any) => {
+    socket.join(`userRoom-${userId}`);
+    io.in(`userRoom-${userId}`).emit(`user room joined, user id: ${userId}`);
+  })
+
   socket.on('joinOuterProjectRoom', (outerProjectId: any) => {
     socket.join(`outerProjectRoom-${outerProjectId}`);
     io.to(`outerProjectRoom-${outerProjectId}`).emit(`outer project room joined, project id: ${outerProjectId}`);
@@ -65,7 +70,7 @@ io.on('connection', function (socket: any) {
 
   socket.on('joinProjectRoom', (projectId: any) => {
     socket.join(`projectRoom-${projectId}`);
-    io.to(`projectRoom-${projectId}`).emit('project room joined');
+    io.in(`projectRoom-${projectId}`).emit('project room joined');
   })
 
   socket.on('joinChatroom', (projectId: any) => {
@@ -76,13 +81,16 @@ io.on('connection', function (socket: any) {
   socket.on('addMember', async (input: any) => {
     // var res = await fetch(`/projectRou/?id=${input.projectId}`)
     var projectId = input.projectId
+    var userId = input.userId
+    var projectInfo = await getProjectFromId(projectId);
     // var response = await res.json()
     io.to(`projectRoom-${projectId}`).emit('receive-addMember', { data: "A new user added in project" });
+    io.to(`userRoom-${userId}`).emit('i-am-in', { projectName: projectInfo.name });
   })
 
   socket.on('redrawProjectPage', async (input: any) => {
     var projectId = input.projectId
-    io.to(`projecRroom-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
+    io.to(`projectRoom-${projectId}`).emit('receive-redrawProjectPage', "project page redrawed");
   })
 
 

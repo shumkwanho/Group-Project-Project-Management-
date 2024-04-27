@@ -160,15 +160,16 @@ body {
 }
 
 .project-area {
-    /* display: flex;
-    flex-direction: row; */
+    display: flex;
+    flex-direction: row;
     padding: 0 15px;
-    columns: 4;
-    column-gap: 20px;
-    break-inside: avoid;
-    overflow: auto;
-    width: calc(100% - 500px);
-    overflow-y: scroll;
+    gap: 10px;
+    /* display: block;
+    column-count: 3;
+    column-gap: 15px; */
+    width: calc(100% - 400px);
+    /* overflow-y: auto; */
+    overflow-x: scroll;
 }
 
 .project-area::-webkit-scrollbar {
@@ -182,7 +183,7 @@ body {
 }
 
 .create-project {
-    box-sizing: content-box;
+    /* box-sizing: content-box; */
     break-inside: avoid;
     display: flex;
     flex-direction: column;
@@ -195,8 +196,10 @@ body {
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
-    min-height: 250px;
-    max-height: 250px;
+    min-width: 200px;
+    max-width: 200px;
+    min-height: 300px;
+    max-height: 300px;
     cursor: pointer;
 }
 
@@ -213,21 +216,30 @@ body {
 }
 
 .center-image img {
-    /* max-width: 100%; */
-    max-height: 150px
+    max-width: 100%;
+    /* max-height: 150px */
 }
 
 .project {
     position: relative;
-    box-sizing: content-box;
+    /* display: inline-block; */
+    min-width: 200px;
+    max-width: 200px;
+
+    /* box-sizing: content-box; */
     break-inside: avoid;
     border: .5px solid rgb(215, 215, 215);
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
     cursor: pointer;
+    overflow-y: auto;
     z-index: 1;
     background-color: #b9cde1;
+}
+
+.project::-webkit-scrollbar {
+    display: none;
 }
 
 /* .project-background {
@@ -236,7 +248,7 @@ body {
     break-inside: avoid;
     border: .5px solid rgb(215, 215, 215);
     border-radius: 15px;
-    padding: 15px;
+    padding: 15px
     margin-bottom: 10px;
     cursor: pointer;
     z-index: 0;
@@ -253,10 +265,12 @@ body {
     flex-wrap: wrap;
     font-weight: 600;
     font-size: 20px;
+    margin: 10px 0;
 }
 
 .project img {
     max-width: 100%;
+    border-radius: 5px;
 }
 
 .edit-project-image {
@@ -273,8 +287,8 @@ body {
     border-left: 1px solid rgb(124, 124, 124);
     padding-left: 15px;
     overflow: auto;
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 200px;
+    max-width: 200px;
     padding: 0 15px;
 }
 
