@@ -339,17 +339,6 @@ body {
     width: 100%;
 }
 
-.update-info,
-.update-password {
-    background-color: #779b9a;
-    border: none;
-    height: 40px;
-    border-radius: 5px;
-    margin-top: 5px;
-    width: 100%;
-    color: white;
-}
-
 .logout {
     height: 30px;
     width: 80px;
@@ -385,7 +374,12 @@ body {
 }
 
 .update-password,
-.update-info {
+.update-info,
+#submit-profile-image,
+#submit-project-image,
+#update-username-button,
+#update-profile-button,
+#update-password-button {
     background-color: #91b6b5;
     color: #ffffff;
     /* background-color: #b8d3d2; */
@@ -398,6 +392,31 @@ body {
 }
 
 .update-password:hover,
-.update-info:hover {
+.update-info:hover,
+#submit-profile-image:hover,
+#submit-project-image:hover,
+#update-username-button:hover,
+#update-profile-button:hover,
+#update-password-button:hover,
+.project-creation-next:hover {
     background-color: #3a3a3a;
+}
+
+.project-creation-next{
+    background-color: #91b6b5;
+    color: #ffffff;
+    /* background-color: #b8d3d2; */
+    border: none !important;
+    /* border: 1px solid #3a3a3a; */
+    height: 40px;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 30%;
+}
+
+.project-creation-close {
+    border: none !important;
+    height: 40px;
+    border-radius: 5px;
+    margin-top: 5px;
 }
