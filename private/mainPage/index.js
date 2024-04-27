@@ -151,19 +151,19 @@ async function getAllUserInfo(userId) {
 
                 if (Number(eachProject.min_duration) <= 10) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
-                        .style.minHeight = "200px";
+                        .style.height = "300px";
 
                 } else if (Number(eachProject.min_duration) > 10 && Number(eachProject.min_duration) <= 30) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
-                        .style.minHeight = "300px";
+                    .style.height = "400px";
 
                 } else if (Number(eachProject.min_duration) > 30 && Number(eachProject.min_duration) <= 60) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
-                        .style.minHeight = "400px";
+                    .style.height = "500px";
 
                 } else {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
-                        .style.minHeight = "500px";
+                    .style.height = "600px";
                 }
                 projectCount++
                 socket.emit('joinOuterProjectRoom', outerProjectId);

@@ -26,7 +26,7 @@ window.addEventListener("load", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
 
 				await finishTask(taskId)
-				// socket.emit('redrawProjectPage', { projectId: projectId });
+				socket.emit('redrawProjectPage', { projectId: projectId });
 				// window.location.reload()
 
 			})
@@ -39,7 +39,7 @@ window.addEventListener("load", async (e) => {
 				console.log(taskId);
 
 				await assignTask(taskId)
-				// socket.emit('redrawProjectPage', { projectId: projectId });
+				socket.emit('redrawProjectPage', { projectId: projectId });
 				// window.location.reload()
 			})
 		})
@@ -49,7 +49,7 @@ window.addEventListener("load", async (e) => {
 })
 
 socket.on('receive-redrawProjectPage', async notImportant => {
-	console.log(notImportant);
+	console.log("GGGGGGGG: ", notImportant);
 
 	const res = await fetch(`/projectRou/?id=${projectId}`)
 	const data = (await res.json()).data
@@ -79,7 +79,7 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 			let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
 
 			await finishTask(taskId)
-			socket.emit('redrawProjectPage', { projectId: projectId });
+
 			// window.location.reload()
 
 		})
@@ -92,11 +92,10 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 			console.log(taskId);
 
 			await assignTask(taskId)
-			socket.emit('redrawProjectPage', { projectId: projectId });
+
 			// window.location.reload()
 		})
 	})
-
 })
 
 socket.on('you-have-a-new-message-this-project', async projectInfo => {
@@ -133,6 +132,7 @@ gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 			// socket.emit('redrawProjectPage', { projectId: projectId });
 			let message = (await res.json()).message
 			console.log(message);
+			// window.location.reload();
 		}
 	} catch (error) {
 		console.log(error)
@@ -156,7 +156,7 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 		body: JSON.stringify(req),
 	});
 	// socket.emit('redrawProjectPage', { projectId: projectId });
-	window.location.reload();
+	// window.location.reload();
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
@@ -199,7 +199,7 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 		body: JSON.stringify(req)
 	})
 	socket.emit('redrawProjectPage', { projectId: projectId });
-	window.location.reload();
+	// window.location.reload();
 });
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {

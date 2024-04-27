@@ -70,7 +70,7 @@ io.on('connection', function (socket: any) {
 
   socket.on('joinProjectRoom', (projectId: any) => {
     socket.join(`projectRoom-${projectId}`);
-    io.to(`projectRoom-${projectId}`).emit('project room joined');
+    io.in(`projectRoom-${projectId}`).emit('project room joined');
   })
 
   socket.on('joinChatroom', (projectId: any) => {
@@ -90,7 +90,7 @@ io.on('connection', function (socket: any) {
 
   socket.on('redrawProjectPage', async (input: any) => {
     var projectId = input.projectId
-    io.to(`projecRroom-${projectId}`).emit('receive-redrawProjectPage', { data: "project page redrawed" });
+    io.to(`projectRoom-${projectId}`).emit('receive-redrawProjectPage', "project page redrawed");
   })
 
 
