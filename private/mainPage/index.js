@@ -1,7 +1,6 @@
 import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
 import { getCurrentDate } from "../utils/getCurrentDate.js"
-import { checkAndPush, checkAndRemove } from "../../utils/arrayCheck.js";
 import { blurBackgroundImage } from "../../utils/blurBackgroundImage.js";
 import { removeChildElements } from "../../utils/removeChildElements.js";
 
