@@ -113,7 +113,6 @@ socket.on('you-have-a-new-message-this-project', async projectInfo => {
 		timerProgressBar: true,
 		timer: 2000
 	  });
-
 })
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {

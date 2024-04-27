@@ -46,6 +46,20 @@ socket.on('you-have-a-new-message', projectInfo => {
 	  });
 })
 
+socket.on('i-am-in', projectInfo => {
+	let projectName = projectInfo.projectName;
+	
+	Swal.fire({
+		position: "top",
+		height: "500px",
+		// icon: "info",
+		text: `You are added in project ${projectName}`,
+		showConfirmButton: false,
+		timerProgressBar: true,
+		timer: 2000
+	  });
+})
+
 
 
 
@@ -74,6 +88,7 @@ window["handleProjectClick"] = handleProjectClick;
 
 getAllUserInfo(userId)
 async function getAllUserInfo(userId) {
+    await socket.emit('joinUserRoom', userId);
     let res = await fetch(`/mainpage/?userId=${userId}`)
     let response = await res.json();
 
@@ -156,7 +171,7 @@ async function getAllUserInfo(userId) {
                         .style.minHeight = "500px";
                 }
                 projectCount++
-                await socket.emit('joinOuterProjectRoom', outerProjectId);
+                socket.emit('joinOuterProjectRoom', outerProjectId);
             }
         }
 
