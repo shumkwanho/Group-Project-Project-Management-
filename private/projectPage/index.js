@@ -99,9 +99,21 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 
 })
 
-socket.on('you-have-a-new-message', async projectInfo => {
-	let projectId = projectInfo.projectId;
+socket.on('you-have-a-new-message-this-project', async projectInfo => {
+	// let projectId = projectInfo.projectId;
+	// let projectName = projectInfo.projectName;
+	console.log(projectInfo)
 	
+	Swal.fire({
+		position: "top",
+		height: "500px",
+		// icon: "info",
+		text: "You have a new message in this project",
+		showConfirmButton: false,
+		timerProgressBar: true,
+		timer: 2000
+	  });
+
 })
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
@@ -753,6 +765,8 @@ document.querySelector(".quit-chat").addEventListener("click", async (event) => 
                 </div>
             </section>
 	`
+
+	sendMessageSubmit()
 })
 
 // async function quitChat() {
@@ -872,6 +886,7 @@ document.querySelector(".darken-area").addEventListener("click", async (event) =
             </section>
 	`
 	allDarkenAreaDisapper()
+	sendMessageSubmit()
 	// document.querySelector(".outer-user-card").style.display = "none";
 	// document.querySelector(".user-card").style.display = "none";
 	// document.querySelector(".user-card").innerHTML = ""
@@ -884,6 +899,7 @@ document.querySelector(".outer-user-card").addEventListener("click", async (even
 	document.querySelector(".darken-area").style.display = "block";
 	document.querySelector(".outer-user-card").style.display = "none";
 	document.querySelector(".user-card").style.display = "none";
+	sendMessageSubmit()
 })
 
 
