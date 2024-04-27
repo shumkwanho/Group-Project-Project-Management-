@@ -55,8 +55,7 @@
                     </div>
 
                     <div class="user-content-button-container">
-                        <button type="button" class="edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit
-                            profile</button>
+                        <button type="button" class="update-info" data-bs-toggle="modal" data-bs-target="#updateInfoModal">Update User Info</button>
                     
                         <button type="button" class="update-password" data-bs-toggle="modal"
                             data-bs-target="#updatePasswordModal">Update Password</button>
@@ -141,45 +140,52 @@
         </div>
     </div>
 
-    <!-- edit button modal -->
-    <div class="modal fade" id="editProfileModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="editProfileLabel" aria-hidden="true">
+    <!-- update info button modal -->
+    <div class="modal fade" id="updateInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="updateInfoLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
-                    <h1 class="fw-bold mb-0 fs-2" id="editProfileLabel">Edit Profile</h1>
+                    <h1 class="fw-bold mb-0 fs-2" id="updateInfoLabel">Edit Profile</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body p-5 pt-0">
-                    <form id="edit-profile">
-
+                    <form id="update-username">
+                    
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control rounded-3" id="new-username" placeholder="username">
                             <label for="new-username">New Username</label>
                         </div>
+                    
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Update Username</button>
+                    
+                    </form>
 
+                    <form id="edit-profile">
+                    
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-first-name" placeholder="first-name">
+                            <input type="text" class="form-control rounded-3" id="new-first-name" placeholder="first-name" required>
                             <label for="new-first-name">Update First Name</label>
                         </div>
-
+                    
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-last-name" placeholder="last-name">
+                            <input type="text" class="form-control rounded-3" id="new-last-name" placeholder="last-name" required>
                             <label for="new-last-name">Update Last Name</label>
                         </div>
-
+                    
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-location" placeholder="location">
+                            <input type="text" class="form-control rounded-3" id="new-location" placeholder="location" required>
                             <label for="new-location">Update Location</label>
                         </div>
-
+                    
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-organization" placeholder="organization">
+                            <input type="text" class="form-control rounded-3" id="new-organization" placeholder="organization" required>
                             <label for="new-organization">Update Organization</label>
                         </div>
-                        
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" id="submit-edit-button">Submit</button>
+                    
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Update Profile</button>
+                    
                     </form>
                 </div>
             </div>

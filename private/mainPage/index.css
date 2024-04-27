@@ -301,7 +301,7 @@ body {
     width: 100%;
 }
 
-.edit-profile, .update-password{
+.update-info, .update-password{
     background-color: #779b9a;
     border: none;
     height: 40px;
