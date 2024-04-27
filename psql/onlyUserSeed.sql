@@ -301,7 +301,7 @@ INSERT INTO users (
     registration_date
 )
 VALUES (
-    'adams_lovesDay',
+    'adams_DayDay',
     'adams@tecky.io',
     '$2a$10$eNN3ZN7quzTH8EVswwi7N.YoavDWdwpWKKvNSvXuKd0jKeSe7FtiK',
     --hashed password for '!1Qwertyuiop'
