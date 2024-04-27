@@ -79,10 +79,18 @@ const userId = searchParams.get("id");
 // console.log("current main page user id: ", userId);
 
 const logoutButton = document.querySelector("#logout-button");
+const updateUsername = document.querySelector("#update-username")
 const editProfile = document.querySelector("#edit-profile");
 const updatePassword = document.querySelector("#update-password");
 const uploadProfileImage = document.querySelector("#upload-profile-image");
-const uploadProjectImage = document.querySelector("#upload-project-image")
+const uploadProjectImage = document.querySelector("#upload-project-image");
+
+//for edit profile modal
+const newUsernameInput = document.querySelector("#new-username");
+const newFirstName = document.querySelector("#new-first-name");
+const newLastName = document.querySelector('#new-last-name');
+const newLocation = document.querySelector('#new-location');
+const newOrganization = document.querySelector('#new-organization');
 
 //for identify the project id when onclick update project image button
 let projectIdForImage;
@@ -107,13 +115,6 @@ async function getAllUserInfo(userId) {
     let taskContent = document.querySelector(".task-content")
     let projectArea = document.querySelector(".project-area")
     let completedProjectArea = document.querySelector(".completed-project-area")
-
-    //for edit profile modal
-    const newUsernameInput = document.querySelector("#new-username");
-    const newFirstName = document.querySelector("#new-first-name");
-    const newLastName = document.querySelector('#new-last-name');
-    const newLocation = document.querySelector('#new-location');
-    const newOrganization = document.querySelector('#new-organization');
 
     let projectCount = 0
     let finishProjectCount = 0
@@ -335,12 +336,11 @@ async function runLogout() {
     }
 }
 
-//editProfile button
-//currently only able to edit username
-editProfile.addEventListener("submit", async (e) => {
+//update username submit button
+updateUsername.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = document.querySelector("#new-username").value;
+    const username = newUsernameInput.value;
 
     let userInfoRes = await fetch('/auth/user')
     let currentUserInfo = await userInfoRes.json();
@@ -354,7 +354,7 @@ editProfile.addEventListener("submit", async (e) => {
     } else if (username === currentUserInfo.data.username) {
         Swal.fire({
             title: 'Username unchanged!',
-            confirmButtonText: "Pick another name"
+            confirmButtonText: "Pick another username"
         });
 
     } else {
@@ -369,7 +369,6 @@ editProfile.addEventListener("submit", async (e) => {
         let result = await res.json();
 
         if (res.ok) {
-
             Swal.fire({
                 title: 'Username update successful!',
                 confirmButtonText: "Continue"
@@ -387,6 +386,51 @@ editProfile.addEventListener("submit", async (e) => {
                     confirmButtonText: "Pick another name"
                 });
             }
+        }
+    }
+})
+
+//edit user info submit button
+editProfile.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const firstName = newFirstName.value;
+    const lastName = newLastName.value;
+    const location = newLocation.value;
+    const organization = newOrganization.value;
+
+    if (isEmptyOrSpace(firstName) || isEmptyOrSpace(lastName) || isEmptyOrSpace(location) || isEmptyOrSpace(organization)) {
+        Swal.fire({
+            title: 'Inputs cannot be blank or only space',
+            showConfirmButton: false
+        });
+        //reset modal input??
+
+    } else {
+
+        let res = await fetch("/auth/user-profile-update", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ firstName, lastName, location, organization })
+        });
+
+        let result = await res.json();
+
+        if (res.ok) {
+            Swal.fire({
+                title: 'User profile update successful!',
+                confirmButtonText: "Continue"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                    getAllUserInfo(userId)
+                }
+            });
+
+        } else {
+            console.log(result.error);
         }
     }
 })

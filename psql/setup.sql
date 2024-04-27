@@ -60,8 +60,8 @@ CREATE TABLE "users"(
     "profile_image" VARCHAR(255) NULL,
     "first_name" VARCHAR(255) NOT NULL DEFAULT 'John',
     "last_name" VARCHAR(255) NOT NULL DEFAULT 'Doe',
-    "organization" VARCHAR(255) NOT NULL DEFAULT 'Not Specified',
-    "location" VARCHAR(255) NOT NULL DEFAULT 'Not Specified',
+    "organization" VARCHAR(255) DEFAULT 'Not Specified',
+    "location" VARCHAR(255) DEFAULT 'Not Specified',
     "last_login" TIMESTAMP(0) WITH
         TIME zone NOT NULL DEFAULT 'NOW()',
     "registration_date" DATE NOT NULL DEFAULT 'NOW()'

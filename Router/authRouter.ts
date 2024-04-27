@@ -19,7 +19,7 @@ authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
-authRouter.put("/user-profile-update", isLoggedIn, userProfileUpdate);
+authRouter.put("/user-profile-update", userProfileUpdate);
 authRouter.get("/search-user", isLoggedIn, searchUser);
 
 async function userRegistration(req: Request, res: Response) {
@@ -580,7 +580,7 @@ async function usernameUpdate(req: Request, res: Response) {
 
         } else {
 
-            let username = req.body.username;
+            const { username }  = req.body;
 
             //check if username is currently being used by another user
             let checkUniqueQuery = (await pgClient.query(
@@ -613,7 +613,40 @@ async function usernameUpdate(req: Request, res: Response) {
     }
 }
 
+//req: firstName, lastName, location, organization
+//frontend to handle empty /invalid input
 async function userProfileUpdate (req: Request, res: Response) {
+    try {
+
+        // username update can only be performed if an user has logged in
+        // check if user is logged in
+        if (!req.session.username) {
+
+            res.status(400).json({
+                message: "update username failed",
+                error: "no active login session"
+            });
+        } else {
+            
+            const { firstName, lastName, location, organization} = req.body;
+
+            let id = req.session.userId;
+
+            let updateProfileQuery = (await pgClient.query(
+                "UPDATE users SET first_name = $1, last_name = $2, location = $3, organization = $4 WHERE id = $5 RETURNING first_name, last_name, location, organization;",
+                [firstName, lastName, location, organization, id]
+            )).rows[0];
+
+            res.json({
+                message: "user profile update successful",
+                data: updateProfileQuery
+            })
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
     
 }
 
