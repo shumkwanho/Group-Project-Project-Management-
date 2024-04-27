@@ -1007,6 +1007,42 @@ function allDarkenAreaDisapper() {
 	`
 }
 
+
+
+
+
+//===================== Logout ===================
+
+document.querySelector(".logout").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+        title: "Do you want to logout",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            runLogout();
+        }
+    });
+})
+
+async function runLogout() {
+    let res = await fetch("/auth/logout", {
+        method: "POST"
+    })
+
+    if (res.ok) {
+        window.location.href = '/';
+    }
+}
+
+
+
+
+
 //user self quit group
 async function removeSelfFromProject(id) {
 
