@@ -1,3 +1,5 @@
+const socket = io.connect();
+
 import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
 import { getCurrentDate } from "../utils/getCurrentDate.js"
@@ -27,6 +29,26 @@ const projectCreationForm = document.querySelector("#projectCreationForm");
 const projectCreationPromptContent = document.querySelector("#projectCreationPromptContent");
 const projectCreationModalLabel = document.querySelector("#projectCreationModalLabel");
 const projectCreationClose = document.querySelector("#project-creation-close");
+
+socket.on('you-have-a-new-message', projectInfo => {
+    let projectId = projectInfo.projectId;
+	let projectName = projectInfo.projectName;
+	console.log(projectInfo)
+	
+	Swal.fire({
+		position: "top",
+		height: "500px",
+		// icon: "info",
+		text: `You have a new message in project ${projectName}`,
+		showConfirmButton: false,
+		timerProgressBar: true,
+		timer: 2000
+	  });
+})
+
+
+
+
 
 printPromptContent(promptCount)
 
@@ -88,15 +110,16 @@ async function getAllUserInfo(userId) {
 
         notification.innerHTML = `
             ${userInfo.last_login ?
-                `Hello ${userInfo.username}, welcome back ! ;] &nbsp;&nbsp;&nbsp; Wish you a nice day`
+                `Hello ${userInfo.username} !&nbsp; ;] &nbsp;&nbsp;&nbsp; Wish you a nice day`
                 :
-                `Hello ${userInfo.username}, welcome to join us ! ;]`
+                `Hello ${userInfo.username}, welcome to join us !&nbsp; ;]`
             }`
 
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
 
                 let projectImageElm;
+                let outerProjectId = eachProject.project_id;
 
                 projectImageElm = eachProject.image ?
                     `<img src="/project-image/${eachProject.image}" alt="" class="project-image">` : ""
@@ -113,7 +136,7 @@ async function getAllUserInfo(userId) {
 
                 if (Number(eachProject.min_duration) <= 10) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
-                        .style.minHeight = "200px"; 
+                        .style.minHeight = "200px";
 
                 } else if (Number(eachProject.min_duration) > 10 && Number(eachProject.min_duration) <= 30) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
@@ -128,6 +151,7 @@ async function getAllUserInfo(userId) {
                         .style.minHeight = "500px";
                 }
                 projectCount++
+                await socket.emit('joinOuterProjectRoom', outerProjectId);
             }
         }
 
@@ -183,8 +207,8 @@ async function getAllUserInfo(userId) {
                     7
                 )
 
-            //     document.getElementById(`projectId-background-${eachProject.project_id}`).style["background-image"] = `url("/project-image/${eachProject.image}")`
-            //     blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
+                //     document.getElementById(`projectId-background-${eachProject.project_id}`).style["background-image"] = `url("/project-image/${eachProject.image}")`
+                //     blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
             }
         }
 
@@ -207,8 +231,8 @@ async function getAllUserInfo(userId) {
         if (userInfo.profile_image == null) {
             let defaultProfileImage = new ProfileImage(
                 userInfo.username, {
-                    backgroundColor: "black",
-                })
+                backgroundColor: "black",
+            })
             imageElm = defaultProfileImage.svg();
         } else {
             imageElm = `<img src="/profile-image/${userInfo.profile_image}" alt="" id="user-profile">`
@@ -238,7 +262,7 @@ async function getAllUserInfo(userId) {
         <div class="project-count">Current projects : ${projectCount}</div>
         <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>`
 
-        taskContent.innerHTML =`
+        taskContent.innerHTML = `
         <div class="text-center">Tasks Status</div>
         <div class="task-status normal">
             <span>Normal:</span> ${normalTaskCount}
@@ -284,7 +308,7 @@ logoutButton.addEventListener("click", (e) => {
 })
 
 async function runLogout() {
-    let res = await fetch ("/auth/logout", {
+    let res = await fetch("/auth/logout", {
         method: "POST"
     })
 
@@ -303,7 +327,7 @@ editProfile.addEventListener("submit", async (e) => {
     let userInfoRes = await fetch('/auth/user')
     let currentUserInfo = await userInfoRes.json();
 
-    if (isEmptyOrSpace(username)){
+    if (isEmptyOrSpace(username)) {
         Swal.fire({
             title: 'Username cannot be blank or only space',
             showConfirmButton: false
@@ -375,9 +399,9 @@ updatePassword.addEventListener("submit", async (e) => {
                 showConfirmButton: false,
             });
 
-        } else { 
+        } else {
 
-            let res = await fetch ("/auth/password-update", {
+            let res = await fetch("/auth/password-update", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -390,7 +414,7 @@ updatePassword.addEventListener("submit", async (e) => {
             if (res.ok) {
 
                 console.log(result);
-                
+
             } else {
                 if (result.error == "sameAsCurrentPassword") {
 
@@ -433,7 +457,7 @@ uploadProfileImage.addEventListener("submit", async (e) => {
                 getAllUserInfo(userId)
             }
         });
-        
+
     } else {
         //not able to catch error from backend??
         //status 400 conditions to be handled
@@ -495,15 +519,15 @@ projectCreationClose.addEventListener("click", (e) => {
             denyButtonText: `Close and Reset`,
             cancelButtonText: `Continue`
 
-          }).then((result) => {
+        }).then((result) => {
             if (result.isDenied) {
-              resetProgress();
-              $("#projectCreationModal").modal("hide");
-              //not able to reset modal content??
-              //using window reload for now
-              window.location.reload();
+                resetProgress();
+                $("#projectCreationModal").modal("hide");
+                //not able to reset modal content??
+                //using window reload for now
+                window.location.reload();
             }
-          });
+        });
     }
 })
 
@@ -551,7 +575,7 @@ function saveResponseByPromptCount(count, inputTarget) {
     } else if (count == 3) {
 
         for (let i = 1; i <= inputTarget.response.value; i++) {
-            
+
             newProjectData.tasks[i] = {
                 name: "",
                 start_date: "2024-01-01",
@@ -584,10 +608,10 @@ function saveResponseByPromptCount(count, inputTarget) {
         newProjectData.tasks[taskCountCurrent].duration = parseInt(inputTarget.response.value);
 
         let finishDate = getFinishDate(
-            newProjectData.tasks[taskCountCurrent].start_date, 
+            newProjectData.tasks[taskCountCurrent].start_date,
             newProjectData.tasks[taskCountCurrent].duration
         );
-        
+
         newProjectData.tasks[taskCountCurrent].finish_date = finishDate;
 
         if (taskCount.length == 0) {
@@ -609,7 +633,7 @@ function saveResponseByPromptCount(count, inputTarget) {
         }
 
     } else if (count == 7) {
-        
+
         taskDependanceCount.length = 0;
 
         if (inputTarget.response.value == 0) {
@@ -620,14 +644,14 @@ function saveResponseByPromptCount(count, inputTarget) {
             motherTaskCountCurrent = taskCountCurrent
             return 8;
         };
-    
+
     } else if (count == 8) {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
         //to be handled: user must check as least one box
 
         for (let checkbox of checkboxes) {
-            if (checkbox.checked){
+            if (checkbox.checked) {
                 let taskNum = parseInt(checkbox.value);
                 newProjectData.tasks[taskCountCurrent].pre_req_of.push(taskNum);
                 taskDependanceCount.push(taskNum);
@@ -644,7 +668,7 @@ function saveResponseByPromptCount(count, inputTarget) {
             }
         }
         return 5;
-        
+
     }
 }
 
@@ -692,7 +716,7 @@ function printPromptContent(promptCount) {
             </label>
             <input class="form-control" id="projectCreationResponse" type="date" value="${minStartDate}" min="${minStartDate}" max="2046-06-30" name="response">`;
         }
-        
+
         //check if all task information have been input
         if (taskCount.length == 0) {
             //never fire???
@@ -712,7 +736,7 @@ function printPromptContent(promptCount) {
                 Q5a. Let's assume the start day of Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span> will be the same as the project start day, 
                 which will be <span class="names">${newProjectData.start_date}</span>.
                 </label>`;
-            
+
             } else {
                 //Q5b for tasks other than first task
                 return `
@@ -798,7 +822,7 @@ async function projectInit(projJSON) {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-          },
+        },
         body: JSON.stringify(projJSON),
     });
 

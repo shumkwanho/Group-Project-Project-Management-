@@ -39,7 +39,8 @@ io.on('connection', function (socket: any) {
     var projectInfo = await getProjectFromId(projectId);
 
     io.to(`chatroom-${projectId}`).emit('receive-newMessage', { userId: userId, justSentMessage: justSentMessage });
-    socket.broadcast.to(`projectRoom-${projectId}`).emit('you-have-a-new-message',{projectId: projectId, projectName: projectInfo.name});
+    socket.to(`projectRoom-${projectId}`).emit('you-have-a-new-message-this-project',{projectId: projectId, projectName: projectInfo.name});
+    socket.to(`outerProjectRoom-${projectId}`).emit('you-have-a-new-message',{projectId: projectId, projectName: projectInfo.name});
 
     console.log("user id: ", userId);
     console.log("last message: ", justSentMessage);
@@ -55,6 +56,11 @@ io.on('connection', function (socket: any) {
     console.log("user id: ", userId);
     console.log("project id: ", projectId);
     console.log("last message info: ", lastEditMessageInfo);
+  })
+
+  socket.on('joinOuterProjectRoom', (outerProjectId: any) => {
+    socket.join(`outerProjectRoom-${outerProjectId}`);
+    io.to(`outerProjectRoom-${outerProjectId}`).emit(`outer project room joined, project id: ${outerProjectId}`);
   })
 
   socket.on('joinProjectRoom', (projectId: any) => {
