@@ -3,6 +3,7 @@ import { getFinishDate } from "../utils/getFinishDate.js";
 import { getCurrentDate } from "../utils/getCurrentDate.js"
 import { checkAndPush, checkAndRemove } from "../../utils/arrayCheck.js";
 import { blurBackgroundImage } from "../../utils/blurBackgroundImage.js";
+import { removeChildElements } from "../../utils/removeChildElements.js";
 
 //****************************//
 // Project Creation related global variables
@@ -107,7 +108,6 @@ async function getAllUserInfo(userId) {
                     `<img src="/project-image/${eachProject.image}" alt="" class="project-image">` : ""
 
                 projectArea.innerHTML += `
-                <div id="projectId-background-${eachProject.project_id}">
                     <section class="project" id="projectId-${eachProject.project_id}" 
                         onclick="handleProjectClick(event, ${eachProject.project_id})">
                     ${projectImageElm}
@@ -115,8 +115,7 @@ async function getAllUserInfo(userId) {
                         <i class="bi bi-camera-fill"></i>
                     </button>
                     <div class="project-name white-word">${eachProject.name}</div>
-                    </section>
-                <div>`
+                    </section>`
 
                 if (Number(eachProject.min_duration) <= 10) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
@@ -181,12 +180,21 @@ async function getAllUserInfo(userId) {
             }
         }
 
-        // if (projectInfo) {
-        //     for await (let eachProject of projectInfo) {
-        //         document.getElementById(`projectId-background-${eachProject.project_id}`).style["background-image"] = `url("/project-image/${eachProject.image}")`
-        //         blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
-        //     }
-        // }
+
+
+        if (projectInfo) {
+            for await (let eachProject of projectInfo) {
+
+                //limit to only show 5 tasks
+                removeChildElements(
+                    document.getElementById(`projectId-${eachProject.project_id}`),
+                    7
+                )
+
+            //     document.getElementById(`projectId-background-${eachProject.project_id}`).style["background-image"] = `url("/project-image/${eachProject.image}")`
+            //     blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
+            }
+        }
 
 
         if (finishedProjects) {
