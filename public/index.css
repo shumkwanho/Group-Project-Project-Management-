@@ -29,7 +29,11 @@ body {
     border-radius: 30px;
 }
 
-.login-button, .registraion-button{
+.login-button, 
+.registration-button, 
+#login-submit-button, 
+#create-new-account-button,
+#google-login{
     background-color: #779b9a;
     border: none;
     height: 40px;
@@ -44,11 +48,13 @@ body {
 
 .lead h1 {
     font-size: 100px;
+}
 
 .button-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-    width: 30%;
+    width: 200px;
     /* Adjust the gap value as needed */
 }
