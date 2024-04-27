@@ -174,7 +174,10 @@ function displayPasswordInput(email, username) {
 
     let passwordInput = `
 
-    <small>Must be as least 10 characters long</small>
+    <small>**Must be as least 10 characters;</small>
+    <br/>
+    <small>with 1 uppercase, lowercase letter, 1 number and 1 symbol.</small>
+    
     <div class="form-floating mb-3">
     <input type="password" class="form-control rounded-3" id="password1" placeholder="Password">
     <label for="password1">Password</label>
@@ -184,8 +187,8 @@ function displayPasswordInput(email, username) {
     <input type="password" class="form-control rounded-3" id="password2" placeholder="Re-enter Password">
     <label for="password2">Re-enter Password</label>
     </div>
-
-    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Create New Account</button>`;
+    
+    <button id="create-new-account-button" type="submit">Create New Account</button>`;
 
     userRegistration.insertAdjacentHTML("beforeend", passwordInput);
 }

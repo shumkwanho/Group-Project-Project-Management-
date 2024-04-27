@@ -31,7 +31,7 @@
             <div class="button-container">
                 <button type="button" class="login-button" data-bs-toggle="modal"
                     data-bs-target="#signInModal">Login</button>
-                <button type="button" class="registraion-button" data-bs-toggle="modal"
+                <button type="button" class="registration-button" data-bs-toggle="modal"
                     data-bs-target="#registerModal">Sign-up</button>
             </div>
         </main>
@@ -63,13 +63,9 @@
                             <label for="password">Password</label>
                         </div>
 
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="login-button">Login</button>
+                        <button type="submit" id="login-submit-button">Login</button>
                     </form>
-                </div>
-                <div class="modal-body p-5 pt-0">
-                    <button type="button" class="btn btn-outline-primary"
-                        onclick='window.location.href="/connect/google"' id="google-login">
+                    <button type="button" onclick='window.location.href="/connect/google"' id="google-login">
                         <i class="bi bi-google">&nbsp Login with Google</i>
                     </button>
                 </div>
@@ -101,15 +97,11 @@
                             <label for="new-username">Username</label>
                         </div>
 
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="create-new-account-button">Create New Account</button>
+                        <button type="submit" id="create-new-account-button">Create New Account</button>
                     </form>
-                </div>
-                <div class="modal-body p-5 pt-0">
-                    <button type="button" class="btn btn-outline-primary"
-                        onclick='window.location.href="/connect/google"' id="google-login">
-                        <i class="bi bi-google">&nbsp Sign-up with Google</i>
-                    </button>
+                    <button type="button" onclick='window.location.href="/connect/google"' id="google-login">
+                    <i class="bi bi-google">&nbsp Sign-up with Google</i>
+                </button>
                 </div>
             </div>
         </div>

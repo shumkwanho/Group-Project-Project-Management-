@@ -122,6 +122,7 @@ body {
 }
 
 .user-content .username {
+    text-align: center;
     margin: 15px 0;
     font-size: 25px;
     font-weight: 600;
@@ -338,7 +339,7 @@ body {
     width: 100%;
 }
 
-.edit-profile,
+.update-info,
 .update-password {
     background-color: #779b9a;
     border: none;
@@ -346,6 +347,7 @@ body {
     border-radius: 5px;
     margin-top: 5px;
     width: 100%;
+    color: white;
 }
 
 .logout {
