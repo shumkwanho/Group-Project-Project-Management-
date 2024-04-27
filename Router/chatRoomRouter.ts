@@ -136,6 +136,10 @@ async function sendMyMessage(req: Request, res: Response) {
     }
 }
 
+export async function getProjectFromId(projectId: number) {
+    return (await pgClient.query('SELECT * FROM projects WHERE id = $1;', [projectId])).rows[0]
+}
+
 
 
 
