@@ -38,39 +38,19 @@
 
                     <div class="user-content">
 
-                        <!-- html script sample -->
-                    
-                        <!-- <div class="image-cropper">
-                            <img src="" alt="" id="user-profile">
-                        </div>
-                        
-                        <div class="username">Username</div> -->
-                        
+                        <!-- more display will be run in js -->
+
                     </div>
 
                     <div class="project-content">
 
-                        <!-- html script sample -->
-
-                        <!-- <div class="project-count">Current projects : 0</div>
-                        <div class="completed-project-count">Completed projects : 0</div> -->
+                        <!-- more display will be run in js -->
 
                     </div>
 
                     <div class="task-content">
 
-                        <!-- html script sample -->
-                        
-                        <!-- <div class="text-center">Tasks Status</div>
-                        <div class="task-status normal">
-                            <span>Normal:</span> ${normalTaskCount}
-                        </div>
-                        <div class="task-status priority">
-                            <span>Priority:</span> ${priorityTaskCount}
-                        </div>
-                        <div class="task-status overrun">
-                            <span>Overrun:</span> ${overrunTaskCount}
-                        </div> -->
+                        <!-- more display will be run in js -->
 
                     </div>
 
@@ -86,33 +66,25 @@
 
                 <section class="project-area">
 
-                    <!-- html script sample -->
-
-                    <!-- <div class="create-project" data-bs-toggle="modal" data-bs-target="#projectCreationModal">
+                    <div class="create-project" data-bs-toggle="modal" data-bs-target="#projectCreationModal">
                         <div class="project-name white-word">Create project</div>
+
+                        <br>
+
                         <div class="center-image">
                             <img src="./create_project.png" alt="" class="create-project-image">
                         </div>
-                    </div> -->
 
-                    <!-- <div class="project">
-                        <img src="" alt="" class="project-image">
-                        <button class="edit-project-image">btn</button>
-                        <div class="project-name">Project 1</div>
-                        <div class="current-task">Task 1</div>
-                        <div class="current-task">Task 2</div>
-                        <div class="current-task">Task 3</div>
-                        <div class="current-task">Task 4</div>
-                    </div> -->
+                    </div>
+
+                    <!-- more display will be run in js -->
 
                 </section>
 
                 <section class="completed-project-area">
-                    <!-- html script sample -->
-                    <!-- <div class="completed-project">
-                        <div class="completed-project-name">Completed Project 1</div>
-                        <div class="completed-project-date">2024-01-01</div>
-                    </div> -->
+
+                    <!-- more display will be run in js -->
+
                 </section>
 
             </article>
@@ -187,8 +159,27 @@
                             <label for="new-username">New Username</label>
                         </div>
 
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="submit-edit-button">Submit</button>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-3" id="new-first-name" placeholder="first-name">
+                            <label for="new-first-name">Update First Name</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-3" id="new-last-name" placeholder="last-name">
+                            <label for="new-last-name">Update Last Name</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-3" id="new-location" placeholder="location">
+                            <label for="new-location">Update Location</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-3" id="new-organization" placeholder="organization">
+                            <label for="new-organization">Update Organization</label>
+                        </div>
+                        
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" id="submit-edit-button">Submit</button>
                     </form>
                 </div>
             </div>

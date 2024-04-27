@@ -19,6 +19,7 @@ authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
+authRouter.put("/user-profile-update", isLoggedIn, userProfileUpdate);
 authRouter.get("/search-user", isLoggedIn, searchUser);
 
 async function userRegistration(req: Request, res: Response) {
@@ -610,6 +611,10 @@ async function usernameUpdate(req: Request, res: Response) {
         console.log(error);
         res.status(500).json({ message: "internal sever error" });
     }
+}
+
+async function userProfileUpdate (req: Request, res: Response) {
+    
 }
 
 function isEmpty(obj: object): boolean {
