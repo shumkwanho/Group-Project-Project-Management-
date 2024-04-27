@@ -39,12 +39,19 @@ VALUES (
 insert into projects (name, start_date,min_duration, image) values ('Alpha', '2024-04-01',25, 'example.jpg');
 insert into projects (name, start_date,min_duration) values ('Delta', '2024-04-01',25);
 insert into projects (name, start_date,min_duration) values ('Beta', '2024-04-01',25);
+insert into projects (name, start_date,min_duration) values ('Gemma', '2024-04-01',25);
+insert into projects (name, start_date,min_duration) values ('Pi', '2024-04-01',25);
+insert into projects (name, start_date,min_duration) values ('Zeta', '2024-04-01',25);
+insert into projects (name, start_date,min_duration) values ('Energy', '2024-04-01',25);
 insert into user_project_relation (user_id, project_id) values (1, 1);
 insert into user_project_relation (user_id, project_id) values (1, 2);
 insert into user_project_relation (user_id, project_id) values (1, 3);
 insert into user_project_relation (user_id, project_id) values (2, 1);
 insert into user_project_relation (user_id, project_id) values (2, 2);
 insert into user_project_relation (user_id, project_id) values (2, 3);
+insert into user_project_relation (user_id, project_id) values (1, 4);
+insert into user_project_relation (user_id, project_id) values (1, 5);
+insert into user_project_relation (user_id, project_id) values (1, 6);
 
 
 --project 10 taskname ,startdate , duration, dependencies
