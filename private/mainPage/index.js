@@ -106,12 +106,17 @@ async function getAllUserInfo(userId) {
     let projectArea = document.querySelector(".project-area")
     let completedProjectArea = document.querySelector(".completed-project-area")
 
-    let newUsernameInput = document.querySelector("#new-username")
+    //for edit profile modal
+    const newUsernameInput = document.querySelector("#new-username");
+    const newFirstName = document.querySelector("#new-first-name");
+    const newLastName = document.querySelector('#new-last-name');
+    const newLocation = document.querySelector('#new-location');
+    const newOrganization = document.querySelector('#new-organization');
 
     let projectCount = 0
     let finishProjectCount = 0
 
-    //for showing project status
+    //for showing task status
     let normalTaskCount = 0;
     let priorityTaskCount = 0;
     let overrunTaskCount = 0;
@@ -124,16 +129,6 @@ async function getAllUserInfo(userId) {
                 :
                 `Hello ${userInfo.username}, welcome to join us !&nbsp; ;]`
             }`
-
-        projectArea.innerHTML = `
-        <div class="create-project" data-bs-toggle="modal" data-bs-target="#projectCreationModal">
-            <div class="project-name white-word">Create project</div>
-            <br>
-            <div class="center-image">
-                <img src="./create_project.png" alt="" class="create-project-image">
-            </div>
-        </div>
-        `
 
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
@@ -218,8 +213,6 @@ async function getAllUserInfo(userId) {
             }
         }
 
-
-
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
 
@@ -233,7 +226,6 @@ async function getAllUserInfo(userId) {
                 //     blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
             }
         }
-
 
         if (finishedProjects) {
             for await (let eachFinishedProject of finishedProjects) {
@@ -276,6 +268,10 @@ async function getAllUserInfo(userId) {
         </div>
         `
         newUsernameInput.setAttribute("value", userInfo.username);
+        newFirstName.setAttribute('value', userInfo.first_name);
+        newLastName.setAttribute('value', userInfo.last_name);
+        newLocation.setAttribute('value', userInfo.location);
+        newOrganization.setAttribute('value', userInfo.organization);
 
         projectContent.innerHTML = `
         <div class="project-count">Current projects : ${projectCount}</div>
@@ -294,7 +290,6 @@ async function getAllUserInfo(userId) {
         </div>
         `
     }
-
 }
 
 //only fire button when click (not fire the section onclick)

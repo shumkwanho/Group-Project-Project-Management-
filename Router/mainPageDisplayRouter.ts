@@ -33,7 +33,7 @@ let today = Number(`${currentYear}${currentMonth}${currentDay}`);
 
 async function getUserInfo(userId: any) {
     return (await pgClient.query(
-        `SELECT id, username, email, profile_image, first_name, last_name, occupation, organization, location, last_login, registration_date FROM users WHERE id = $1`,
+        `SELECT id, username, email, profile_image, first_name, last_name, organization, location, last_login, registration_date FROM users WHERE id = $1`,
         [userId])).rows[0];
 }
 
