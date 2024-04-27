@@ -252,6 +252,12 @@ async function getAllUserInfo(userId) {
             ${imageElm}
             </div>
             <div class="username">${userInfo.username}</div>
+            <div class="bold-text">Name:</div>
+                <div>${userInfo.first_name} ${userInfo.last_name}</div>
+            <div class="bold-text">Location:</div>
+                <div>${userInfo.location}</div>
+            <div class="bold-text">Organization:</div>
+                <div>${userInfo.organization}</div>
         </div>
         `
         newUsernameInput.setAttribute("value", userInfo.username);

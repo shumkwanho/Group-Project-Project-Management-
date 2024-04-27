@@ -5,6 +5,11 @@ INSERT INTO users (
     username,
     email,
     password,
+    first_name,
+    last_name,
+    occupation,
+    organization,
+    location,
     last_login,
     registration_date
 )
@@ -13,6 +18,11 @@ VALUES (
     'user@gmail.com',
     '$2a$10$r8xSUf9C4lG0ubOpWbMJH.LjoNVv6KgLxyqFWK8UxTmUmA6fD5hNa',
     --hashed password for '1234'
+    'John',
+    'Doe',
+    'Unemployed',
+    'My Company',
+    'Unknown',
     CURRENT_TIMESTAMP,
     CURRENT_DATE
 );
@@ -22,6 +32,11 @@ INSERT INTO users (
     email,
     password,
     profile_image,
+    first_name,
+    last_name,
+    occupation,
+    organization,
+    location,
     last_login,
     registration_date
 )
@@ -31,6 +46,11 @@ VALUES (
     '$2a$10$r8xSUf9C4lG0ubOpWbMJH.LjoNVv6KgLxyqFWK8UxTmUmA6fD5hNa',
     --hashed password for '1234'
     'mydog.jpg',
+    'Bill',
+    'Yuen',
+    'Freelancer',
+    'Tecky',
+    'Hong Kong',
     CURRENT_TIMESTAMP,
     CURRENT_DATE
 );

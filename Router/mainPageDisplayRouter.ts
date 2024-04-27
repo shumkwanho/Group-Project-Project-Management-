@@ -6,14 +6,10 @@ export const mainPageDisplayRouter = Router();
 mainPageDisplayRouter.get('/', getMainPageInfo)
 
 
-
-
-
 function serverError(err: any, res: Response) {
     console.log(err)
     res.status(500).json({ message: 'Server internal error.' })
 }
-
 
 
 function getFinishDate(startDate: any, durationInDay: number) {
@@ -28,7 +24,6 @@ function getFinishDate(startDate: any, durationInDay: number) {
 }
 
 
-
 const currentDate = new Date();
 let currentYear = (String(currentDate.getFullYear()));
 let currentMonth = (String(currentDate.getMonth() + 1).padStart(2, '0'));
@@ -36,10 +31,9 @@ let currentDay = (String(currentDate.getDate()).padStart(2, '0'));
 let today = Number(`${currentYear}${currentMonth}${currentDay}`);
 
 
-
 async function getUserInfo(userId: any) {
     return (await pgClient.query(
-        `SELECT id, username, email, profile_image, last_login, registration_date FROM users WHERE id = $1`,
+        `SELECT id, username, email, profile_image, first_name, last_name, occupation, organization, location, last_login, registration_date FROM users WHERE id = $1`,
         [userId])).rows[0];
 }
 
@@ -144,9 +138,7 @@ async function getMainPageInfo(req: Request, res: Response) {
         //     }
         // }
 
-
         let allFinishedProjects = await getAllFinishedProjects(userId)
-
 
         res.status(200).json({
             userInfo: userInfo,
@@ -157,15 +149,12 @@ async function getMainPageInfo(req: Request, res: Response) {
             finishedProjects: allFinishedProjects
         })
 
-
         // console.log("userInfo: ", userInfo);
         // console.log("allCurrentProjects: ", allCurrentProjects);
         // console.log("allOverrunTasks: ", allOverrunTasks);
         // console.log("meetDeadlineTasks: ", meetDeadlineTasks);
         // console.log("currentTaskInfo: ", currentTaskInfo);
         // console.log("allFinishedProjects:", allFinishedProjects);
-
-
 
     } catch (err) {
         serverError(err, res)
