@@ -29,6 +29,12 @@ const projectCreationPromptContent = document.querySelector("#projectCreationPro
 const projectCreationModalLabel = document.querySelector("#projectCreationModalLabel");
 const projectCreationClose = document.querySelectorAll(".project-creation-close");
 
+printPromptContent(promptCount)
+
+//****************************//
+// Project Creation related global variables
+//****************************//
+
 socket.on('you-have-a-new-message', projectInfo => {
     let projectId = projectInfo.projectId;
 	let projectName = projectInfo.projectName;
@@ -60,18 +66,6 @@ socket.on('i-am-in', projectInfo => {
         window.location.reload();
     });
 })
-
-
-
-
-
-printPromptContent(promptCount)
-
-//****************************//
-
-//****************************//
-// Project Creation related global variables
-//****************************//
 
 var searchParams = new URLSearchParams(window.location.search);
 const userId = searchParams.get("id");
@@ -217,15 +211,11 @@ async function getAllUserInfo(userId) {
 
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
-
                 //limit to only show 5 tasks
                 removeChildElements(
                     document.getElementById(`projectId-${eachProject.project_id}`),
                     7
                 )
-
-                //     document.getElementById(`projectId-background-${eachProject.project_id}`).style["background-image"] = `url("/project-image/${eachProject.image}")`
-                //     blurBackgroundImage(`#projectId-background-${eachProject.project_id}`, 5);
             }
         }
 
@@ -301,7 +291,6 @@ function handleProjectClick(event, id) {
         //will only fire modal toggle
         projectIdForImage = id;
     } else {
-        // const projectURL = `http://localhost:8080/project/?id=${id}`;
         const projectURL = `/project/?id=${id}`;
         window.location.href = projectURL;
     }
@@ -564,12 +553,9 @@ uploadProjectImage.addEventListener("submit", async (e) => {
         //status 400 conditions to be handled
         console.log(response);
     }
-
-
 })
 
 projectCreationClose.forEach(elm => {
-
     elm.addEventListener("click", (e) => {
 
         e.preventDefault();
@@ -579,7 +565,6 @@ projectCreationClose.forEach(elm => {
             window.location.reload();
 
         } else if (promptCount > 1) {
-
             Swal.fire({
                 title: "All your progress will be cleared!",
                 text: "Are you sure?",
@@ -595,7 +580,7 @@ projectCreationClose.forEach(elm => {
                     resetProgress();
                     $("#projectCreationModal").modal("hide");
                     //not able to reset modal content??
-                    //using window reload for now
+                    //using window reload (better solution)
                     window.location.reload();
                 }
             });
@@ -606,15 +591,30 @@ projectCreationClose.forEach(elm => {
 projectCreationForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    let inputTarget = e.currentTarget
-
     //ready to init
     if (promptCount == 99) {
 
         let projId = await projectInit(newProjectData);
-        window.location.href = `../project/?id=${projId}`;
+
+        Swal.fire({
+            title: 'Creating Project Successful',
+            text: `Redirecting to your project page`,
+            showConfirmButton: false,
+            timer: 1800,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+                window.location.reload();
+                window.location.href = `../project/?id=${projId}`
+            };
+        })
 
     } else {
+
+        let inputTarget = e.currentTarget;
         //save response and update prompt count
         promptCount = saveResponseByPromptCount(promptCount, inputTarget);
 
@@ -771,7 +771,6 @@ function printPromptContent(promptCount) {
         return `
         <label for="projectCreationResponse" class="form-label">
         How many Tasks do you plan to have for this Project??
-        <br/>
         <br/><mark>Let's start with 2 to 5 Tasks.</mark> You may remove or add more later.
         </label>
 
@@ -827,11 +826,13 @@ function printPromptContent(promptCount) {
         } else {
             //update the current task number for input
             taskCountCurrent = taskCount.shift();
+
             if (taskCountCurrent == 1) {
                 //Q5a only for task 1 (first task)
                 return `
                 <label for="projectCreationResponse" class="form-label">
-                Let's assume the start date of Task #${taskCountCurrent}.
+                Let's assume the start date of Task #${taskCountCurrent} 
+                <br/>to be same as Project start date.
                 <br/>
 
                 <div class="input-group mb-3">
@@ -841,9 +842,8 @@ function printPromptContent(promptCount) {
 
                 <div class="input-group mb-3">
                 <span class="input-group-text">Task #${taskCountCurrent} Starting Date</span>
-                <input class="form-control" id="projectCreationResponse" type="date" value="${newProjectData.start_date}" min="${minStartDate}" max="2046-06-30" name="response">
-                </div>
-                <div>(Same as Project start date)</div>`;
+                <input class="form-control" id="projectCreationResponse" type="date" value="${newProjectData.start_date}" min="${newProjectData.start_date}" max="2046-06-30" name="response" disabled>
+                </div>`;
 
             } else {
                 //Q5b for tasks other than first task
