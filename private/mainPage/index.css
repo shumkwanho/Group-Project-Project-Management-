@@ -56,6 +56,10 @@ body {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
+.top-bar-word {
+    text-align: center;
+}
+
 .user-project-area {
     display: flex;
     flex-direction: row;
@@ -376,4 +380,22 @@ body {
     /* background-color: #8fd1cf; */
     border: .5px solid #b8d3d2 !important;
     color: #b8d3d2;
+}
+
+.update-password,
+.update-info {
+    background-color: #91b6b5;
+    color: #ffffff;
+    /* background-color: #b8d3d2; */
+    border: none !important;
+    /* border: 1px solid #3a3a3a; */
+    height: 40px;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.update-password:hover,
+.update-info:hover {
+    background-color: #3a3a3a;
 }
