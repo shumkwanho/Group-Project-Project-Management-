@@ -335,7 +335,7 @@ body {
     width: 100%;
 }
 
-.edit-profile,
+.update-info,
 .update-password {
     background-color: #779b9a;
     border: none;
@@ -343,6 +343,7 @@ body {
     border-radius: 5px;
     margin-top: 5px;
     width: 100%;
+    color: white;
 }
 
 .logout {
@@ -377,4 +378,36 @@ body {
     /* background-color: #8fd1cf; */
     border: .5px solid #b8d3d2 !important;
     color: #b8d3d2;
+}
+
+#submit-profile-image,
+#submit-project-image {
+    background-color: #779b9a;
+    border: none;
+    height: 40px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    color: white;
+}
+
+#update-username-button, 
+#update-profile-button,
+#update-password-button {
+    background-color: #779b9a;
+    border: none;
+    height: 40px;
+    border-radius: 5px;
+    width: 100%;
+    color: white;
+}
+
+.project-creation-next {
+    background-color: #779b9a;
+    border: none;
+    height: 40px;
+    border-radius: 5px;
+    width: 30%;
+    color: white;
 }

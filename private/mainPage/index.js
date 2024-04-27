@@ -315,6 +315,7 @@ logoutButton.addEventListener("click", (e) => {
     Swal.fire({
         title: "Do you want to logout",
         showCancelButton: true,
+        confirmButtonColor: "#779b9a",
         confirmButtonText: "Yes",
         cancelButtonText: "No",
         allowOutsideClick: false
@@ -371,6 +372,7 @@ updateUsername.addEventListener("submit", async (e) => {
         if (res.ok) {
             Swal.fire({
                 title: 'Username update successful!',
+                confirmButtonColor: "#779b9a",
                 confirmButtonText: "Continue"
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -383,6 +385,7 @@ updateUsername.addEventListener("submit", async (e) => {
             if (result.error == "newUsernameExist") {
                 Swal.fire({
                     title: 'Username already taken!',
+                    confirmButtonColor: "#779b9a",
                     confirmButtonText: "Pick another name"
                 });
             }
@@ -421,6 +424,7 @@ editProfile.addEventListener("submit", async (e) => {
         if (res.ok) {
             Swal.fire({
                 title: 'User profile update successful!',
+                confirmButtonColor: "#779b9a",
                 confirmButtonText: "Continue"
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -512,6 +516,7 @@ uploadProfileImage.addEventListener("submit", async (e) => {
 
         Swal.fire({
             title: 'Profile Image Uploaded',
+            confirmButtonColor: "#779b9a",
             confirmButtonText: "Continue"
         }).then((result) => {
             if (result.isConfirmed) {
@@ -547,6 +552,7 @@ uploadProjectImage.addEventListener("submit", async (e) => {
 
         Swal.fire({
             title: 'Project Image Uploaded',
+            confirmButtonColor: "#779b9a",
             confirmButtonText: "Continue"
         }).then((result) => {
             if (result.isConfirmed) {
@@ -577,6 +583,7 @@ projectCreationClose.addEventListener("click", (e) => {
             text: "Are you sure?",
             showConfirmButton: false,
             showDenyButton: true,
+            cancelButtonColor: "#779b9a",
             showCancelButton: true,
             denyButtonText: `Close and Reset`,
             cancelButtonText: `Continue`

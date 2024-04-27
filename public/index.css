@@ -38,8 +38,10 @@ body {
     border: none;
     height: 40px;
     border-radius: 5px;
-    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     width: 100%;
+    color: white;
 }
 
 .lead h4 {

@@ -174,7 +174,7 @@ function displayPasswordInput(email, username) {
 
     let passwordInput = `
 
-    <small>**Must be as least 10 characters long,</small>
+    <small>**Must be as least 10 characters;</small>
     <br/>
     <small>with 1 uppercase, lowercase letter, 1 number and 1 symbol.</small>
     

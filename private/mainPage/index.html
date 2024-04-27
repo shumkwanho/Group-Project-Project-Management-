@@ -55,8 +55,9 @@
                     </div>
 
                     <div class="user-content-button-container">
-                        <button type="button" class="update-info" data-bs-toggle="modal" data-bs-target="#updateInfoModal">Update User Info</button>
-                    
+                        <button type="button" class="update-info" data-bs-toggle="modal"
+                            data-bs-target="#updateInfoModal">Update User Info</button>
+
                         <button type="button" class="update-password" data-bs-toggle="modal"
                             data-bs-target="#updatePasswordModal">Update Password</button>
                     </div>
@@ -98,18 +99,16 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
-                    <h1 class="fw-bold mb-0 fs-2" id="uploadProfileImageLabel">Upload Profile Image</h1>
+                    <h1 class="fw-bold mb-0 fs-2" id="uploadProfileImageLabel">Update Profile Image</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body p-5 pt-0">
                     <form enctype="multipart/form-data" method="post" id="upload-profile-image">
 
-                        <label for="profile-image-upload" class="form-label">Upload Image</label>
                         <input class="form-control" type="file" name="profile-image" id="profile-image-upload">
 
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="submit-profile-image">Submit</button>
+                        <button type="submit" id="submit-profile-image">Update</button>
                     </form>
                 </div>
             </div>
@@ -122,18 +121,16 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
-                    <h1 class="fw-bold mb-0 fs-2" id="uploadProjectImageLabel">Upload Project Cover Image</h1>
+                    <h1 class="fw-bold mb-0 fs-2" id="uploadProjectImageLabel">Upload Cover Image</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body p-5 pt-0">
                     <form enctype="multipart/form-data" method="put" id="upload-project-image">
 
-                        <label for="project-image-upload" class="form-label">Upload Image</label>
                         <input class="form-control" type="file" name="project-image" id="project-image-upload">
 
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="submit-project-image">Submit</button>
+                        <button type="submit" id="submit-project-image">Upload</button>
                     </form>
                 </div>
             </div>
@@ -146,46 +143,51 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
-                    <h1 class="fw-bold mb-0 fs-2" id="updateInfoLabel">Edit Profile</h1>
+                    <h1 class="fw-bold mb-0 fs-2" id="updateInfoLabel">Update User Info</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body p-5 pt-0">
                     <form id="update-username">
-                    
+
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control rounded-3" id="new-username" placeholder="username">
                             <label for="new-username">New Username</label>
                         </div>
-                    
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Update Username</button>
-                    
+
+                        <button id="update-username-button" type="submit">Update Username</button>
+
                     </form>
+                    <br />
 
                     <form id="edit-profile">
-                    
+
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-first-name" placeholder="first-name" required>
+                            <input type="text" class="form-control rounded-3" id="new-first-name"
+                                placeholder="first-name" required>
                             <label for="new-first-name">Update First Name</label>
                         </div>
-                    
+
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-last-name" placeholder="last-name" required>
+                            <input type="text" class="form-control rounded-3" id="new-last-name" placeholder="last-name"
+                                required>
                             <label for="new-last-name">Update Last Name</label>
                         </div>
-                    
+
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-location" placeholder="location" required>
+                            <input type="text" class="form-control rounded-3" id="new-location" placeholder="location"
+                                required>
                             <label for="new-location">Update Location</label>
                         </div>
-                    
+
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="new-organization" placeholder="organization" required>
+                            <input type="text" class="form-control rounded-3" id="new-organization"
+                                placeholder="organization" required>
                             <label for="new-organization">Update Organization</label>
                         </div>
-                    
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Update Profile</button>
-                    
+
+                        <button id="update-profile-button" type="submit">Update Profile</button>
+
                     </form>
                 </div>
             </div>
@@ -205,6 +207,10 @@
                 <div class="modal-body p-5 pt-0">
                     <form id="update-password">
 
+                        <small>**Must be as least 10 characters;</small>
+                        <br/>
+                        <small>with 1 uppercase, lowercase letter, 1 number and 1 symbol.</small>
+
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control rounded-3 " id="password1"
                                 placeholder="password">
@@ -217,8 +223,7 @@
                             <label for="password2">Confirm New Password</label>
                         </div>
 
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
-                            id="update-password-button">Submit</button>
+                        <button type="submit" id="update-password-button">Update</button>
                     </form>
                 </div>
             </div>
@@ -246,7 +251,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="project-creation-close">Close</button>
-                    <button type="submit" form="projectCreationForm" class="btn btn-primary">Save and Next</button>
+                    <button type="submit" form="projectCreationForm" class="project-creation-next">Save and Next</button>
                 </div>
             </div>
         </div>
