@@ -411,3 +411,7 @@ body {
     width: 30%;
     color: white;
 }
+
+.project-creation-body {
+    height: 330px;
+}

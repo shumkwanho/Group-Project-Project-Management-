@@ -233,24 +233,27 @@
     <!-- Create Project Q1 modal -->
     <div class="modal fade" id="projectCreationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="projectCreationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="projectCreationModalLabel">Project Creation</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="projectCreationModalLabel">Create New Project</h1>
+                    <button type="button" class="btn-close project-creation-close" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body project-creation-body">
                     <form id="projectCreationForm">
                         <div id="projectCreationPromptContent">
-                            <label for="projectCreationResponse" class="form-label">Q1. What is the name of your
-                                Project??</label>
-                            <input class="form-control" id="projectCreationResponse" type="text" name="response"
-                                value="New Project 1">
+                            <label for="projectCreationResponse" class="form-label">What is the title of your Project?</label>
+
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Project Title</span>
+                                    <input class="form-control" aria-describedby="inputGroup-sizing-default" id="projectCreationResponse" type="text"
+                                        name="response" value="New Project 1">
+                                </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="project-creation-close">Close</button>
+                    <button type="button" class="btn btn-secondary project-creation-close">Close</button>
                     <button type="submit" form="projectCreationForm" class="project-creation-next">Save and Next</button>
                 </div>
             </div>

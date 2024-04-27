@@ -28,7 +28,7 @@ let newProjectData = {
 const projectCreationForm = document.querySelector("#projectCreationForm");
 const projectCreationPromptContent = document.querySelector("#projectCreationPromptContent");
 const projectCreationModalLabel = document.querySelector("#projectCreationModalLabel");
-const projectCreationClose = document.querySelector("#project-creation-close");
+const projectCreationClose = document.querySelectorAll(".project-creation-close");
 
 socket.on('you-have-a-new-message', projectInfo => {
     let projectId = projectInfo.projectId;
@@ -569,35 +569,39 @@ uploadProjectImage.addEventListener("submit", async (e) => {
 
 })
 
-projectCreationClose.addEventListener("click", (e) => {
-    e.preventDefault();
+projectCreationClose.forEach(elm => {
 
-    if (promptCount == 1) {
-        $("#projectCreationModal").modal("hide");
-        window.location.reload();
+    elm.addEventListener("click", (e) => {
 
-    } else if (promptCount > 1) {
+        e.preventDefault();
 
-        Swal.fire({
-            title: "All your progress will be cleared!",
-            text: "Are you sure?",
-            showConfirmButton: false,
-            showDenyButton: true,
-            cancelButtonColor: "#779b9a",
-            showCancelButton: true,
-            denyButtonText: `Close and Reset`,
-            cancelButtonText: `Continue`
+        if (promptCount == 1) {
+            $("#projectCreationModal").modal("hide");
+            window.location.reload();
 
-        }).then((result) => {
-            if (result.isDenied) {
-                resetProgress();
-                $("#projectCreationModal").modal("hide");
-                //not able to reset modal content??
-                //using window reload for now
-                window.location.reload();
-            }
-        });
-    }
+        } else if (promptCount > 1) {
+
+            Swal.fire({
+                title: "All your progress will be cleared!",
+                text: "Are you sure?",
+                showConfirmButton: false,
+                showDenyButton: true,
+                cancelButtonColor: "#779b9a",
+                showCancelButton: true,
+                denyButtonText: `Close and Reset`,
+                cancelButtonText: `Continue`
+
+            }).then((result) => {
+                if (result.isDenied) {
+                    resetProgress();
+                    $("#projectCreationModal").modal("hide");
+                    //not able to reset modal content??
+                    //using window reload for now
+                    window.location.reload();
+                }
+            });
+        }
+    })
 })
 
 projectCreationForm.addEventListener("submit", async (e) => {
@@ -744,29 +748,43 @@ function saveResponseByPromptCount(count, inputTarget) {
 function printPromptContent(promptCount) {
     if (promptCount == 1) {
         return `
-        <label for="projectCreationResponse" class="form-label">Q1. What is the name of your
-        Project??</label>
-        <input class="form-control" id="projectCreationResponse" type="text" name="response"
-        value="New Project 1">`;
+        <label for="projectCreationResponse" class="form-label">
+        What is the title of your Project??
+        </label>
+
+        <div class="input-group mb-3">
+        <span class="input-group-text">Project Title</span>
+        <input class="form-control" id="projectCreationResponse" type="text" name="response" value="New Project 1">
+        </div>`;
 
     } else if (promptCount == 2) {
         return `
         <label for="projectCreationResponse" class="form-label">
-        Q2. When will your project start??
+        What is your Project Starting Date??
         </label>
-        <input class="form-control" id="projectCreationResponse" type="date" value="${getCurrentDate()}" min="1997-07-01" max="2046-06-30" name="response">`;
+
+        <div class="input-group mb-3">
+        <span class="input-group-text">Starting Date</span>
+        <input class="form-control" id="projectCreationResponse" type="date" value="${getCurrentDate()}" min="1997-07-01" max="2046-06-30" name="response">
+        </div>`;
 
     } else if (promptCount == 3) {
         return `
         <label for="projectCreationResponse" class="form-label">
-        Q3. How many tasks do you plan to have for this project?? (Please enter a number between 2 and 5. You may remove or add more tasks later)
+        How many Tasks do you plan to have for this Project??
+        <br/>
+        <br/><mark>Let's start with 2 to 5 Tasks.</mark> You may remove or add more later.
         </label>
-        <input class="form-control" id="projectCreationResponse" type="number" min="2" max="5" value="2" name="response">`;
+
+        <div class="input-group mb-3">
+        <span class="input-group-text">Number of Tasks</span>
+        <input class="form-control" id="projectCreationResponse" type="number" min="2" max="5" value="2" name="response">
+        </div>`;
 
     } else if (promptCount == 4) {
         return `
         <label for="projectCreationResponse" class="form-label">
-        Q4. What are the title of the task(s)??
+        What are the title of the Task(s)??
         </label>
         ${printTaskNameInput()}`;
 
@@ -780,10 +798,22 @@ function printPromptContent(promptCount) {
 
             return `
             <label for="projectCreationResponse" class="form-label">
-            Q5. When will Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span> start??
-            (Must be one day after ${newProjectData.tasks[motherTaskCountCurrent].finish_date}, which is completion date of Task ${motherTaskCountCurrent}.)
+            When will Task #${taskCountCurrent} start??
+            <br/>Let's assume to be one day after
+            <br/><mark>${newProjectData.tasks[motherTaskCountCurrent].finish_date}
+            <br/>(Completion date of Task #${motherTaskCountCurrent})</mark>
+            <br/>
             </label>
-            <input class="form-control" id="projectCreationResponse" type="date" value="${minStartDate}" min="${minStartDate}" max="2046-06-30" name="response">`;
+
+            <div class="input-group mb-3">
+            <span class="input-group-text">Task #${taskCountCurrent}</span>
+            <input class="form-control" id="projectCreationResponse" type="text" value="${newProjectData.tasks[taskCountCurrent].name}" disabled>
+            </div>
+
+            <div class="input-group mb-3">
+            <span class="input-group-text">Starting Date</span>
+            <input class="form-control" id="projectCreationResponse" type="date" value="${minStartDate}" min="${minStartDate}" max="2046-06-30" name="response">
+            </div>`;
         }
 
         //check if all task information have been input
@@ -802,51 +832,91 @@ function printPromptContent(promptCount) {
                 //Q5a only for task 1 (first task)
                 return `
                 <label for="projectCreationResponse" class="form-label">
-                Q5a. Let's assume the start day of Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span> will be the same as the project start day, 
-                which will be <span class="names">${newProjectData.start_date}</span>.
-                </label>`;
+                Let's assume the start date of Task #${taskCountCurrent}.
+                <br/>
+
+                <div class="input-group mb-3">
+                <span class="input-group-text">Task #${taskCountCurrent}</span>
+                <input class="form-control" id="projectCreationResponse" type="text" value="${newProjectData.tasks[taskCountCurrent].name}" disabled>
+                </div>
+
+                <div class="input-group mb-3">
+                <span class="input-group-text">Task #${taskCountCurrent} Starting Date</span>
+                <input class="form-control" id="projectCreationResponse" type="date" value="${newProjectData.start_date}" min="${minStartDate}" max="2046-06-30" name="response">
+                </div>
+                <div>(Same as Project start date)</div>`;
 
             } else {
                 //Q5b for tasks other than first task
                 return `
                 <label for="projectCreationResponse" class="form-label">
-                Q5b. When will Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span> start??
+                When will Task #${taskCountCurrent} start??
                 </label>
-                <input class="form-control" id="projectCreationResponse" type="date" value="${getCurrentDate()}" min="1997-07-01" max="2046-06-30" name="response">`;
+
+                <div class="input-group mb-3">
+                <span class="input-group-text">Task #${taskCountCurrent}</span>
+                <input class="form-control" id="projectCreationResponse" type="text" value="${newProjectData.tasks[taskCountCurrent].name}" disabled>
+                </div>
+
+                <div class="input-group mb-3">
+                <span class="input-group-text">Starting Date</span>
+                <input class="form-control" id="projectCreationResponse" type="date" value="${getCurrentDate()}" min="1997-07-01" max="2046-06-30" name="response">
+                </div>`;
             }
         }
 
     } else if (promptCount == 6) {
         return `
         <label for="projectCreationResponse" class="form-label">
-        Q6. How many working days will it take to complete Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span>??
+        How many working days will it take to complete Task ${taskCountCurrent}</span>??
         </label>
-        <input class="form-control" id="projectCreationResponse" type="number" min="1" max="10" value="1" name="response">`;
+
+        <div class="input-group mb-3">
+        <span class="input-group-text">Task #${taskCountCurrent}</span>
+        <input class="form-control" id="projectCreationResponse" type="text" value="${newProjectData.tasks[taskCountCurrent].name}" disabled>
+        </div>
+
+        <div class="input-group mb-3">
+        <span class="input-group-text">Days to Complete</span>
+        <input class="form-control" id="projectCreationResponse" type="number" min="1" max="10" value="1" name="response">
+        </div>`;
 
     } else if (promptCount == 7) {
 
         return `
+        <div class="input-group mb-3">
+        <span class="input-group-text">Task #${taskCountCurrent}</span>
+        <input class="form-control" id="projectCreationResponse" type="text" value="${newProjectData.tasks[taskCountCurrent].name}" disabled>
+        </div>
+
+        <div class="input-group mb-3">
+        <span class="input-group-text">Completion Date</span>
+        <input class="form-control" id="projectCreationResponse" type="date" value="${newProjectData.tasks[taskCountCurrent].finish_date}" disabled>
+        </div>
+
         <label for="projectCreationResponse" class="form-label">
-        Q7. The estimated completion date of Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span> is: <span class="names">${newProjectData.tasks[taskCountCurrent].finish_date}</span>;
-        Does this task need to be completed before any other tasks can start??
+        The estimated completion date of Task ${taskCountCurrent} is ${newProjectData.tasks[taskCountCurrent].finish_date}.
+        <br/><mark>Must this Task be completed prior to starting any other Tasks??</mark>
         </label>
+
         <div class="form-check">
         <input class="form-check-input" type="radio" name="response" id="projectCreationResponseYes" value="1">
         <label class="form-check-label" for="projectCreationResponseYes">
         Yes
-        </label>
-        </div>
+        </label></div>
+
         <div class="form-check">
         <input class="form-check-input" type="radio" name="response" id="projectCreationResponseNo" value="0" checked>
         <label class="form-check-label" for="projectCreationResponseNo">
         No
-        </label>
-        </div>`;
+        </label></div>`;
 
     } else if (promptCount == 8) {
         return `
         <label for="projectCreationResponse" class="form-label">
-        Q8. Which task(s) can only be started after the completion of Task ${taskCountCurrent}: <span class="names">"${newProjectData.tasks[taskCountCurrent].name}"</span>?? (Check the task number(s))
+        Which Task(s) can only be started after
+        <br/>Task ${taskCountCurrent}: "${newProjectData.tasks[taskCountCurrent].name}"??
+        <br/>
         </label>
         ${printTaskNameCheckboxes()}
         `
@@ -864,7 +934,10 @@ function printTaskNameInput() {
     let printResult = "";
     for (let i = 1; i <= taskCount.length; i++) {
         printResult += `
-        <input class="form-control" id="projectCreationResponse" type="text" name="response_${i}" value="New Task ${i}">`;
+        <div class="input-group mb-3">
+        <span class="input-group-text">Task #${i}</span>
+        <input class="form-control" id="projectCreationResponse" type="text" name="response_${i}" value="New Task ${i}">
+        </div>`;
     };
     return printResult;
 }
@@ -877,7 +950,7 @@ function printTaskNameCheckboxes() {
         <div class="form-check">
         <input class="form-check-input" type="checkbox" value="${taskNum}" id="projectCreationResponseCheckboxTask_${taskNum}">
         <label class="form-check-label" for="projectCreationResponseCheckboxTask_${taskNum}">
-        Task ${taskNum}: <span class="names">"${newProjectData.tasks[taskNum].name}"</span>
+        Task ${taskNum}: <mark>"${newProjectData.tasks[taskNum].name}"</mark>
         </label>
         </div>`
     };
@@ -913,7 +986,6 @@ function addPreReq(projJSON) {
             }
         }
     }
-
 };
 
 function resetProgress() {
