@@ -57,7 +57,9 @@ socket.on('i-am-in', projectInfo => {
 		showConfirmButton: false,
 		timerProgressBar: true,
 		timer: 2000
-	  });
+	  }).then(function() {
+        window.location.reload();
+    });
 })
 
 
@@ -274,12 +276,13 @@ async function getAllUserInfo(userId) {
         newLocation.setAttribute('value', userInfo.location);
         newOrganization.setAttribute('value', userInfo.organization);
 
-        projectContent.innerHTML = `
-        <div class="project-count">Current projects : ${projectCount}</div>
-        <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>`
+        // projectContent.innerHTML = `
+        // `
+        // <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>
 
         taskContent.innerHTML = `
-        <div class="text-center">Tasks Status</div>
+        <div class="project-count bold-text">Current projects : ${projectCount}</div>
+        <div class="bold-text">Tasks Status</div>
         <div class="task-status normal">
             <span>Normal:</span> ${normalTaskCount}
         </div>
