@@ -2,6 +2,8 @@ import { Router, Request, Response, response } from "express";
 import { pgClient } from "../utils/pgClient";
 import { getTaskRelation } from "../utils/getTaskRelation";
 import { getMinDuration } from "../utils/MinDuration";
+import { ObjectFlags } from "typescript";
+import { parse } from "path";
 
 export const taskRouter = Router()
 
@@ -59,18 +61,22 @@ async function createTask(req: Request, res: Response) {
 
 async function createTaskRelation(req: Request, res: Response) {
     try {
-
-
         const { projectId, preTask, taskId } = req.body
-        const rootTaskId = await getRootTask(projectId)
-        await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, rootTaskId])
-        const ifExist = (await pgClient.query(`select * from task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])).rows[0]
-        if (!ifExist) {
-            await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
-        }
-        await changeProjectDuration(projectId)
-        await checkpreReqTask(preTask)
-        res.json({ message: "update sucessfully" })
+        console.log(req.body);
+        
+        if (parseInt(preTask) < parseInt(taskId)) {
+            const rootTaskId = await getRootTask(projectId)
+            await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, rootTaskId])
+            const ifExist = (await pgClient.query(`select * from task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])).rows[0]
+            if (!ifExist) {
+                await pgClient.query(`insert into task_relation (task_id, pre_req_task_id) values ($1,$2)`, [taskId, preTask])
+            }
+            await changeProjectDuration(projectId)
+            await checkpreReqTask(preTask)
+            res.json({ message: "update sucessfully" })
+        }else(
+            res.json({message:"invalid relation"})
+        )
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Internal Server Error" })
@@ -151,9 +157,11 @@ async function deleteTaskRelation(req: Request, res: Response) {
         const { projectId, preTask, taskId } = req.body
         const rootTaskId = await getRootTask(projectId)
         await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, preTask])
-        await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2) returning *`, [taskId, rootTaskId])
-        await pgClient.query(`update tasks set pre_req_fulfilled = true where id = $1`, [taskId])
-
+        const checkRelation = (await pgClient.query(`select * from task_relation where task_id = $1`, [taskId])).rows[0]
+        if (!checkRelation) {
+            await pgClient.query(`insert into task_relation (task_id,pre_req_task_id) values ($1,$2) returning *`, [taskId, rootTaskId])
+            await pgClient.query(`update tasks set pre_req_fulfilled = true where id = $1`, [taskId])
+        }
         await changeProjectDuration(projectId)
         res.json({ message: "Delete Successfully" })
     } catch (error) {
