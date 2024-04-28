@@ -252,13 +252,15 @@ async function runUserRegistration(email, username, form) {
 
             if (res.ok) {
 
+                let isFirstLogin = true;
+
                 //login with new user-info
                 await fetch("/auth/username-login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, password, isFirstLogin })
                 });
 
                 //direct to main page

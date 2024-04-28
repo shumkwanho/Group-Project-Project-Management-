@@ -120,9 +120,9 @@ async function getAllUserInfo(userId) {
 
         notification.innerHTML = `
             ${userInfo.last_login ?
-                `<div class="top-bar-word">Hello ${userInfo.username} !&nbsp;&nbsp; ;] &nbsp;&nbsp;&nbsp;&nbsp; Wish you a nice day</div>`
+                `<div class="top-bar-word">Hello ${userInfo.username} !&nbsp;&nbsp; ;] &nbsp;&nbsp;&nbsp;&nbsp; Wish you a nice day!</div>`
                 :
-                `<div class="top-bar-word">Hello ${userInfo.username}, welcome to join us !&nbsp;&nbsp; ;]</div>`
+                `<div class="top-bar-word">Hello ${userInfo.username}, welcome to join us!&nbsp;&nbsp; ;]</div>`
             }`
 
         if (projectInfo) {

@@ -28,12 +28,6 @@ async function userRegistration(req: Request, res: Response) {
 
         const { username, email, password } = req.body;
 
-        //handle if username or email already exist in DB
-        let checkUniqueQuery = (await pgClient.query(
-            "SELECT id FROM users WHERE username = $1 OR email = $2",
-            [username, email]
-        )).rows[0];
-
         let isUsernameExist = await checkUsername(username);
         let isEmailExist = await checkEmail(email);
 
@@ -47,7 +41,7 @@ async function userRegistration(req: Request, res: Response) {
             let hashedPassword = await hashPassword(password);
 
             let userQueryResult = (await pgClient.query(
-                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username",
+                "INSERT INTO users (username, email, password, registration_date) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, username",
                 [username, email, hashedPassword]
             )).rows[0];
 
@@ -93,7 +87,7 @@ async function checkUserExist(req: Request, res: Response) {
 
 async function usernameLogin(req: Request, res: Response) {
     try {
-        const { username, password } = req.body;
+        const { username, password, isFirstLogin } = req.body;
 
         const userQuery = (
             await pgClient.query(
@@ -133,14 +127,34 @@ async function usernameLogin(req: Request, res: Response) {
 
                 req.session.save();
 
-                res.json({
-                    message: "login successful",
-                    data: {
-                        id: userQuery.id,
-                        username: userQuery.username
-                    }
-                });
-            };
+                if (isFirstLogin) {
+
+                    res.json({
+                        message: "first login successful",
+                        data: {
+                            id: userQuery.id,
+                            username: userQuery.username
+                        }
+                    });
+
+                } else {
+                    //log last login_time
+                    const userLoginQuery = (
+                        await pgClient.query(
+                            "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                            [userQuery.id]
+                        )).rows[0];
+
+                    res.json({
+                        message: "login successful",
+                        data: {
+                            id: userQuery.id,
+                            username: userQuery.username,
+                            last_login: userLoginQuery.last_login
+                        }
+                    });
+                };
+            }
         }
     } catch (error) {
         console.log(error);
@@ -192,11 +206,19 @@ async function emailLogin(req: Request, res: Response) {
 
                 req.session.save();
 
+                //log last login_time
+                const userLoginQuery = (
+                    await pgClient.query(
+                        "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                        [userQuery.id]
+                    )).rows[0];
+
                 res.json({
                     message: "login successful",
                     data: {
                         id: userQuery.id,
-                        username: userQuery.username
+                        username: userQuery.username,
+                        last_login: userLoginQuery.last_login
                     }
                 });
             };
@@ -236,6 +258,13 @@ async function googleLogin(req: Request, res: Response) {
             req.session.userId = checkUniqueQuery.id;
             req.session.username = checkUniqueQuery.username;
 
+            //log last login_time
+            const userLoginQuery = (
+                await pgClient.query(
+                    "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                    [checkUniqueQuery.id]
+                ));
+
         } else {
 
             //if google email does not exist in DB, register with google email
@@ -256,7 +285,7 @@ async function googleLogin(req: Request, res: Response) {
             //username: gmail domain + random
             //password: random 10 chars
             let userQueryResult = (await pgClient.query(
-                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username;",
+                "INSERT INTO users (username, email, password, registration_date) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, username;",
                 [username, email, hashedPassword]
             )).rows[0];
 
