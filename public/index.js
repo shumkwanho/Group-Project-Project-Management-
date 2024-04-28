@@ -1,5 +1,3 @@
-
-
 import { identifyInput, isEmptyOrSpace, isPasswordValid } from "../utils/checkInput.js";
 
 let isNewUsernameEmailOkay = false;

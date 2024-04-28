@@ -15,8 +15,8 @@ INSERT INTO users (
 VALUES (
     'user',
     'user@gmail.com',
-    '$2a$10$r8xSUf9C4lG0ubOpWbMJH.LjoNVv6KgLxyqFWK8UxTmUmA6fD5hNa',
-    --hashed password for '1234'
+    '$2a$10$eNN3ZN7quzTH8EVswwi7N.YoavDWdwpWKKvNSvXuKd0jKeSe7FtiK',
+    --hashed password for '!1Qwertyuiop'
     'John',
     'Doe',
     'My Company',
@@ -40,8 +40,8 @@ INSERT INTO users (
 VALUES (
     'billsfyuen225',
     'billsfyuen@hotmail.com',
-    '$2a$10$r8xSUf9C4lG0ubOpWbMJH.LjoNVv6KgLxyqFWK8UxTmUmA6fD5hNa',
-    --hashed password for '1234'
+    '$2a$10$eNN3ZN7quzTH8EVswwi7N.YoavDWdwpWKKvNSvXuKd0jKeSe7FtiK',
+    --hashed password for '!1Qwertyuiop'
     'mydog.jpg',
     'Bill',
     'Yuen',

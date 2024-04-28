@@ -27,7 +27,7 @@ searchInput.addEventListener("input", async (e) => {
                 let imageElm = generateImageElement(user.profile_image, user.username);
 
                 userInfoList.innerHTML += `
-                    <div class="user-info-card" id="user-info-card-${user.id}" onclick="addUserToProject(${projectId}, ${user.id})">
+                    <div class="user-info-card" id="user-info-card-${user.id}" onclick="addUserToProject(${projectId}, ${user.id}, '${user.username}')">
                         <div class="user-info-card-word")>
                             <div class="header">${user.username}</div>
                             <div class="body">${user.email}</div>
@@ -45,7 +45,23 @@ searchInput.addEventListener("input", async (e) => {
     }
 })
 
-async function addUserToProject(projectId, userId) {
+function addUserToProject(projectId, userId, username) {
+
+    Swal.fire({
+        title: `Invite ${username} to this Project??`,
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+		confirmButtonColor: "#779b9a",
+        cancelButtonText: "No",
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            runAddUser(projectId, userId, username);
+        }
+    });
+}
+
+async function runAddUser(projectId, userId, username) {
 
     let res = await fetch(`/projectRou/add-user`, {
         method: "POST",
@@ -53,15 +69,44 @@ async function addUserToProject(projectId, userId) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            projectId: projectId,
-            userId: userId
+            project_id: projectId,
+            user_id: userId
         })
     })
 
     let response = await res.json();
-    console.log(response);
+
     if (res.ok) {
-        socket.emit('addMember', { projectId: projectId, userId: userId });
-        // location.reload();
+
+        Swal.fire({
+            title: `Adding ${username} successful`,
+			confirmButtonText: "Continue",
+			confirmButtonColor: "#779b9a"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload();
+                // socket.emit('addMember', { projectId: projectId, userId: userId });
+            }
+        });
+
+    } else {
+
+        if (response.error == "userAddingSelf") {
+            Swal.fire({
+                title: 'You cannot add yourself',
+                text: 'You are in this project already',
+                showConfirmButton: false,
+            });
+
+        } else if (response.error == "userAlreadyAssigned") {
+            Swal.fire({
+                title: `Adding ${username} failed`,
+                text: 'He/She is in this project already',
+                showConfirmButton: false,
+            });
+
+        } else {
+            console.log(response.message);
+        }
     }
 }

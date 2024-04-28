@@ -257,35 +257,43 @@ async function inspectProjectUser(req: Request, res: Response) {
 //request: user id
 async function addProjectUser(req: Request, res: Response) {
     try {
-        
+
         const { project_id, user_id } = req.body;
 
-        //check if relation already exist
-        let checkQuery = (await pgClient.query(
-            "SELECT * FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
-            [user_id, project_id]
-        )).rows[0];
-
-        if (checkQuery !== undefined) {
-            //user project relation already exists
+        if (user_id === req.session.userId) {
+            //if user is adding self
             res.status(400).json({
                 message: "add new user to project failed",
-                error: "user already assigned to project"
-            });
-
+                error: "userAddingSelf",
+            })
         } else {
-            //temporary all permission level are set to 0
-            const permission_level = 0;
-
-            let relationQueryResult = (await pgClient.query(
-                "INSERT INTO user_project_relation (user_id, project_id, permission_level) VALUES ($1, $2, $3) RETURNING id",
-                [user_id, project_id, permission_level]
+            //check if relation already exist
+            let checkQuery = (await pgClient.query(
+                "SELECT * FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
+                [user_id, project_id]
             )).rows[0];
 
-            res.json({
-                message: "add new user to project successful",
-                data: { user_project_relation_id: relationQueryResult.id }
-            })
+            if (checkQuery !== undefined) {
+                //user project relation already exists
+                res.status(400).json({
+                    message: "add new user to project failed",
+                    error: "userAlreadyAssigned"
+                });
+
+            } else {
+                //temporary all permission level are set to 0
+                const permission_level = 0;
+
+                let relationQueryResult = (await pgClient.query(
+                    "INSERT INTO user_project_relation (user_id, project_id, permission_level) VALUES ($1, $2, $3) RETURNING id",
+                    [user_id, project_id, permission_level]
+                )).rows[0];
+
+                res.json({
+                    message: "add new user to project successful",
+                    data: { user_project_relation_id: relationQueryResult.id }
+                })
+            }
         }
 
     } catch (error) {
