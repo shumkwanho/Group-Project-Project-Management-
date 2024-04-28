@@ -8,6 +8,14 @@ const userRegistration = document.querySelector("#user-registration");
 const newEmail = document.querySelector("#new-email");
 const newUsername = document.querySelector("#new-username");
 
+const signInModal = new bootstrap.Modal(
+    document.getElementById('signInModal')
+)
+
+const registerModal = new bootstrap.Modal(
+    document.getElementById('registerModal')
+)
+
 //user login
 userLogin.addEventListener("submit", async (e) => {
 
@@ -62,8 +70,6 @@ userLogin.addEventListener("submit", async (e) => {
 
     if (res.ok) {
 
-        $("#projectCreationModal").modal("hide");
-
         Swal.fire({
             title: 'Login Successful',
             text: `Welcome Back ${response.data.username}!! Redirecting you to main page.`,
@@ -77,7 +83,7 @@ userLogin.addEventListener("submit", async (e) => {
             //login successful
 
             if (result.dismiss === Swal.DismissReason.timer) {
-                window.location.reload();
+                signInModal.hide();
                 window.location.href = `./main?id=${response.data.id}`
             };
         })
@@ -105,6 +111,7 @@ userRegistration.addEventListener("submit", async (e) => {
 
     if (isNewUsernameEmailOkay) {
         runUserRegistration(email, username, form);
+        registerModal.hide();
 
     } else {
         //double check if email is an valid input
@@ -277,7 +284,6 @@ async function runUserRegistration(email, username, form) {
                     //login successful
                     //to be done: want to close modal
                     if (result.dismiss === Swal.DismissReason.timer) {
-                        window.location.reload();
                         window.location.href = `./main?id=${response.data.id}`
                     };
                 })
