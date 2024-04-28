@@ -496,7 +496,7 @@ async function getAllMessages(projectId) {
                 <span class="edited">edited</span>
                 ` : ""}
                 <button class="edit-content" onclick="editMessage(${eachMessage.messages_id},'${eachMessage.content}')">
-                <img src="./edit-text.png" class="edit-text" alt="edit-text">
+                <img src="/assets/edit-text.png" class="edit-text" alt="edit-text">
                 </button>
                 </div>
                 `
@@ -584,7 +584,7 @@ socket.on('receive-newMessage', async lastMessageInfo => {
 			<span class="content">${msg.content}</span>
 			<span class="create-time">${msg.created_time}</span>
 			<button class="edit-content" onclick="editMessage(${msg.messages_id},'${msg.content}')">
-			<img src="./edit-text.png" class="edit-text" alt="edit-text">
+			<img src="/assets/edit-text.png" class="edit-text" alt="edit-text">
 			</button>
 			</div>
 			`
@@ -675,7 +675,7 @@ socket.on('receive-editMessage', async info => {
 			<span class="create-time">${msg.created_time}</span>
 			<span class="edited">edited</span>
 			<button class="edit-content" onclick="editMessage(${msg.messages_id},'${msg.content}')">
-			<img src="./edit-text.png" class="edit-text" alt="edit-text">
+			<img src="/assets/edit-text.png" class="edit-text" alt="edit-text">
 			</button>
 			`
 			:
