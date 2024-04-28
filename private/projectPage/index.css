@@ -9,18 +9,14 @@ body {
 .main-page {
     height: 30px;
     width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
     cursor: pointer;
     border: none;
-    border-radius: 15px;
+    padding-left: 15px;
 }
 
-.main-page:hover {
-    /* background-color: #8fd1cf; */
-    border: .5px solid #b8d3d2 !important;
-    color: #b8d3d2;
+.main-page > img {
+    height: 100%;
 }
 
 .logout {
