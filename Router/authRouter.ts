@@ -242,8 +242,6 @@ async function googleLogin(req: Request, res: Response) {
         });
 
         const result: any = await fetchRes.json();
-
-        console.log(result);
         const email = result.email;
 
         //check if google email already exist in DB
@@ -252,19 +250,16 @@ async function googleLogin(req: Request, res: Response) {
             [email]
         )).rows[0];
 
-
         if (checkUniqueQuery) {
-
             //if google email exist in DB, login with google email
             req.session.userId = checkUniqueQuery.id;
             req.session.username = checkUniqueQuery.username;
 
             //log last login_time
-            const userLoginQuery = (
-                await pgClient.query(
-                    "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
-                    [checkUniqueQuery.id]
-                ));
+            await pgClient.query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                [checkUniqueQuery.id]
+            );
 
         } else {
 
@@ -279,27 +274,30 @@ async function googleLogin(req: Request, res: Response) {
             let [username, domain] = gmail.split("@");
 
             while (await checkUsername(username)) {
-                username += `_${generateRandomNumChar(1)}`;
+                username += `_${generateRandomNumChar(2)}`;
             }
+
+            //get full name from Google
+            let firstName = result.given_name;
+            let lastName = result.family_name;
+
+            //set unique marker to identify as new google user in frontend
+            username += '@';
 
             //create new user account
             //username: gmail domain + random
             //password: random 10 chars
             let userQueryResult = (await pgClient.query(
-                "INSERT INTO users (username, email, password, registration_date) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, username;",
-                [username, email, hashedPassword]
+                "INSERT INTO users (username, email, first_name, last_name, password, registration_date) VALUES ($1, $2, $3, $4, $5, CURRENT_DATE) RETURNING id, username;",
+                [username, email, firstName, lastName, hashedPassword]
             )).rows[0];
 
             //login with new user info
-            (userQueryResult.username);
-
             req.session.userId = userQueryResult.id;
             req.session.username = userQueryResult.username;
 
         }
-
         req.session.save();
-
         res.redirect(`/main?id=${req.session.userId}`)
 
     } catch (error) {

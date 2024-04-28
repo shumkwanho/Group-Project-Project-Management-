@@ -82,6 +82,7 @@ const uploadProjectImage = document.querySelector("#upload-project-image");
 //for first config modal
 
 const configModal = new bootstrap.Modal(document.getElementById('configModal'), {});
+const configUsername = document.querySelector("#config-username");
 const configFirstName = document.querySelector("#config-first-name");
 const configLastName = document.querySelector('#config-last-name');
 const configLocation = document.querySelector('#config-location');
@@ -132,7 +133,7 @@ async function getAllUserInfo(userId) {
     if (res.ok) {
 
         if (!userInfo.last_login) {
-            await displayFirstLoginConfig(userInfo.username)
+            await displayFirstLoginConfig(userInfo.username, userInfo.first_name, userInfo.last_name)
         }
 
         notification.innerHTML = `
@@ -341,15 +342,17 @@ async function runLogout() {
 }
 
 //for newly registered user
-async function displayFirstLoginConfig(username) {
+async function displayFirstLoginConfig(username, firstName, lastName) {
 
-    //to be done for google users
-    //remove username disable
-    //fill in first name, last name
-    //add password field
+    if (username.endsWith('@')) {
+        //identified as a google login
+        username = username.slice(0, -1);
+        configUsername.removeAttribute('disabled');
+        configFirstName.setAttribute('value', firstName);
+        configLastName.setAttribute('value', lastName);
+    }
+    configUsername.setAttribute('value', username);
 
-    document.getElementById("config-username").setAttribute('value', username);
-    
     configModal.show();
 }
 
