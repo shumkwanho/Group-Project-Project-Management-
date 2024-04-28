@@ -4,6 +4,7 @@ import { isEmptyOrSpace, isPasswordValid } from "../../utils/checkInput.js";
 import { getFinishDate } from "../utils/getFinishDate.js";
 import { getCurrentDate } from "../utils/getCurrentDate.js"
 import { removeChildElements } from "../../utils/removeChildElements.js";
+import { changeDateFormat } from "../../utils/changeDateFormat.js";
 
 //****************************//
 // Project Creation related global variables
@@ -80,7 +81,6 @@ const uploadProfileImage = document.querySelector("#upload-profile-image");
 const uploadProjectImage = document.querySelector("#upload-project-image");
 
 //for first config modal
-
 const configModal = new bootstrap.Modal(document.getElementById('configModal'), {});
 const configUsername = document.querySelector("#config-username");
 const configFirstName = document.querySelector("#config-first-name");
@@ -347,7 +347,17 @@ async function displayFirstLoginConfig(username, firstName, lastName) {
     if (username.endsWith('@')) {
         //identified as a google login
         username = username.slice(0, -1);
-        configUsername.removeAttribute('disabled');
+
+        //update username without @
+        //backend already check if same username exists
+        await fetch("/auth/username-update", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username })
+        });
+
         configFirstName.setAttribute('value', firstName);
         configLastName.setAttribute('value', lastName);
     }
@@ -880,7 +890,7 @@ function printPromptContent(promptCount) {
             <label for="projectCreationResponse" class="form-label">
             When will Task #${taskCountCurrent} start??
             <br/>Let's assume to be one day after
-            <br/><mark>${newProjectData.tasks[motherTaskCountCurrent].finish_date}
+            <br/><mark>${changeDateFormat(newProjectData.tasks[motherTaskCountCurrent].finish_date)}
             <br/>(Completion date of Task #${motherTaskCountCurrent})</mark>
             <br/>
             </label>
@@ -976,7 +986,7 @@ function printPromptContent(promptCount) {
         </div>
 
         <label for="projectCreationResponse" class="form-label">
-        The estimated completion date of Task ${taskCountCurrent} is ${newProjectData.tasks[taskCountCurrent].finish_date}.
+        The estimated completion date of Task ${taskCountCurrent} is ${changeDateFormat(newProjectData.tasks[taskCountCurrent].finish_date)}.
         <br/><mark>Must this Task be completed prior to starting any other Tasks??</mark>
         </label>
 

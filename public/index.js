@@ -111,7 +111,6 @@ userRegistration.addEventListener("submit", async (e) => {
 
     if (isNewUsernameEmailOkay) {
         runUserRegistration(email, username, form);
-        registerModal.hide();
 
     } else {
         //double check if email is an valid input
@@ -282,8 +281,8 @@ async function runUserRegistration(email, username, form) {
                     }
                 }).then((result) => {
                     //login successful
-                    //to be done: want to close modal
                     if (result.dismiss === Swal.DismissReason.timer) {
+                        registerModal.hide();
                         window.location.href = `./main?id=${response.data.id}`
                     };
                 })
