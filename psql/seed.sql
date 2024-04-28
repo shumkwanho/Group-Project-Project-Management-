@@ -20,7 +20,7 @@ VALUES (
     'John',
     'Doe',
     'My Company',
-    'Unknown',
+    'Hong Kong',
     CURRENT_TIMESTAMP,
     CURRENT_DATE
 );
@@ -46,7 +46,7 @@ VALUES (
     'Bill',
     'Yuen',
     'Tecky',
-    'Hong Kong',
+    'Los Angeles',
     CURRENT_TIMESTAMP,
     CURRENT_DATE
 );
