@@ -148,11 +148,11 @@ async function getAllUserInfo(userId) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
                         .style.height = "300px";
 
-                } else if (Number(eachProject.min_duration) > 10 && Number(eachProject.min_duration) <= 30) {
+                } else if (Number(eachProject.min_duration) > 10 && Number(eachProject.min_duration) <= 20) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
                     .style.height = "400px";
 
-                } else if (Number(eachProject.min_duration) > 30 && Number(eachProject.min_duration) <= 60) {
+                } else if (Number(eachProject.min_duration) > 20 && Number(eachProject.min_duration) <= 40) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)
                     .style.height = "500px";
 
