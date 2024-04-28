@@ -353,7 +353,7 @@ async function getOtherUserInfo(req: Request, res: Response) {
 
             const userQueryResult = (
                 await pgClient.query(
-                    "SELECT id, username, email, profile_image, last_login, registration_date FROM users WHERE id = $1;",
+                    "SELECT id, username, email, profile_image, first_name, last_name, location, organization, last_login, registration_date FROM users WHERE id = $1;",
                     [userId]
                 )).rows[0];
 
@@ -364,6 +364,9 @@ async function getOtherUserInfo(req: Request, res: Response) {
                     id: userQueryResult.id,
                     username: userQueryResult.username,
                     email: userQueryResult.email,
+                    full_name: userQueryResult.first_name + " " + userQueryResult.last_name,
+                    location: userQueryResult.location,
+                    organization: userQueryResult.organization,
                     profile_image: userQueryResult.profile_image,
                     last_login: userQueryResult.last_login,
                     registration_date: userQueryResult.registration_date

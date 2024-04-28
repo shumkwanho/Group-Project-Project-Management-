@@ -104,7 +104,6 @@ async function getAllUserInfo(userId) {
 
     let notification = document.querySelector("#notification")
     let userContent = document.querySelector(".user-content")
-    let projectContent = document.querySelector(".project-content")
     let taskContent = document.querySelector(".task-content")
     let projectArea = document.querySelector(".project-area")
     let completedProjectArea = document.querySelector(".completed-project-area")
@@ -261,12 +260,15 @@ async function getAllUserInfo(userId) {
         newUsernameInput.setAttribute("value", userInfo.username);
         newFirstName.setAttribute('value', userInfo.first_name);
         newLastName.setAttribute('value', userInfo.last_name);
-        newLocation.setAttribute('value', userInfo.location);
         newOrganization.setAttribute('value', userInfo.organization);
 
-        // projectContent.innerHTML = `
-        // `
-        // <div class="completed-project-count">Completed projects : ${finishProjectCount}</div>
+        //set default location selection same as user current location
+        let locationOptions = newLocation.options;
+        for (let i = 0; i < locationOptions.length; i++) {
+            if (userInfo.location === locationOptions[i].value) {
+                locationOptions[i].selected = true;
+            }
+        }
 
         taskContent.innerHTML = `
         <div class="project-count bold-text">Current projects : ${projectCount}</div>
