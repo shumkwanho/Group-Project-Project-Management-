@@ -42,6 +42,7 @@ body {
     margin-bottom: 5px;
     width: 100%;
     color: white;
+    z-index: 2;
 }
 
 .login-button:hover, 
@@ -52,12 +53,18 @@ body {
     background-color: #3a3a3a;
 }
 
+.lead {
+    z-index: 1;
+}
+
 .lead h4 {
     color: gray;
+    z-index: 1;
 }
 
 .lead h1 {
     font-size: 100px;
+    z-index: 1;
 }
 
 .button-container {
@@ -66,4 +73,17 @@ body {
     justify-content: center;
     gap: 10px;
     width: 200px;
+}
+
+.logo {
+    position: absolute;
+    top: 53.5%;
+    left: 51%;
+    transform: translate(-50%, -50%);
+    opacity: 0.4;
+    z-index: 0;
+}
+
+.logo img {
+    width: 700px;
 }
