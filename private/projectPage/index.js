@@ -27,7 +27,7 @@ window.addEventListener("load", async (e) => {
 				let taskId = (e.currentTarget.parentElement.parentElement.parentElement.id).slice(5)
 
 				await finishTask(taskId)
-				socket.emit('redrawProjectPage', { projectId: projectId });
+				// await socket.emit('redrawProjectPage', { projectId: projectId });
 				// window.location.reload()
 
 			})
@@ -99,7 +99,7 @@ socket.on('you-have-a-new-message-this-project', async projectInfo => {
 	// let projectId = projectInfo.projectId;
 	// let projectName = projectInfo.projectName;
 	console.log(projectInfo)
-	
+
 	Swal.fire({
 		position: "top",
 		height: "500px",
@@ -108,7 +108,7 @@ socket.on('you-have-a-new-message-this-project', async projectInfo => {
 		showConfirmButton: false,
 		timerProgressBar: true,
 		timer: 2000
-	  });
+	});
 })
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
@@ -263,7 +263,7 @@ function createGanttChart(data) {
 	const projectData = chartData(data)
 	const taskRelation = chartRelation(data)
 	gantt.config.date_format = "%Y-%m-%d";
-	
+
 	gantt.init("gantt_here");
 
 	gantt.parse({
@@ -283,7 +283,7 @@ async function displayTaskList(data) {
 
 		if (task.userRelation[0]) {
 			imageElm = generateImageElement(
-				task.userRelation[0].profile_image, 
+				task.userRelation[0].profile_image,
 				task.userRelation[0].username
 			);
 		}
@@ -390,30 +390,40 @@ async function assignTask(taskId) {
 }
 
 async function finishTask(taskId) {
-	Swal.fire({
+	let flag = false;
+console.log("flag: ", flag);
+
+Swal.fire({
 		title: "Is the task finished?",
 		icon: "question",
 		showCancelButton: true,
 		confirmButtonColor: "#3085d6",
 		cancelButtonColor: "#d33",
 		confirmButtonText: "Yes, I am finished!"
-	}).then((result) => {
+	}).then(async (result) => {
 		if (result.isConfirmed) {
+			flag = true;
+			console.log("flag: ", flag);
+
 			Swal.fire({
 				title: "finished!!",
 				text: "Your task has been finished.",
 				icon: "success"
 			});
-			const res = fetch('/task/finish', {
+		} if (flag == true) {
+			const res = await fetch('/task/finish', {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({ id: taskId, projectId: projectId })
 			})
-			socket.emit('redrawProjectPage', { projectId: projectId });
+			if (res.ok) {
+                socket.emit('redrawProjectPage', { projectId: projectId });
+            }
 		}
 	});
+	// socket.emit('redrawProjectPage', { projectId: projectId });
 }
 
 const mainPage = document.querySelector(".main-page").addEventListener("click", async (e) => {
@@ -785,9 +795,9 @@ async function getOtherUserInfo(userId) {
 	let userContentElm = generateUserContent(username, email, fullName, location, organization);
 
 	let buttonElm = (myUserId == user_id) ?
-	`<button class="quit-group" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>`
-	:
-	`<button class="remove-member" onclick="removeMemberFromProject(${user_id}, '${username}')">Remove Group Member</button>`
+		`<button class="quit-group" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>`
+		:
+		`<button class="remove-member" onclick="removeMemberFromProject(${user_id}, '${username}')">Remove Group Member</button>`
 
 	document.querySelector(".darken-area").style.display = "block";
 	document.querySelector(".user-card").style.display = "flex";
@@ -860,7 +870,7 @@ async function displayMember(data) {
 	for (let user of users) {
 		let imageElm = generateImageElement(user.profile_image, user.username);
 
-		memberArea.innerHTML +=`
+		memberArea.innerHTML += `
 			<div class="team-member">
         	<div class="team-member-username white-word" id="user_${user}" onclick="getOtherUserInfo(${user.id})">${user.username}</div>
         	<div class="image-cropper" onclick="getOtherUserInfo(${user.id})">
@@ -930,30 +940,30 @@ function allDarkenAreaDisappear() {
 
 document.querySelector(".logout").addEventListener("click", (e) => {
 
-    e.preventDefault();
+	e.preventDefault();
 
-    Swal.fire({
-        title: "Do you want to logout",
-        showCancelButton: true,
-        confirmButtonText: "Yes",
+	Swal.fire({
+		title: "Do you want to logout",
+		showCancelButton: true,
+		confirmButtonText: "Yes",
 		confirmButtonColor: "#779b9a",
-        cancelButtonText: "No",
-        allowOutsideClick: false
-    }).then((result) => {
-        if (result.isConfirmed) {
-            runLogout();
-        }
-    });
+		cancelButtonText: "No",
+		allowOutsideClick: false
+	}).then((result) => {
+		if (result.isConfirmed) {
+			runLogout();
+		}
+	});
 })
 
 async function runLogout() {
-    let res = await fetch("/auth/logout", {
-        method: "POST"
-    })
+	let res = await fetch("/auth/logout", {
+		method: "POST"
+	})
 
-    if (res.ok) {
-        window.location.href = '/';
-    }
+	if (res.ok) {
+		window.location.href = '/';
+	}
 }
 
 //user self quit group
@@ -969,7 +979,7 @@ async function removeSelfFromProject(id) {
 			runRemoveMember(id);
 		}
 	});
-	
+
 }
 
 //remove member
@@ -1005,10 +1015,10 @@ async function runRemoveMember(id, username = "self") {
 
 	if (username === "self") {
 		titleMessage = `Removed yourself from this project!`
-		runPage = function() { window.location.href = `../main?id=${id}` }
+		runPage = function () { window.location.href = `../main?id=${id}` }
 	} else {
 		titleMessage = `Removed ${username} from this project!`;
-		runPage = function() { window.location.reload() }
+		runPage = function () { window.location.reload() }
 	}
 
 	if (res.ok) {

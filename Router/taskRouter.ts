@@ -63,7 +63,7 @@ async function createTaskRelation(req: Request, res: Response) {
     try {
         const { projectId, preTask, taskId } = req.body
         console.log(req.body);
-        
+
         if (parseInt(preTask) < parseInt(taskId)) {
             const rootTaskId = await getRootTask(projectId)
             await pgClient.query(`DELETE FROM task_relation where task_id = $1 and pre_req_task_id = $2`, [taskId, rootTaskId])
@@ -74,8 +74,8 @@ async function createTaskRelation(req: Request, res: Response) {
             await changeProjectDuration(projectId)
             await checkpreReqTask(preTask)
             res.json({ message: "update sucessfully" })
-        }else(
-            res.json({message:"invalid relation"})
+        } else (
+            res.json({ message: "invalid relation" })
         )
     } catch (error) {
         console.log(error)
@@ -138,16 +138,22 @@ async function updateTask(req: Request, res: Response) {
 }
 
 async function finishTask(req: Request, res: Response) {
-    const taskId = req.body.id
-    const projectId = req.body.projectId
-    await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`, [taskId])
-    await checkpreReqTask(taskId)
-    const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`, [projectId])).rows
+    try {
+        const taskId = req.body.id
+        const projectId = req.body.projectId
+        await pgClient.query(`update tasks set actual_finish_date = NOW() where id = $1`, [taskId])
+        await checkpreReqTask(taskId)
+        const checkAllTask = (await pgClient.query(`select * from tasks where project_id = $1 and actual_finish_date is null`, [projectId])).rows
 
-    if (checkAllTask.length == 0) {
-        await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`, [projectId])
+        if (checkAllTask.length == 0) {
+            await pgClient.query(`update projects set actual_finish_date = NOW() where id = $1`, [projectId]);
+        }
+
+        res.status(200).json({ message: "finish task successfully" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal Server Error" })
     }
-
 }
 
 
