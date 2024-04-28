@@ -1,5 +1,6 @@
 import { getFinishDate } from "../../utils/getFinishDate.js";
 import { generateImageElement } from "../../utils/generateImageElement.js";
+import { generateUserContent } from "../../utils/generateUserContent.js";
 
 const socket = io.connect();
 
@@ -745,9 +746,13 @@ async function getOtherUserInfoFromChat(userId) {
 	let user_id = response.data.id;
 	let username = response.data.username;
 	let email = response.data.email;
+	let fullName = response.data.full_name;
+	let location = response.data.location;
+	let organization = response.data.organization;
 	let profileImage = response.data.profile_image
 
 	let imageElm = generateImageElement(profileImage, username);
+	let userContentElm = generateUserContent(username, email, fullName, location, organization);
 
 	let buttonElm = (myUserId == user_id) ?
 		`<button class="quit-group" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>`
@@ -760,8 +765,7 @@ async function getOtherUserInfoFromChat(userId) {
 
 	document.querySelector(".user-card").innerHTML = `
     	<div class="image-cropper">${imageElm}</div>
-    	<div class="username">${username}</div>
-    	<div class="e-mail">${email}</div>
+		${userContentElm}
 		${buttonElm}`
 }
 
@@ -772,9 +776,13 @@ async function getOtherUserInfo(userId) {
 	let user_id = response.data.id;
 	let username = response.data.username;
 	let email = response.data.email;
+	let fullName = response.data.full_name;
+	let location = response.data.location;
+	let organization = response.data.organization;
 	let profileImage = response.data.profile_image
 
 	let imageElm = generateImageElement(profileImage, username);
+	let userContentElm = generateUserContent(username, email, fullName, location, organization);
 
 	let buttonElm = (myUserId == user_id) ?
 	`<button class="quit-group" onclick="removeSelfFromProject(${myUserId})">Quit Group</button>`
@@ -786,8 +794,7 @@ async function getOtherUserInfo(userId) {
 
 	document.querySelector(".user-card").innerHTML = `
     	<div class="image-cropper">${imageElm}</div>
-    	<div class="username">${username}</div>
-    	<div class="e-mail">${email}</div>
+		${userContentElm}
 		${buttonElm}`
 }
 

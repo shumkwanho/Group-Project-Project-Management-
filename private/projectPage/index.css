@@ -770,8 +770,11 @@ h4 {
     font-weight: 600;
 }
 
-.user-card .e-mail {
-    margin-bottom: 50px;
+.user-card .e-mail,
+.user-card .full-name,
+.user-card .location,
+.user-card .organization {
+    margin-bottom: 5px;
     /* font-size: 25px; */
     /* font-weight: 600; */
 }
@@ -1037,4 +1040,8 @@ h4 {
 .remove-member:hover,
 .add-new-member:hover {
     background-color: #3a3a3a;
+}
+
+.email-link {
+    color: black;
 }
