@@ -249,14 +249,14 @@ async function getAllUserInfo(userId) {
             ${imageElm}
             </div>
             <div class="username">${userInfo.username}</div>
-            <div class="bold-text">Name:</div>
-                <div>${userInfo.first_name} ${userInfo.last_name}</div>
-            <div class="bold-text">Location:</div>
-                <div>${userInfo.location}</div>
-            <div class="bold-text">Organization:</div>
-                <div>${userInfo.organization}</div>
-        </div>
-        `
+            <div class="user-content-info">
+            <div class="bold-text text-center">${userInfo.first_name} ${userInfo.last_name}</div>
+            <div class="text-center"><i class="bi bi-envelope-at"></i> ${userInfo.email}</div>
+            <div class="text-center"><i class="bi bi-geo-alt"></i> ${userInfo.location}</div>
+            <div class="text-center"><i class="bi bi-building"></i> ${userInfo.organization}</div>
+            </div>
+        </div>`
+
         newUsernameInput.setAttribute("value", userInfo.username);
         newFirstName.setAttribute('value', userInfo.first_name);
         newLastName.setAttribute('value', userInfo.last_name);
@@ -486,6 +486,24 @@ updatePassword.addEventListener("submit", async (e) => {
         }
     }
 })
+
+document.querySelector("#toggle-password").addEventListener("click", (e) => {
+    showPassword();
+})
+
+//show password toggle
+function showPassword () {
+    let password1 = document.querySelector("#password1");
+    let password2 = document.querySelector("#password2");
+
+    if (password1.type === 'password' && password2.type === 'password') {
+        password1.type = 'text';
+        password2.type = 'text';
+    } else if (password1.type === 'text' && password2.type === 'text') {
+        password1.type = 'password';
+        password2.type = 'password';
+    };
+}
 
 //upload profile image
 //conditions to be handled

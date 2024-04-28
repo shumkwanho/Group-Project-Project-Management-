@@ -185,10 +185,31 @@ function displayPasswordInput(email, username) {
     <input type="password" class="form-control rounded-3" id="password2" placeholder="Re-enter Password">
     <label for="password2">Re-enter Password</label>
     </div>
+
+    <input type="checkbox" id="toggle-password">
+    <label for="toggle-password">Show Password</label>
     
     <button id="create-new-account-button" type="submit">Create New Account</button>`;
 
     userRegistration.insertAdjacentHTML("beforeend", passwordInput);
+
+    //show password toggle
+    document.querySelector("#toggle-password").addEventListener("click", (e) => {
+        showPassword();
+    })
+}
+
+function showPassword() {
+    let password1 = document.querySelector("#password1");
+    let password2 = document.querySelector("#password2");
+
+    if (password1.type === 'password' && password2.type === 'password') {
+        password1.type = 'text';
+        password2.type = 'text';
+    } else if (password1.type === 'text' && password2.type === 'text') {
+        password1.type = 'password';
+        password2.type = 'password';
+    };
 }
 
 async function runUserRegistration(email, username, form) {
