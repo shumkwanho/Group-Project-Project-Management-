@@ -385,7 +385,8 @@ body {
 #submit-project-image,
 #update-username-button,
 #update-profile-button,
-#update-password-button {
+#update-password-button,
+#first-time-config-button {
     background-color: #91b6b5;
     color: #ffffff;
     /* background-color: #b8d3d2; */
@@ -404,7 +405,8 @@ body {
 #update-username-button:hover,
 #update-profile-button:hover,
 #update-password-button:hover,
-.project-creation-next:hover {
+.project-creation-next:hover,
+#first-time-config-button:hover {
     background-color: #3a3a3a;
 }
 

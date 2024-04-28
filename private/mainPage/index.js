@@ -72,13 +72,23 @@ const userId = searchParams.get("id");
 // console.log("current main page user id: ", userId);
 
 const logoutButton = document.querySelector("#logout-button");
-const updateUsername = document.querySelector("#update-username")
+const firstTimeConfig = document.querySelector("#first-time-config");
+const updateUsername = document.querySelector("#update-username");
 const editProfile = document.querySelector("#edit-profile");
 const updatePassword = document.querySelector("#update-password");
 const uploadProfileImage = document.querySelector("#upload-profile-image");
 const uploadProjectImage = document.querySelector("#upload-project-image");
 
+//for first config modal
+
+const configModal = new bootstrap.Modal(document.getElementById('configModal'), {});
+const configFirstName = document.querySelector("#config-first-name");
+const configLastName = document.querySelector('#config-last-name');
+const configLocation = document.querySelector('#config-location');
+const configOrganization = document.querySelector('#config-organization');
+
 //for edit profile modal
+const updateInfoModal = new bootstrap.Modal(document.getElementById('updateInfoModal'), {});
 const newUsernameInput = document.querySelector("#new-username");
 const newFirstName = document.querySelector("#new-first-name");
 const newLastName = document.querySelector('#new-last-name');
@@ -90,8 +100,11 @@ let projectIdForImage;
 window["handleProjectClick"] = handleProjectClick;
 
 getAllUserInfo(userId)
+
 async function getAllUserInfo(userId) {
+
     await socket.emit('joinUserRoom', userId);
+
     let res = await fetch(`/mainpage/?userId=${userId}`)
     let response = await res.json();
 
@@ -118,12 +131,12 @@ async function getAllUserInfo(userId) {
 
     if (res.ok) {
 
+        if (!userInfo.last_login) {
+            await displayFirstLoginConfig(userInfo.username)
+        }
+
         notification.innerHTML = `
-            ${userInfo.last_login ?
-                `<div class="top-bar-word">Hello ${userInfo.username} !&nbsp;&nbsp; ;] &nbsp;&nbsp;&nbsp;&nbsp; Wish you a nice day!</div>`
-                :
-                `<div class="top-bar-word">Hello ${userInfo.username}, welcome to join us!&nbsp;&nbsp; ;]</div>`
-            }`
+            <div class="top-bar-word">Hello ${userInfo.username} !&nbsp;&nbsp; ;] &nbsp;&nbsp;&nbsp;&nbsp; Wish you a nice day!</div>`;
 
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
@@ -284,6 +297,7 @@ async function getAllUserInfo(userId) {
         </div>
         `
     }
+
 }
 
 //only fire button when click (not fire the section onclick)
@@ -325,6 +339,43 @@ async function runLogout() {
         window.location.href = '/';
     }
 }
+
+//for newly registered user
+async function displayFirstLoginConfig(username) {
+
+    //to be done for google users
+    //remove username disable
+    //fill in first name, last name
+    //add password field
+
+    document.getElementById("config-username").setAttribute('value', username);
+    
+    configModal.show();
+}
+
+firstTimeConfig.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const firstName = configFirstName.value;
+    const lastName = configLastName.value;
+    const location = configLocation.value;
+    const organization = configOrganization.value;
+
+    await runProfileUpdate(firstName, lastName, location, organization, firstTimeConfig);
+    
+    let res = await fetch ('/auth/update-log-time', {
+        method: "PUT"
+    })
+
+    let result = await res.json();
+
+    if (res.ok) {
+        getAllUserInfo(userId)
+        configModal.hide();
+    } else {
+        console.log(result)
+    }
+})
 
 //update username submit button
 updateUsername.addEventListener("submit", async (e) => {
@@ -391,15 +442,24 @@ editProfile.addEventListener("submit", async (e) => {
     const location = newLocation.value;
     const organization = newOrganization.value;
 
+    await runProfileUpdate(firstName, lastName, location, organization, editProfile);
+
+    getAllUserInfo(userId)
+    updateInfoModal.hide();
+})
+
+//same for edit profile and first time config
+async function runProfileUpdate(firstName, lastName, location, organization, formSelector) {
+
     if (isEmptyOrSpace(firstName) || isEmptyOrSpace(lastName) || isEmptyOrSpace(location) || isEmptyOrSpace(organization)) {
         Swal.fire({
             title: 'Inputs cannot be blank or only space',
             showConfirmButton: false
         });
-        //reset modal input??
+
+        formSelector.reset();
 
     } else {
-
         let res = await fetch("/auth/user-profile-update", {
             method: "PUT",
             headers: {
@@ -411,14 +471,14 @@ editProfile.addEventListener("submit", async (e) => {
         let result = await res.json();
 
         if (res.ok) {
+
             Swal.fire({
                 title: 'User profile update successful!',
                 confirmButtonColor: "#779b9a",
                 confirmButtonText: "Continue"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.reload();
-                    getAllUserInfo(userId)
+                    return;
                 }
             });
 
@@ -426,7 +486,7 @@ editProfile.addEventListener("submit", async (e) => {
             console.log(result.error);
         }
     }
-})
+}
 
 //update password button
 updatePassword.addEventListener("submit", async (e) => {

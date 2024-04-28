@@ -139,6 +139,103 @@
         </div>
     </div>
 
+        <!-- first login config modal -->
+        <div class="modal fade" id="configModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="configModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 shadow">
+                    <div class="modal-header p-5 pb-4 border-bottom-0">
+                        <h1 class="fw-bold mb-0 fs-2" id="configModalLabel">Welcome New User</h1>
+                    </div>
+        
+                    <div class="modal-body p-5 pt-0">
+                        <form id="first-time-config">
+        
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-3" id="config-username" placeholder="username" required
+                                    disabled>
+                                <label for="username">Username</label>
+                            </div>
+        
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-3" id="config-first-name" placeholder="first-name"
+                                    required>
+                                <label for="first-name">First Name</label>
+                            </div>
+        
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-3" id="config-last-name" placeholder="last-name"
+                                    required>
+                                <label for="last-name">Last Name</label>
+                            </div>
+        
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="config-location">
+                                    <option value="Amsterdam">Amsterdam</option>
+                                    <option value="Athens">Athens</option>
+                                    <option value="Barcelona">Barcelona</option>
+                                    <option value="Beijing">Beijing</option>
+                                    <option value="Berlin">Berlin</option>
+                                    <option value="Buenos Aires">Buenos Aires</option>
+                                    <option value="Bangkok">Bangkok</option>
+                                    <option value="Chicago">Chicago</option>
+                                    <option value="Cairo">Cairo</option>
+                                    <option value="Copenhagen">Copenhagen</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Dubai">Dubai</option>
+                                    <option value="Dublin">Dublin</option>
+                                    <option value="Frankfurt">Frankfurt</option>
+                                    <option value="Geneva">Geneva</option>
+                                    <option value="Helsinki">Helsinki</option>
+                                    <option value="Hong Kong" selected>Hong Kong</option>
+                                    <option value="Istanbul">Istanbul</option>
+                                    <option value="Jakarta">Jakarta</option>
+                                    <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                    <option value="Lima">Lima</option>
+                                    <option value="Lisbon">Lisbon</option>
+                                    <option value="London">London</option>
+                                    <option value="Los Angeles">Los Angeles</option>
+                                    <option value="Madrid">Madrid</option>
+                                    <option value="Mexico City">Mexico City</option>
+                                    <option value="Milan">Milan</option>
+                                    <option value="Moscow">Moscow</option>
+                                    <option value="Mumbai">Mumbai</option>
+                                    <option value="Munich">Munich</option>
+                                    <option value="New York City">New York City</option>
+                                    <option value="Oslo">Oslo</option>
+                                    <option value="Paris">Paris</option>
+                                    <option value="Prague">Prague</option>
+                                    <option value="Rio de Janeiro">Rio de Janeiro</option>
+                                    <option value="Rome">Rome</option>
+                                    <option value="Seoul">Seoul</option>
+                                    <option value="Shanghai">Shanghai</option>
+                                    <option value="Singapore">Singapore</option>
+                                    <option value="Stockholm">Stockholm</option>
+                                    <option value="Sydney">Sydney</option>
+                                    <option value="Tokyo">Tokyo</option>
+                                    <option value="Toronto">Toronto</option>
+                                    <option value="Vancouver">Vancouver</option>
+                                    <option value="Vienna">Vienna</option>
+                                    <option value="Warsaw">Warsaw</option>
+                                    <option value="Zurich">Zurich</option>
+                                </select>
+                                <label for="location">Location</label>
+                            </div>
+        
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-3" id="config-organization" placeholder="organization"
+                                    required>
+                                <label for="organization">Organization</label>
+                            </div>
+        
+                            <button id="first-time-config-button" type="submit">Submit Information</button>
+        
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- update info button modal -->
     <div class="modal fade" id="updateInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="updateInfoLabel" aria-hidden="true">

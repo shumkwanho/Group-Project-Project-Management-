@@ -20,6 +20,7 @@ authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 authRouter.put("/user-profile-update", userProfileUpdate);
+authRouter.put("/update-log-time", isLoggedIn, updateLogTime);
 authRouter.get("/search-user", isLoggedIn, searchUser);
 
 async function userRegistration(req: Request, res: Response) {
@@ -660,7 +661,7 @@ async function userProfileUpdate (req: Request, res: Response) {
             });
         } else {
             
-            const { firstName, lastName, location, organization} = req.body;
+            const { firstName, lastName, location, organization } = req.body;
 
             let id = req.session.userId;
 
@@ -680,6 +681,34 @@ async function userProfileUpdate (req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
     
+}
+
+//for new registered users to update log time to quit config
+async function updateLogTime (req: Request, res: Response) {
+    try {
+        if (!req.session.username) {
+
+            res.status(400).json({
+                message: "update username failed",
+                error: "no active login session"
+            });
+        } else {
+            let id = req.session.userId;
+
+            let updateLogTimeQuery = (await pgClient.query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                [id]
+            )).rows[0];
+
+            res.json({
+                message: "update last login time successful",
+                data: updateLogTimeQuery
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
 }
 
 function isEmpty(obj: object): boolean {
