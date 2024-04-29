@@ -33,6 +33,8 @@ io.on('connection', function (socket: any) {
   // socket.request.session.save();
   io.emit('newConnection', "There is a new connection");
 
+  // ==================== Client Send New Message In Chatroom ====================
+
   socket.on('newMessage', async (data: any) => {
     var justSentMessage = await getJustSentMessage(data.projectId);
     var userId = await data.userId;
@@ -47,6 +49,8 @@ io.on('connection', function (socket: any) {
     console.log("last message: ", justSentMessage);
   })
 
+  // ==================== Client Edit Message From Chatroom ====================
+
   socket.on('editMessage', async (data: any) => {
     var lastEditMessageInfo = await getLastEditMessage(data.messageId);
     var userId = await data.userId;
@@ -58,6 +62,8 @@ io.on('connection', function (socket: any) {
     console.log("project id: ", projectId);
     console.log("last message info: ", lastEditMessageInfo);
   })
+
+  // ==================== Client Join Rooms ====================
 
   socket.on('joinUserRoom', (userId: any) => {
     socket.join(`userRoom-${userId}`);
@@ -79,6 +85,8 @@ io.on('connection', function (socket: any) {
     io.to(`chatroom-${projectId}`).emit('chatroom joined');
   })
 
+  // ==================== Add Project Member ====================
+
   socket.on('addMember', async (input: any) => {
     // var res = await fetch(`/projectRou/?id=${input.projectId}`)
     var projectId = input.projectId
@@ -88,6 +96,8 @@ io.on('connection', function (socket: any) {
     io.to(`projectRoom-${projectId}`).emit('receive-addMember', { data: "A new user added in project" });
     io.to(`userRoom-${userId}`).emit('i-am-in', { projectName: projectInfo.name });
   })
+
+  // ==================== Redraw Porject Task Status ====================
 
   socket.on('redrawProjectPage', async (input: any) => {
     var projectId = input.projectId
@@ -139,7 +149,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/projectRou", isLoggedIn, projectRouter)
 app.use("/task", isLoggedIn, taskRouter)
 app.use("/auth", authRouter)
-app.use("/chatroom", chatRoomRouter)
+app.use("/chatroom", isLoggedIn, chatRoomRouter)
 app.use("/mainpage", isLoggedIn, mainPageDisplayRouter)
 app.use("/testLogin", testLoginRouter)
 
