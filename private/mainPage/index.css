@@ -130,7 +130,7 @@ body {
 .user-content .username {
     text-align: center;
     margin: 15px 0;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
 }
 
@@ -141,6 +141,11 @@ body {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
+}
+
+.user-content-info div {
+    font-size: 15px;
+    margin-bottom: 5px;
 }
 
 .image-cropper>img {
@@ -381,7 +386,8 @@ body {
 #submit-project-image,
 #update-username-button,
 #update-profile-button,
-#update-password-button {
+#update-password-button,
+#first-time-config-button {
     background-color: #91b6b5;
     color: #ffffff;
     /* background-color: #b8d3d2; */
@@ -400,7 +406,8 @@ body {
 #update-username-button:hover,
 #update-profile-button:hover,
 #update-password-button:hover,
-.project-creation-next:hover {
+.project-creation-next:hover,
+#first-time-config-button:hover {
     background-color: #3a3a3a;
 }
 
@@ -421,4 +428,8 @@ body {
     height: 40px;
     border-radius: 5px;
     margin-top: 5px;
+}
+
+.project-creation-body {
+    height: 330px;
 }

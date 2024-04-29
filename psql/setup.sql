@@ -58,12 +58,11 @@ CREATE TABLE "users"(
     "email" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "profile_image" VARCHAR(255) NULL,
-    "first_name" VARCHAR(255) NOT NULL DEFAULT 'John',
-    "last_name" VARCHAR(255) NOT NULL DEFAULT 'Doe',
+    "first_name" VARCHAR(255) NOT NULL DEFAULT 'Small',
+    "last_name" VARCHAR(255) NOT NULL DEFAULT 'Potato',
     "organization" VARCHAR(255) DEFAULT 'Not Specified',
     "location" VARCHAR(255) DEFAULT 'Hong Kong',
-    "last_login" TIMESTAMP(0) WITH
-        TIME zone NOT NULL DEFAULT 'NOW()',
+    "last_login" TIMESTAMP(0) WITH TIME zone NULL,
     "registration_date" DATE NOT NULL DEFAULT 'NOW()'
 );
 ALTER TABLE

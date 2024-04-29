@@ -15,6 +15,7 @@ import { getLastEditMessage } from "./Router/chatRoomRouter";
 import { error } from "console";
 import { mainPageDisplayRouter } from "./Router/mainPageDisplayRouter";
 import { getProjectFromId } from "./Router/chatRoomRouter";
+import path from "path";
 
 const PORT = 8080
 const app = express()
@@ -158,9 +159,13 @@ app.use("/main", isLoggedIn, express.static("private/mainPage"))
 
 app.use(express.static("uploads"))
 app.use(express.static("public"))
+
 app.use("/utils", express.static("utils"))
-app.use("/init-project", express.static("private"))
-// isLoggedIn, 
+app.use("/init-project", express.static("private")) 
+
+app.use((req, res) => {
+  res.sendFile(path.resolve("./public/404.html"));
+});
 
 server.listen(PORT, () => {
   console.log(`listening to http://localhost:${PORT}`)

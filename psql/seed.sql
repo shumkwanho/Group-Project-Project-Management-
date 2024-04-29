@@ -9,7 +9,6 @@ INSERT INTO users (
     last_name,
     organization,
     location,
-    last_login,
     registration_date
 )
 VALUES (
@@ -21,7 +20,6 @@ VALUES (
     'Doe',
     'My Company',
     'Hong Kong',
-    CURRENT_TIMESTAMP,
     CURRENT_DATE
 );
 
@@ -34,7 +32,6 @@ INSERT INTO users (
     last_name,
     organization,
     location,
-    last_login,
     registration_date
 )
 VALUES (
@@ -47,7 +44,6 @@ VALUES (
     'Yuen',
     'Tecky',
     'Los Angeles',
-    CURRENT_TIMESTAMP,
     CURRENT_DATE
 );
 

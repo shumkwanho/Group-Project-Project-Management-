@@ -20,6 +20,7 @@ authRouter.put("/password-update", isLoggedIn, updatePassword);
 authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 authRouter.put("/user-profile-update", userProfileUpdate);
+authRouter.put("/update-log-time", isLoggedIn, updateLogTime);
 authRouter.get("/search-user", isLoggedIn, searchUser);
 
 async function userRegistration(req: Request, res: Response) {
@@ -27,12 +28,6 @@ async function userRegistration(req: Request, res: Response) {
         //not allow profile image upload on initial registration
 
         const { username, email, password } = req.body;
-
-        //handle if username or email already exist in DB
-        let checkUniqueQuery = (await pgClient.query(
-            "SELECT id FROM users WHERE username = $1 OR email = $2",
-            [username, email]
-        )).rows[0];
 
         let isUsernameExist = await checkUsername(username);
         let isEmailExist = await checkEmail(email);
@@ -47,7 +42,7 @@ async function userRegistration(req: Request, res: Response) {
             let hashedPassword = await hashPassword(password);
 
             let userQueryResult = (await pgClient.query(
-                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username",
+                "INSERT INTO users (username, email, password, registration_date) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, username",
                 [username, email, hashedPassword]
             )).rows[0];
 
@@ -93,7 +88,7 @@ async function checkUserExist(req: Request, res: Response) {
 
 async function usernameLogin(req: Request, res: Response) {
     try {
-        const { username, password } = req.body;
+        const { username, password, isFirstLogin } = req.body;
 
         const userQuery = (
             await pgClient.query(
@@ -133,14 +128,34 @@ async function usernameLogin(req: Request, res: Response) {
 
                 req.session.save();
 
-                res.json({
-                    message: "login successful",
-                    data: {
-                        id: userQuery.id,
-                        username: userQuery.username
-                    }
-                });
-            };
+                if (isFirstLogin) {
+
+                    res.json({
+                        message: "first login successful",
+                        data: {
+                            id: userQuery.id,
+                            username: userQuery.username
+                        }
+                    });
+
+                } else {
+                    //log last login_time
+                    const userLoginQuery = (
+                        await pgClient.query(
+                            "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                            [userQuery.id]
+                        )).rows[0];
+
+                    res.json({
+                        message: "login successful",
+                        data: {
+                            id: userQuery.id,
+                            username: userQuery.username,
+                            last_login: userLoginQuery.last_login
+                        }
+                    });
+                };
+            }
         }
     } catch (error) {
         console.log(error);
@@ -192,11 +207,19 @@ async function emailLogin(req: Request, res: Response) {
 
                 req.session.save();
 
+                //log last login_time
+                const userLoginQuery = (
+                    await pgClient.query(
+                        "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                        [userQuery.id]
+                    )).rows[0];
+
                 res.json({
                     message: "login successful",
                     data: {
                         id: userQuery.id,
-                        username: userQuery.username
+                        username: userQuery.username,
+                        last_login: userLoginQuery.last_login
                     }
                 });
             };
@@ -219,8 +242,6 @@ async function googleLogin(req: Request, res: Response) {
         });
 
         const result: any = await fetchRes.json();
-
-        console.log(result);
         const email = result.email;
 
         //check if google email already exist in DB
@@ -229,12 +250,16 @@ async function googleLogin(req: Request, res: Response) {
             [email]
         )).rows[0];
 
-
         if (checkUniqueQuery) {
-
             //if google email exist in DB, login with google email
             req.session.userId = checkUniqueQuery.id;
             req.session.username = checkUniqueQuery.username;
+
+            //log last login_time
+            await pgClient.query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                [checkUniqueQuery.id]
+            );
 
         } else {
 
@@ -249,27 +274,30 @@ async function googleLogin(req: Request, res: Response) {
             let [username, domain] = gmail.split("@");
 
             while (await checkUsername(username)) {
-                username += `_${generateRandomNumChar(1)}`;
+                username += `_${generateRandomNumChar(2)}`;
             }
+
+            //get full name from Google
+            let firstName = result.given_name;
+            let lastName = result.family_name;
+
+            //set unique marker to identify as new google user in frontend
+            username += '@';
 
             //create new user account
             //username: gmail domain + random
             //password: random 10 chars
             let userQueryResult = (await pgClient.query(
-                "INSERT INTO users (username, email, password, last_login, registration_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_DATE) RETURNING id, username;",
-                [username, email, hashedPassword]
+                "INSERT INTO users (username, email, first_name, last_name, password, registration_date) VALUES ($1, $2, $3, $4, $5, CURRENT_DATE) RETURNING id, username;",
+                [username, email, firstName, lastName, hashedPassword]
             )).rows[0];
 
             //login with new user info
-            (userQueryResult.username);
-
             req.session.userId = userQueryResult.id;
             req.session.username = userQueryResult.username;
 
         }
-
         req.session.save();
-
         res.redirect(`/main?id=${req.session.userId}`)
 
     } catch (error) {
@@ -631,7 +659,7 @@ async function userProfileUpdate (req: Request, res: Response) {
             });
         } else {
             
-            const { firstName, lastName, location, organization} = req.body;
+            const { firstName, lastName, location, organization } = req.body;
 
             let id = req.session.userId;
 
@@ -651,6 +679,34 @@ async function userProfileUpdate (req: Request, res: Response) {
         res.status(500).json({ message: "internal sever error" });
     }
     
+}
+
+//for new registered users to update log time to quit config
+async function updateLogTime (req: Request, res: Response) {
+    try {
+        if (!req.session.username) {
+
+            res.status(400).json({
+                message: "update username failed",
+                error: "no active login session"
+            });
+        } else {
+            let id = req.session.userId;
+
+            let updateLogTimeQuery = (await pgClient.query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                [id]
+            )).rows[0];
+
+            res.json({
+                message: "update last login time successful",
+                data: updateLogTimeQuery
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
 }
 
 function isEmpty(obj: object): boolean {
