@@ -391,7 +391,6 @@ async function assignTask(taskId) {
 
 async function finishTask(taskId) {
 	let flag = false;
-console.log("flag: ", flag);
 
 Swal.fire({
 		title: "Is the task finished?",
@@ -403,7 +402,6 @@ Swal.fire({
 	}).then(async (result) => {
 		if (result.isConfirmed) {
 			flag = true;
-			console.log("flag: ", flag);
 
 			Swal.fire({
 				title: "finished!!",
@@ -444,13 +442,14 @@ document.querySelector(".open-chatroom").addEventListener("click", async (e) => 
 	await getAllMessages(projectId);
 })
 
-//===================== Get All Members And Messages Below ====================
 
 window["editMessage"] = editMessage;
 window["confirmEdit"] = confirmEdit;
 window["getOtherUserInfo"] = getOtherUserInfo;
 window["sendMessage"] = sendMessage;
 window["getOtherUserInfoFromChat"] = getOtherUserInfoFromChat;
+
+//===================== Get All Members And Messages Below ====================
 
 async function getAllMessages(projectId) {
 
