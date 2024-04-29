@@ -25,7 +25,7 @@
                 <h4>seamless collaborations...</h4>
                 <h1>and... then?</h1>
             </div>
-    
+
             <div class="button-container">
                 <button type="button" class="login-button" data-bs-toggle="modal"
                     data-bs-target="#signInModal">Login</button>
@@ -50,15 +50,15 @@
                     <form id="user-login">
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="username_email" value="user">
+                            <input type="text" class="form-control rounded-3" id="username_email">
                             <label for="username_email">Username / Email</label>
                         </div>
-
+                        <!-- value="user" -->
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-3 " id="password" value="!1Qwertyuiop">
+                            <input type="password" class="form-control rounded-3 " id="password">
                             <label for="password">Password</label>
                         </div>
-
+                        <!-- value="!1Qwertyuiop" -->
                         <button type="submit" id="login-submit-button">Login</button>
                     </form>
                     <button type="button" onclick='window.location.href="/connect/google"' id="google-login">
@@ -96,8 +96,8 @@
                         <button type="submit" id="create-new-account-button">Create New Account</button>
                     </form>
                     <button type="button" onclick='window.location.href="/connect/google"' id="google-login">
-                    <i class="bi bi-google">&nbsp Sign-up with Google</i>
-                </button>
+                        <i class="bi bi-google">&nbsp Sign-up with Google</i>
+                    </button>
                 </div>
             </div>
         </div>
