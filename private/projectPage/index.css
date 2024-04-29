@@ -374,8 +374,8 @@ h4 {
 
 .member>.username {
     font-size: 18px;
-    font-weight: 600px;
-    max-width: 65%;
+    font-weight: 600;
+    max-width: calc(100% - 50px);
     overflow: auto;
     cursor: pointer;
 }
@@ -433,7 +433,7 @@ h4 {
 
     .member>.username {
         font-size: 14px;
-        max-width: 115px;
+        max-width: calc(100% - 40px) !important;
         overflow: auto;
     }
 
@@ -943,7 +943,7 @@ h4 {
 
 .team-member-username {
     cursor: pointer;
-    max-width: 120px;
+    max-width: calc(100% - 50px);
     overflow: auto;
 
     -webkit-user-select: none;
