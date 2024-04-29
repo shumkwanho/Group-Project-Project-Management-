@@ -15,6 +15,7 @@ body {
 
 .text-center {
     text-align: center;
+    overflow-x: hidden;
 }
 
 .row {
@@ -95,7 +96,6 @@ body {
     padding: 15px;
     overflow: hidden;
     overflow-y: scroll
-
 }
 
 .personal-area::-webkit-scrollbar {
@@ -276,6 +276,10 @@ body {
 
 .project:hover {
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.15);
+
+    .edit-project-image {
+        display: block;
+    }
 }
 
 .project-name {
@@ -294,6 +298,7 @@ body {
 }
 
 .edit-project-image {
+    display: none;
     position: absolute;
     top: 20px;
     right: 20px;
@@ -378,7 +383,7 @@ body {
     padding-left: 15px;
 }
 
-.main-page > img {
+.main-page>img {
     height: 100%;
 }
 
@@ -413,7 +418,7 @@ body {
     background-color: #3a3a3a;
 }
 
-.project-creation-next{
+.project-creation-next {
     background-color: #91b6b5;
     color: #ffffff;
     /* background-color: #b8d3d2; */

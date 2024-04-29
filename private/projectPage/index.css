@@ -15,7 +15,7 @@ body {
     padding-left: 15px;
 }
 
-.main-page > img {
+.main-page>img {
     height: 100%;
 }
 
@@ -375,6 +375,8 @@ h4 {
 .member>.username {
     font-size: 18px;
     font-weight: 600px;
+    max-width: 65%;
+    overflow: auto;
     cursor: pointer;
 }
 
@@ -431,6 +433,8 @@ h4 {
 
     .member>.username {
         font-size: 14px;
+        max-width: 115px;
+        overflow: auto;
     }
 
     .member>.image-cropper {
@@ -483,6 +487,7 @@ h4 {
 
 }
 
+.member>.username::-webkit-scrollbar,
 #message-box::-webkit-scrollbar {
     display: none;
 }
@@ -938,10 +943,16 @@ h4 {
 
 .team-member-username {
     cursor: pointer;
+    max-width: 120px;
+    overflow: auto;
 
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.team-member-username::-webkit-scrollbar {
+    display: none;
 }
 
 .member-list-area {
@@ -952,7 +963,7 @@ h4 {
     display: none;
 }
 
-.team-member-list > .member-list-area > .list-title {
+.team-member-list>.member-list-area>.list-title {
     display: flex;
     justify-content: center;
     font-size: 25px;
@@ -1019,9 +1030,9 @@ h4 {
 .quit-group,
 .remove-member,
 .add-new-member {
-    
+
     color: rgb(250, 250, 250);
-    background-color: #91b6b5; 
+    background-color: #91b6b5;
     /* background-color: #b8d3d2;  */
     border: none !important;
     /* border: 1px solid #3a3a3a; */
