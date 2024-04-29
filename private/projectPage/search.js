@@ -85,7 +85,7 @@ async function runAddUser(projectId, userId, username) {
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.reload();
-                // socket.emit('addMember', { projectId: projectId, userId: userId });
+                socket.emit('addMember', { projectId: projectId, userId: userId });
             }
         });
 

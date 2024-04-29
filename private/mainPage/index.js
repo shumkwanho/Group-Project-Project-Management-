@@ -235,7 +235,7 @@ async function getAllUserInfo(userId) {
         if (finishedProjects) {
             for await (let eachFinishedProject of finishedProjects) {
                 completedProjectArea.innerHTML += `
-                    <div class="completed-project" onclick="location='http://localhost:8080/project/?id=${eachFinishedProject.project_id}'">
+                    <div class="completed-project" onclick="location='/project/?id=${eachFinishedProject.project_id}'">
                     <div class="completed-project-name white-word">${eachFinishedProject.name}</div>
                     <div class="completed-project-date white-word">${eachFinishedProject.actual_finish_date}</div>
                     </div>

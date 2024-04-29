@@ -332,7 +332,7 @@ INSERT INTO users (
     password
 )
 VALUES (
-    'James not gay',
+    'James_lovely',
     'jnjeiiids@gmail.com',
     '$2a$10$eNN3ZN7quzTH8EVswwi7N.YoavDWdwpWKKvNSvXuKd0jKeSe7FtiK'
     --hashed password for '!1Qwertyuiop'
@@ -345,7 +345,7 @@ INSERT INTO users (
     profile_image
 )
 VALUES (
-    'James really not gay',
+    'James_Cool',
     'jajajuug@gmail.com',
     '$2a$10$eNN3ZN7quzTH8EVswwi7N.YoavDWdwpWKKvNSvXuKd0jKeSe7FtiK',
     --hashed password for '!1Qwertyuiop'
@@ -442,7 +442,7 @@ INSERT INTO users (
 )
 VALUES (
     '關羽',
-    'chocho@gmail.com',
+    'kwanyu@gmail.com',
     '$2a$10$eNN3ZN7quzTH8EVswwi7N.YoavDWdwpWKKvNSvXuKd0jKeSe7FtiK',
     --hashed password for '!1Qwertyuiop'
     '08.jpg'
@@ -557,7 +557,7 @@ INSERT INTO users (
     profile_image
 )
 VALUES (
-    'I_am_handsome',
+    'Tim_Chalamet',
     'Timothee',
     'Chalamet',
     'TimCha@gmail.com',

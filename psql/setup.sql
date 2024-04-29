@@ -38,7 +38,7 @@ CREATE TABLE "messages"(
         TIME zone NOT NULL DEFAULT 'NOW()',
         "edited_at" TIMESTAMP(0)
     WITH
-        TIME zone NOT NULL DEFAULT 'NOW()'
+        TIME zone NULL
 );
 ALTER TABLE
     "messages" ADD PRIMARY KEY("id");

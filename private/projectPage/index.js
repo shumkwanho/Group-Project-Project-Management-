@@ -485,7 +485,7 @@ async function getAllMessages(projectId) {
 		// console.log(allMessages);
 
 		for (let eachMessageDate of allMessagesDate) {
-			// messagesBox.innerHTML += "<div>123"
+			console.log(eachMessageDate)
 			messagesBox.innerHTML +=
 				`<div class="displayCreatedDate"><div>${eachMessageDate.created_date}</div></div>`
 

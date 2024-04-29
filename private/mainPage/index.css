@@ -187,6 +187,7 @@ body {
     width: calc(100% - 400px);
     /* overflow-y: auto; */
     overflow-x: scroll;
+
 }
 
 .project-area::-webkit-scrollbar {
@@ -254,6 +255,7 @@ body {
     overflow-y: auto;
     z-index: 1;
     background-color: #b9cde1;
+
 }
 
 .project::-webkit-scrollbar {
