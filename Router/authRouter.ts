@@ -278,8 +278,8 @@ async function googleLogin(req: Request, res: Response) {
             }
 
             //get full name from Google
-            let firstName = result.given_name;
-            let lastName = result.family_name;
+            let firstName = (result.given_name) ? result.given_name : "Not Specified";
+            let lastName = (result.family_name) ? result.family_name: "Not Specified";
 
             //set unique marker to identify as new google user in frontend
             username += '@';
