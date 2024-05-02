@@ -55,8 +55,8 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 	const res = await fetch(`/projectRou/?id=${projectId}`)
 	const data = (await res.json()).data
 
-	const projectData = chartData(data)
-	const taskRelation = chartRelation(data)
+	// const projectData = chartData(data)
+	// const taskRelation = chartRelation(data)
 
 	gantt.config.date_format = "%Y-%m-%d";
 	gantt.init("gantt_here");
@@ -65,7 +65,9 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 		data: [],
 		links: []
 	});
-	gantt.getTask(1).readonly = true;
+	const rootTaskId = data.tasks[0].id
+
+	gantt.getTask(rootTaskId).readonly = true;
 
 	document.querySelector(".inside-jira-task-box-finished").innerHTML = ""
 	document.querySelector(".inside-jira-task-box-ongoing").innerHTML = ""
@@ -113,16 +115,15 @@ socket.on('you-have-a-new-message-this-project', async projectInfo => {
 
 gantt.attachEvent("onAfterTaskDelete", async (id, item) => {
 	try {
-		const taskData = (await getProjectData(projectId)).tasks
-		const taskId = taskData[id - 1].id
-		if (taskId) {
+		// const taskData = (await getProjectData(projectId)).tasks
+		if (id) {
 			let res = await fetch('/task', {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
-					taskId: taskId,
+					taskId: id,
 					projectId: projectId
 				})
 			})
@@ -157,12 +158,16 @@ gantt.attachEvent("onAfterTaskAdd", async function (id, item) {
 });
 
 gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
-	const taskData = (await getProjectData(projectId)).tasks
-	const taskId = taskData[id - 1].id
+	// console.log(id)
+	// const taskData = (await getProjectData(projectId)).tasks
+	// console.log(taskData)
+	// console.log(item)
+
+	// const taskId = taskData[id].id
 
 	const req = {
 		projectId: projectId,
-		taskId: taskId,
+		taskId: id,
 		taskName: item.text,
 		duration: item.duration,
 		startDate: getFinishDate(item.start_date, 1),
@@ -180,12 +185,17 @@ gantt.attachEvent("onAfterTaskUpdate", async function (id, item) {
 
 gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 	const tasksData = (await getProjectData(projectId)).tasks
-	const preTask = tasksData[item.source - 1];
-	const task = tasksData[item.target - 1];
+	console.log(tasksData)
+	console.log(item)
+	const sourceId = item.source
+	const targetId = item.target
+
+	// const preTask = tasksData[item.source];
+	// const task = tasksData[item.target];
 	const req = {
 		projectId: projectId,
-		preTask: preTask.id,
-		taskId: task.id
+		preTask: sourceId,
+		taskId: targetId
 	}
 	let res = await fetch('/task/relation', {
 		method: "DELETE",
@@ -200,12 +210,14 @@ gantt.attachEvent("onAfterLinkDelete", async function (id, item) {
 
 gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 	const tasksData = (await getProjectData(projectId)).tasks
-	const preTask = tasksData[item.source - 1]
-	const task = tasksData[item.target - 1];
+
+	const sourceId = item.source
+	const targetId = item.target
+
 	const req = {
 		projectId: projectId,
-		preTask: preTask.id,
-		taskId: task.id
+		preTask: sourceId,
+		taskId: targetId
 	}
 	let res = await fetch('/task/relation', {
 		method: "POST",
@@ -219,28 +231,26 @@ gantt.attachEvent("onAfterLinkAdd", async function (id, item) {
 
 
 function chartData(data) {
-	let projectData = [{ id: 1, text: `Project Name : ${data.name} (Possible Min Duration)`, start_date: data.start_date, duration: data.min_duration, parent: 0, open: true }]
+	console.log(data)
+	// const tasks = data.tasks
+	let projects = {
+		data: [],
+		relation: []
+	}
+	const rootTaskId = data.tasks[0].id
 
-	for (let i = 1; i < data.tasks.length; i++) {
-		let taskData = data.tasks
+	for (let i = 0; i < data.tasks.length; i++) {
+		let taskData = data.tasks[i]
 		let temp = {}
-		temp.id = i + 1
-		temp.text = taskData[i].name
-		temp.start_date = taskData[i].start_date
-		temp.duration = parseInt(taskData[i].duration)
-		if (taskData[i].actual_finish_date) {
+		temp.id = taskData.id
+		temp.text = taskData.name
+		temp.start_date = taskData.start_date
+		temp.duration = i == 0 ? data.min_duration : parseInt(taskData.duration)
+		if (taskData.actual_finish_date) {
 			temp.progress = 1
 		}
-		projectData.push(temp)
-	}
-	return projectData
-}
+		projects.data.push(temp)
 
-function chartRelation(data) {
-	let taskRelation = []
-	let idCount = 1
-	const rootTaskId = data.tasks[0].id
-	for (let i = 2; i < data.tasks.length; i++) {
 		let relation = data.tasks[i].relation.preTask
 		if (relation.length > 0) {
 			for (let j = 0; j < relation.length; j++) {
@@ -248,29 +258,33 @@ function chartRelation(data) {
 					continue
 				}
 				let temp = {}
-				temp.id = idCount
-				temp.source = relation[j] - rootTaskId + 1
-				temp.target = i + 1
+				temp.id = i + 1
+				temp.source = relation[j]
+				temp.target = taskData.id
 				temp.type = "0"
-				taskRelation.push(temp)
-				idCount += 1
+				projects.relation.push(temp)
 			}
 		}
-	} return taskRelation
+	}
+	console.log(projects)
+	return projects
 }
 
+
 function createGanttChart(data) {
-	const projectData = chartData(data)
-	const taskRelation = chartRelation(data)
+	const chartDataObj = chartData(data)
+	const projectData2 = chartDataObj.data
+	const taskRelation = chartDataObj.relation
+
 	gantt.config.date_format = "%Y-%m-%d";
 
 	gantt.init("gantt_here");
 
 	gantt.parse({
-		data: projectData,
+		data: projectData2,
 		links: taskRelation
 	});
-	gantt.getTask(1).readonly = true;
+	gantt.getTask(data.tasks[0].id).readonly = true;
 }
 
 async function displayTaskList(data) {
