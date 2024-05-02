@@ -4,6 +4,7 @@ import { pgClient } from "../utils/pgClient";
 import formidable from "formidable";
 import { isLoggedIn } from "../utils/guard";
 import { generatePassword, generateRandomNumChar } from "../utils/randomGenerator";
+import UserModel from "../model/userModel";
 
 export const authRouter = Router();
 
@@ -22,6 +23,22 @@ authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 authRouter.put("/user-profile-update", userProfileUpdate);
 authRouter.put("/update-log-time", isLoggedIn, updateLogTime);
 authRouter.get("/search-user", isLoggedIn, searchUser);
+
+
+
+
+async function getUsername(req: Request, res: Response) {
+    try {
+        const userModel = new UserModel() 
+        const username = await userModel.getUsername(req.session.userId!)
+        res.json({
+            msg: username
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "internal sever error" });
+    }
+};
 
 async function userRegistration(req: Request, res: Response) {
     try {
@@ -54,6 +71,9 @@ async function userRegistration(req: Request, res: Response) {
                 }
             });
         }
+
+        // const userModel = new UserModel() 
+        // const username = await userModel.getUsername(req.session.userId!)
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "internal sever error" });
