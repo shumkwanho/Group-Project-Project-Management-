@@ -18,18 +18,15 @@ authRouter.get("/user", isLoggedIn, getUserInfo);
 authRouter.get("/other-user", isLoggedIn, getOtherUserInfo);
 authRouter.post("/inspect-password", isLoggedIn, inspectPassword);
 authRouter.put("/password-update", isLoggedIn, updatePassword);
-authRouter.post("/profile-image-update", isLoggedIn, updateProfileImage);
+authRouter.post("/profile-image-update", updateProfileImage);
 authRouter.put("/username-update", isLoggedIn, usernameUpdate);
 authRouter.put("/user-profile-update", userProfileUpdate);
 authRouter.put("/update-log-time", isLoggedIn, updateLogTime);
 authRouter.get("/search-user", isLoggedIn, searchUser);
 
-
-
-
 async function getUsername(req: Request, res: Response) {
     try {
-        const userModel = new UserModel() 
+        const userModel = new UserModel()
         const username = await userModel.getUsername(req.session.userId!)
         res.json({
             msg: username
@@ -45,15 +42,17 @@ async function userRegistration(req: Request, res: Response) {
         //not allow profile image upload on initial registration
 
         const { username, email, password } = req.body;
+        const userMode = new UserModel();
 
-        let isUsernameExist = await checkUsername(username);
-        let isEmailExist = await checkEmail(email);
+        let isUsernameExist = await userMode.checkUsername(username);
+        let isEmailExist = await userMode.checkEmail(email);
 
         if (isUsernameExist || isEmailExist) {
             res.status(400).json({
                 message: "user registration failed",
                 error: "username and/or email already exist(s) in database"
             });
+            return
         } else {
 
             let hashedPassword = await hashPassword(password);
@@ -93,11 +92,10 @@ async function checkUserExist(req: Request, res: Response) {
             "username and/or email already exist(s)" :
             "username and email does not exist";
 
-        let isExist = checkUniqueQuery ? true : false
 
         res.json({
             message: message,
-            isExist: isExist
+            isExist: !!checkUniqueQuery
         });
 
     } catch (error) {
@@ -118,68 +116,35 @@ async function usernameLogin(req: Request, res: Response) {
 
         //check if username exist in DB
         if (!userQuery) {
-
-            console.log(`username: ${username} does not exist in users db`);
-            res.status(400).json({
-                message: "login failed",
-                error: "invalid credentials"
-            });
-
-        } else {
-
-            let isPasswordMatched = await checkPassword({
-                plainPassword: password,
-                hashedPassword: userQuery.password
-            });
-
-            //check if password matches
-            if (!isPasswordMatched) {
-
-                console.log(`password incorrect`);
-                res.status(400).json({
-                    message: "login failed",
-                    error: "invalid credentials"
-                });
-
-            } else {
-
-                req.session.userId = userQuery.id;
-                req.session.username = userQuery.username;
-
-                req.session.save();
-
-                if (isFirstLogin) {
-
-                    res.json({
-                        message: "first login successful",
-                        data: {
-                            id: userQuery.id,
-                            username: userQuery.username
-                        }
-                    });
-
-                } else {
-                    //log last login_time
-                    const userLoginQuery = (
-                        await pgClient.query(
-                            "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
-                            [userQuery.id]
-                        )).rows[0];
-
-                    res.json({
-                        message: "login successful",
-                        data: {
-                            id: userQuery.id,
-                            username: userQuery.username,
-                            last_login: userLoginQuery.last_login
-                        }
-                    });
-                };
-            }
+            throw new Error("login failed")
         }
-    } catch (error) {
+        let isPasswordMatched = await checkPassword({
+            plainPassword: password,
+            hashedPassword: userQuery.password
+        });
+        if (!isPasswordMatched) {
+            throw new Error("login failed")
+        } 
+        req.session.userId = userQuery.id;
+        req.session.username = userQuery.username;
+        req.session.save();
+        const userLoginQuery = (
+            await pgClient.query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1 RETURNING last_login",
+                [userQuery.id]
+            )).rows[0];
+
+        res.json({
+            message: "first login successful",
+            data: {
+                id: userQuery.id,
+                username: userQuery.username,
+                last_login: !!userLoginQuery.last_login
+            }
+        });
+    } catch (error: any) {
         console.log(error);
-        res.status(500).json({ message: "internal sever error" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -292,14 +257,14 @@ async function googleLogin(req: Request, res: Response) {
             //handle generate unique username
             let gmail = result.email;
             let [username, domain] = gmail.split("@");
-
-            while (await checkUsername(username)) {
+            const userModel = new UserModel();
+            while (await userModel.checkUsername(username)) {
                 username += `_${generateRandomNumChar(2)}`;
             }
 
             //get full name from Google
             let firstName = (result.given_name) ? result.given_name : "Not Specified";
-            let lastName = (result.family_name) ? result.family_name: "Not Specified";
+            let lastName = (result.family_name) ? result.family_name : "Not Specified";
 
             //set unique marker to identify as new google user in frontend
             username += '@';
@@ -356,35 +321,20 @@ async function logout(req: Request, res: Response) {
 
 async function getUserInfo(req: Request, res: Response) {
     try {
-        //check if user is logged in
-        if (req.session.username) {
-
-            let userId = req.session.userId;
-
-            const userQueryResult = (
-                await pgClient.query(
-                    "SELECT id, username, email, profile_image, last_login, registration_date FROM users WHERE id = $1;",
-                    [userId]
-                )).rows[0];
-
-            res.json({
-                message: "check user info successful",
-                data: {
-                    id: userQueryResult.id,
-                    username: userQueryResult.username,
-                    email: userQueryResult.email,
-                    profile_image: userQueryResult.profile_image,
-                    last_login: userQueryResult.last_login,
-                    registration_date: userQueryResult.registration_date
-                }
-            });
-
-        } else {
-            res.status(400).json({
-                message: "check username failed",
-                error: "no active login session"
-            });
-        }
+        let userId = req.session.userId!;
+        const userModel = new UserModel()
+        const userQueryResult = await userModel.getUserInfo(userId)
+        res.json({
+            message: "check user info successful",
+            data: {
+                id: userQueryResult.id,
+                username: userQueryResult.username,
+                email: userQueryResult.email,
+                profile_image: userQueryResult.profile_image,
+                last_login: userQueryResult.last_login,
+                registration_date: userQueryResult.registration_date
+            }
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "internal sever error" });
@@ -396,14 +346,11 @@ async function getOtherUserInfo(req: Request, res: Response) {
         //check if user is logged in
         if (req.session.username) {
 
-            let { userId } = req.query;
+            let userId  = req.query.userId;
             let myUserId = req.session.userId;
 
-            const userQueryResult = (
-                await pgClient.query(
-                    "SELECT id, username, email, profile_image, first_name, last_name, location, organization, last_login, registration_date FROM users WHERE id = $1;",
-                    [userId]
-                )).rows[0];
+            const userModel = new UserModel()
+            const userQueryResult = await userModel.getUserInfo(userId)
 
             res.json({
                 message: "check other user info successful",
@@ -531,48 +478,36 @@ async function updatePassword(req: Request, res: Response) {
 async function updateProfileImage(req: Request, res: Response) {
 
     try {
-        //upload profile picture can only be performed if an user has logged in
-        //check if user is logged in
-        if (!req.session.username) {
+        let id = req.session.userId;
+        let username = req.session.username;
 
-            res.status(400).json({
-                message: "check username failed",
-                error: "no active login session"
-            });
+        //max file size = 5mb, need to remind users in front end
+        const MAX_FILE_SIZE = 20 * 1024 ** 2;
 
-        } else {
+        const imageForm = formidable({
+            uploadDir: __dirname + "/../uploads/profile-image",
+            keepExtensions: true,
+            minFileSize: 0,
+            maxFiles: 1,
+            allowEmptyFiles: true,
+            filter: part => part.mimetype?.startsWith('image/') || false,
+            filename: (originalName, originalExt, part, form) => {
+                let fieldName = part.name
+                let timestamp = Date.now()
+                let ext = part.mimetype?.split('/').pop()
+                return `${username}-${fieldName}-${timestamp}.${ext}`;
+            },
+        });
 
-            let id = req.session.userId;
-            let username = req.session.username;
-
-            //max file size = 5mb, need to remind users in front end
-            const MAX_FILE_SIZE = 20 * 1024 ** 2;
-
-            const imageForm = formidable({
-                uploadDir: __dirname + "/../uploads/profile-image",
-                keepExtensions: true,
-                minFileSize: 0,
-                maxFiles: 1,
-                allowEmptyFiles: true,
-                filter: part => part.mimetype?.startsWith('image/') || false,
-                filename: (originalName, originalExt, part, form) => {
-                    let fieldName = part.name
-                    let timestamp = Date.now()
-                    let ext = part.mimetype?.split('/').pop()
-                    return `${username}-${fieldName}-${timestamp}.${ext}`;
-                },
-            });
-
-            imageForm.parse(req, async (err, fields, files) => {
-
-                if (err) {
-                    res.status(500).json({ message: "internal server error" });
-                };
-
-                if (files instanceof Object) {
-
-                    let fileSize = (files['profile-image']![0] as formidable.File).size;
-                    let filename = (files['profile-image']![0] as formidable.File).newFilename;
+        imageForm.parse(req, async (err, fields, files) => {
+            console.log("filesfilesfilesfilesfilesfilesfilesfilesfiles")
+            if (err) {
+                res.status(500).json({ message: "internal server error" });
+            };
+            try {
+                if (!Array.isArray(files) && files['profile-image']) {
+                    let fileSize = (files['profile-image'][0] as formidable.File).size;
+                    let filename = (files['profile-image'][0] as formidable.File).newFilename;
 
                     if (isEmpty(files)) {
                         //check if an image is uploaded
@@ -608,10 +543,15 @@ async function updateProfileImage(req: Request, res: Response) {
 
                     }
                 } else {
-                    ("not and object")
+                    console.log("not and object")
                 }
-            })
-        }
+            } catch (e) {
+                console.log(e)
+                res.status(500).json({ message: "internal server error" });
+            }
+
+        })
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "internal sever error" });
@@ -631,7 +571,7 @@ async function usernameUpdate(req: Request, res: Response) {
 
         } else {
 
-            const { username }  = req.body;
+            const { username } = req.body;
 
             //check if username is currently being used by another user
             let checkUniqueQuery = (await pgClient.query(
@@ -666,7 +606,7 @@ async function usernameUpdate(req: Request, res: Response) {
 
 //req: firstName, lastName, location, organization
 //frontend to handle empty /invalid input
-async function userProfileUpdate (req: Request, res: Response) {
+async function userProfileUpdate(req: Request, res: Response) {
     try {
 
         // username update can only be performed if an user has logged in
@@ -678,7 +618,7 @@ async function userProfileUpdate (req: Request, res: Response) {
                 error: "no active login session"
             });
         } else {
-            
+
             const { firstName, lastName, location, organization } = req.body;
 
             let id = req.session.userId;
@@ -693,16 +633,16 @@ async function userProfileUpdate (req: Request, res: Response) {
                 data: updateProfileQuery
             })
         }
-        
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "internal sever error" });
     }
-    
+
 }
 
 //for new registered users to update log time to quit config
-async function updateLogTime (req: Request, res: Response) {
+async function updateLogTime(req: Request, res: Response) {
     try {
         if (!req.session.username) {
 
@@ -733,47 +673,30 @@ function isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
 };
 
-async function checkUsername(username: string) {
-    let checkUniqueQuery = (await pgClient.query(
-        "SELECT username FROM users WHERE username = $1",
-        [username]
-    )).rows[0];
-
-    return checkUniqueQuery;
-}
-
-async function checkEmail(email: string) {
-    let checkUniqueQuery = (await pgClient.query(
-        "SELECT id FROM users WHERE username = $1",
-        [email]
-    )).rows[0];
-
-    return checkUniqueQuery;
-}
 
 async function searchUser(req: Request, res: Response) {
     let { value } = req.query
     console.log(value);
     try {
-
         let userList = (
-            await pgClient.query(
-                "SELECT id, username, email, profile_image FROM users WHERE LOWER(username) || LOWER(email) LIKE LOWER('%' || $1 || '%') ORDER BY id ASC LIMIT 10;", 
-                [value]
-            )).rows
-
-        let defaultUserList = (
             await pgClient.query(
                 "SELECT id, username, email, profile_image FROM users ORDER BY id ASC LIMIT 10;"
             )).rows
-
-        if (userList.length > 0) {
-            res.status(200).json({ userList: userList })
-        } else if (!value) {
-            res.json({ userList: defaultUserList })
-        }  else if (userList.length == 0) {
-            res.json({ message: "no user found" })
+   
+        if (value) {
+            userList = (
+                await pgClient.query(
+                    "SELECT id, username, email, profile_image FROM users WHERE LOWER(username) || LOWER(email) LIKE LOWER('%' || $1 || '%') ORDER BY id ASC LIMIT 10;",
+                    [value]
+                )).rows
         }
+
+        if(userList.length == 0) {
+            res.json({ message: "no user found" })
+            return
+        }
+
+        res.status(200).json({ userList: userList })
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "internal sever error" });

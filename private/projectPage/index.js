@@ -453,7 +453,7 @@ window["getOtherUserInfoFromChat"] = getOtherUserInfoFromChat;
 
 async function getAllMessages(projectId) {
 
-	let res = await fetch(`/chatroom?projectId=${projectId}`)
+	let res = await fetch(`/chatroom/message/${projectId}`)
 
 	let response = await res.json();
 
