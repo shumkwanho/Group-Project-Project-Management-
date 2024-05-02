@@ -1,4 +1,30 @@
 body {
+    margin: 0;
+    padding: 1rem;
+  }
+  .columns {
+    max-width: 80vw;
+    margin: auto;
+    columns: 4 200px;
+    column-gap: 1rem;
+    font-size: 1.2rem;
+  }
+  .box {
+    /* background: red; */
+    color: white;
+    margin: 0 0 1rem;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+  }
+  .box:nth-child(odd) {
+    /* background: blue; */
+  }
+
+  
+
+body {
     font-family: "DM Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 300;
@@ -177,17 +203,13 @@ body {
 }
 
 .project-area {
-    display: flex;
+    /* display: flex;
     flex-direction: row;
     padding: 0 15px;
     gap: 10px;
-    /* display: block;
-    column-count: 3;
-    column-gap: 15px; */
     width: calc(100% - 400px);
-    /* overflow-y: auto; */
-    overflow-x: scroll;
-
+    overflow-x: scroll; */
+    padding: 0 15px;
 }
 
 .project-area::-webkit-scrollbar {

@@ -68,22 +68,17 @@ async function getAllFinishedProjects(userId: any) {
         FROM projects 
         INNER JOIN user_project_relation
         ON project_id = projects.id
-        WHERE user_id = $1 AND CURRENT_TIMESTAMP >= actual_finish_date 
+        WHERE user_id = $1 AND actual_finish_date IS NOT NULL
         ORDER BY actual_finish_date DESC;`, [userId])).rows
 }
 
 async function getMainPageInfo(req: Request, res: Response) {
     let { userId } = req.query;
-    // let currentUserId = req.session.userId;
 
     try {
-
-        // console.log("userId: ", userId);
-
         let currentTaskInfo = [];
         let allOverrunTasks = [];
         let meetDeadlineTasks = [];
-        // let finishedProjectsInformation = [];
 
         let userInfo = await getUserInfo(userId);
 
@@ -111,33 +106,11 @@ async function getMainPageInfo(req: Request, res: Response) {
                     } else if (duration == 0) {
                         meetDeadlineTasks.push(eachCurrentTask)
                     } else {
-                    currentTaskInfo.push(eachCurrentTask);
+                        currentTaskInfo.push(eachCurrentTask);
                     }
                 }
             }
         }
-
-        // if (currentTaskInfo.length > 0) {
-
-        //     let duration
-
-        //     for await (let eachTask of currentTaskInfo) {
-
-        //         let task_start_date = eachTask.task_start_date
-        //         let taskDuration = Number(eachTask.duration)
-
-        //         let taskDeadline = Number(getFinishDate(task_start_date, taskDuration));
-
-        //         duration = Number(taskDeadline - today);
-
-        //         if (duration < 0) {
-        //             allOverrunTasks.push(eachTask)
-        //         } else if (duration == 0) {
-        //             meetDeadlineTasks.push(eachTask)
-        //         }
-
-        //     }
-        // }
 
         let allFinishedProjects = await getAllFinishedProjects(userId)
 
@@ -149,14 +122,6 @@ async function getMainPageInfo(req: Request, res: Response) {
             currentTaskInfo: currentTaskInfo,
             finishedProjects: allFinishedProjects
         })
-
-        // console.log("userInfo: ", userInfo);
-        // console.log("allCurrentProjects: ", allCurrentProjects);
-        // console.log("allOverrunTasks: ", allOverrunTasks);
-        // console.log("meetDeadlineTasks: ", meetDeadlineTasks);
-        // console.log("currentTaskInfo: ", currentTaskInfo);
-        // console.log("allFinishedProjects:", allFinishedProjects);
-
     } catch (err) {
         serverError(err, res)
     }

@@ -6,11 +6,11 @@ import http from "http";
 import { projectRouter } from "./Router/projectRouter";
 import { taskRouter } from "./Router/taskRouter";
 import { authRouter } from "./Router/authRouter";
-import { chatRoomRouter } from "./Router/chatRoomRouter";
-import { testLoginRouter } from "./Router/testLoginRouter";
+// import { chatRoomRouter } from "./Router/chatRoomRouter";
+// import { testLoginRouter } from "./Router/testLoginRouter";
 import { Server as SOCKETIO } from "socket.io";
 import { isLoggedIn } from "./utils/guard";
-import { getJustSentMessage } from "./Router/chatRoomRouter";
+import { chatRoomRouter, getJustSentMessage } from "./Router/chatRoomRouter";
 import { getLastEditMessage } from "./Router/chatRoomRouter";
 import { error } from "console";
 import { mainPageDisplayRouter } from "./Router/mainPageDisplayRouter";
@@ -151,7 +151,7 @@ app.use("/task", isLoggedIn, taskRouter)
 app.use("/auth", authRouter)
 app.use("/chatroom", isLoggedIn, chatRoomRouter)
 app.use("/mainpage", isLoggedIn, mainPageDisplayRouter)
-app.use("/testLogin", testLoginRouter)
+// app.use("/testLogin", testLoginRouter)
 
 app.use("/project", isLoggedIn, express.static("private/projectPage"))
 app.use("/chat", express.static("private/chatPage"))

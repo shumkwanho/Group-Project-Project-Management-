@@ -148,9 +148,10 @@ userRegistration.addEventListener("submit", async (e) => {
             //check if username / email already exist in database
             if (res.ok) {
                 if (response.isExist) {
+                    const msg = response.message
                     Swal.fire({
                         title: 'Email / Username already exists',
-                        text: 'Enter another email / username',
+                        text: msg,
                         showConfirmButton: false,
                     });
 

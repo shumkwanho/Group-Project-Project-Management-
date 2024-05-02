@@ -138,7 +138,19 @@ async function getAllUserInfo(userId) {
 
         notification.innerHTML = `
             <div class="top-bar-word">Hello ${userInfo.username} !&nbsp;&nbsp; ;] &nbsp;&nbsp;&nbsp;&nbsp; Wish you a nice day!</div>`;
+            projectArea.innerHTML += `<div class="box">
+            <div class="create-project" data-bs-toggle="modal" data-bs-target="#projectCreationModal">
+                <div class="project-name white-word">Create project</div>
 
+                <br>
+
+                <div class="center-image">
+                    <img src="/assets/create_project.png" alt="" class="create-project-image">
+                </div>
+
+                
+            </div>
+        </div>`
         if (projectInfo) {
             for await (let eachProject of projectInfo) {
 
@@ -149,14 +161,16 @@ async function getAllUserInfo(userId) {
                     `<img src="/project-image/${eachProject.image}" alt="" class="project-image">` : ""
 
                 projectArea.innerHTML += `
-                    <section class="project" id="projectId-${eachProject.project_id}" 
-                        onclick="handleProjectClick(event, ${eachProject.project_id})">
-                    ${projectImageElm}
-                    <button type="button" class="btn btn-outline-secondary edit-project-image" data-bs-toggle="modal" data-bs-target="#uploadProjectImageModal">
-                        <i class="bi bi-camera-fill"></i>
-                    </button>
-                    <div class="project-name white-word">${eachProject.name}</div>
-                    </section>`
+                   <div class="box">
+                   <section class="project" id="projectId-${eachProject.project_id}" 
+                    onclick="handleProjectClick(event, ${eachProject.project_id})">
+                        ${projectImageElm}
+                        <button type="button" class="btn btn-outline-secondary edit-project-image" data-bs-toggle="modal" data-bs-target="#uploadProjectImageModal">
+                            <i class="bi bi-camera-fill"></i>
+                        </button>
+                        <div class="project-name white-word">${eachProject.name}</div>
+                    </section>
+                   </div>`
 
                 if (Number(eachProject.min_duration) <= 10) {
                     document.querySelector(`#projectId-${eachProject.project_id}`)

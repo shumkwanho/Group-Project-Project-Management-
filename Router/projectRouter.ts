@@ -6,7 +6,6 @@ import { getMinDuration } from "../utils/MinDuration";
 export const projectRouter = Router()
 
 projectRouter.get("/", inspectProject)
-projectRouter.get("/user_relation", getUserTaskRelation)
 projectRouter.post("/", createProject)
 projectRouter.put("/", updateProject)
 projectRouter.delete("/", deleteProject)
@@ -22,12 +21,20 @@ async function inspectProject(req: Request, res: Response) {
         const { id } = req.query
         const targetProject = (await pgClient.query(`select * from projects where id = $1`, [id])).rows[0]
 
-        if (targetProject == undefined) {
+        if (!targetProject) {
             res.status(400).json({ message: "Cannot find target project" })
             return
         }
-        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name,pre_req_fulfilled, tasks.start_date,duration,tasks.actual_finish_date from projects join tasks on project_id = projects.id where project_id = $1 ORDER BY tasks.id`, [id])).rows
-        const usersOfTargetProject = (await pgClient.query(`select * from projects join user_project_relation on projects.id = project_id join users on users.id = user_id where projects.id = $1`, [id])).rows
+
+        const tasksOfTargetProject = (await pgClient.query(`select tasks.id, tasks.name,pre_req_fulfilled, tasks.start_date,duration,tasks.actual_finish_date 
+        from projects 
+        left join tasks on project_id = projects.id 
+        where project_id = $1 
+        ORDER BY tasks.id`, [id])).rows
+        const usersOfTargetProject = (await pgClient.query(`select * from projects 
+        left join user_project_relation on projects.id = project_id 
+        join users on users.id = user_id 
+        where projects.id = $1`, [id])).rows
 
 
         for (let task of tasksOfTargetProject) {
@@ -49,10 +56,6 @@ async function inspectProject(req: Request, res: Response) {
 
 }
 
-
-async function getUserTaskRelation(req: Request, res: Response) {
-    const tasks = await pgClient.query(`select `)
-}
 
 
 // request:project name,project photo -> create new project and project id  (if photo = null, dont pass into backendside
@@ -260,41 +263,34 @@ async function addProjectUser(req: Request, res: Response) {
 
         const { project_id, user_id } = req.body;
 
-        if (user_id === req.session.userId) {
-            //if user is adding self
+        //check if relation already exist
+        let checkQuery = (await pgClient.query(
+            "SELECT * FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
+            [user_id, project_id]
+        )).rows[0];
+
+        if (checkQuery !== undefined) {
+            //user project relation already exists
             res.status(400).json({
                 message: "add new user to project failed",
-                error: "userAddingSelf",
-            })
+                error: "userAlreadyAssigned"
+            });
+
         } else {
-            //check if relation already exist
-            let checkQuery = (await pgClient.query(
-                "SELECT * FROM user_project_relation WHERE user_id = $1 AND project_id = $2",
-                [user_id, project_id]
+            //temporary all permission level are set to 0
+            const permission_level = 0;
+
+            let relationQueryResult = (await pgClient.query(
+                "INSERT INTO user_project_relation (user_id, project_id, permission_level) VALUES ($1, $2, $3) RETURNING id",
+                [user_id, project_id, permission_level]
             )).rows[0];
 
-            if (checkQuery !== undefined) {
-                //user project relation already exists
-                res.status(400).json({
-                    message: "add new user to project failed",
-                    error: "userAlreadyAssigned"
-                });
-
-            } else {
-                //temporary all permission level are set to 0
-                const permission_level = 0;
-
-                let relationQueryResult = (await pgClient.query(
-                    "INSERT INTO user_project_relation (user_id, project_id, permission_level) VALUES ($1, $2, $3) RETURNING id",
-                    [user_id, project_id, permission_level]
-                )).rows[0];
-
-                res.json({
-                    message: "add new user to project successful",
-                    data: { user_project_relation_id: relationQueryResult.id }
-                })
-            }
+            res.json({
+                message: "add new user to project successful",
+                data: { user_project_relation_id: relationQueryResult.id }
+            })
         }
+        
 
     } catch (error) {
         console.log(error);
@@ -328,12 +324,14 @@ async function removeProjectUser(req: Request, res: Response) {
         } else {
 
             let id = checkQuery.id;
-            let userTaskRelations = (await pgClient.query(`select user_task_relation.id from users join user_project_relation on users.id = user_id join user_task_relation on user_project_relation.id = user_project_relation_id where users.id = $1`, [userId])).rows
-            if (userTaskRelations.length > 0) {
-                for (let userTaskRelation of userTaskRelations) {
-                    await pgClient.query(`DELETE FROM user_task_relation where id = $1`, [userTaskRelation.id])
+            let userProjectRelations = (await pgClient.query(`select id from user_project_relation 
+            where user_project_relation.user_id = $1`, [userId])).rows
+            if (userProjectRelations.length > 0) {
+                for (let userProjectRelation of userProjectRelations) {
+                    await pgClient.query(`DELETE FROM user_task_relation where user_project_relation_id = $1`, [userProjectRelation.id])
                 }
             }
+            
             await pgClient.query("DELETE FROM user_project_relation WHERE id = $1", [id])
 
             res.json({ message: "remove user from project successful", id: userId });
