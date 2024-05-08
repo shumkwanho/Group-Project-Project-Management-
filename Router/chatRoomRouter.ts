@@ -5,23 +5,15 @@ import { io } from "../main";
 
 export const chatRoomRouter = Router();
 
-chatRoomRouter.get('/', showChatroom);
+chatRoomRouter.get('/message/:projectId', getAllMessages);
 chatRoomRouter.post('/', sendMyMessage);
 chatRoomRouter.put('/', editMyMessage);
-
-
-
-
 
 // ==================== Show Server Error ====================
 export function serverError(err: any, res: Response) {
     console.log(err)
     res.status(500).json({ message: 'Server internal error.' })
 }
-
-
-
-
 
 // ==================== Show All Messages ====================
 
@@ -63,8 +55,8 @@ async function getAllMessagesFrompgClient(projectId: any) {
     ORDER BY created_at ASC  ;`, [projectId])).rows
 }
 
-async function showChatroom(req: Request, res: Response) {
-    let { projectId } = req.query;
+async function getAllMessages(req: Request, res: Response) {
+    let { projectId } = req.params;
     console.log("client got messages info by project id: ", projectId);
 
     let userId = req.session.userId;
@@ -163,6 +155,8 @@ async function editMyMessage(req: Request, res: Response) {
         let justEditedMessage = await changeMessageTopgClient(messageId, content);
 
         (justEditedMessage);
+
+        io.to(`chatroom-${1}`).emit('receive-editMessage', { userId: userId, lastEditMessageInfo: content });
 
         res.status(200).json({
             userId: userId,

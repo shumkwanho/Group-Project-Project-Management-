@@ -55,8 +55,8 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 	const res = await fetch(`/projectRou/?id=${projectId}`)
 	const data = (await res.json()).data
 
-	const projectData = chartData(data)
-	const taskRelation = chartRelation(data)
+	// const projectData = chartData(data)
+	// const taskRelation = chartRelation(data)
 
 	gantt.config.date_format = "%Y-%m-%d";
 	gantt.init("gantt_here");
@@ -65,7 +65,9 @@ socket.on('receive-redrawProjectPage', async notImportant => {
 		data: [],
 		links: []
 	});
-	gantt.getTask(1).readonly = true;
+	const rootTaskId = data.tasks[0].id
+
+	gantt.getTask(rootTaskId).readonly = true;
 
 	document.querySelector(".inside-jira-task-box-finished").innerHTML = ""
 	document.querySelector(".inside-jira-task-box-ongoing").innerHTML = ""
@@ -465,7 +467,7 @@ window["getOtherUserInfoFromChat"] = getOtherUserInfoFromChat;
 
 async function getAllMessages(projectId) {
 
-	let res = await fetch(`/chatroom?projectId=${projectId}`)
+	let res = await fetch(`/chatroom/message/${projectId}`)
 
 	let response = await res.json();
 
