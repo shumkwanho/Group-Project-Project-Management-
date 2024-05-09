@@ -179,7 +179,7 @@ body {
     position: relative;
     width: 100%;
     padding: 15px;
-    column-count: 4;
+    column-count: 5;
     column-gap: 15px;
     overflow: auto;
     padding: 0;
@@ -418,6 +418,12 @@ body {
 
 .project-creation-body {
     height: 330px;
+}
+
+@media screen and (max-width: 1650px) {
+    .project-area {
+        column-count: 4;
+    }
 }
 
 @media screen and (max-width: 1350px) {
